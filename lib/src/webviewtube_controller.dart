@@ -15,9 +15,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     _webViewController = webViewController;
   }
 
-  void onLoaded() {
-    _isLoaded = true;
-  }
+  void onLoaded() => _isLoaded = true;
 
   void onReady() => value = value.copyWith(isReady: true);
 
@@ -42,7 +40,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   }
 
   void _callMethod(String method) {
-    if (value.isReady) {
+    if (_isLoaded && value.isReady) {
       _webViewController?.runJavascript(method);
     } else {
       debugPrint('The controller is not ready for method calls.');
