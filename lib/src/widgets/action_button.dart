@@ -69,16 +69,3 @@ class _ActionButtonState extends State<ActionButton>
     );
   }
 }
-
-class LoadingIndicator extends StatelessWidget {
-  const LoadingIndicator({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return const CircularProgressIndicator(
-      valueColor: AlwaysStoppedAnimation(Colors.white),
-    );
-  }
-}
