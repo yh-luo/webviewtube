@@ -4,9 +4,12 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'models/models.dart';
 
 class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
-  WebviewtubeController() : super(const WebviewTubeValue());
+  WebviewtubeController({WebviewtubeOptions? options})
+      : options = options ?? WebviewtubeOptions(),
+        super(const WebviewTubeValue());
 
   WebViewController? _webViewController;
+  WebviewtubeOptions options;
   bool _isLoaded = false;
 
   bool get isLoaded => _isLoaded;

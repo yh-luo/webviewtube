@@ -6,16 +6,16 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
-import 'widgets.dart';
 
 class WebviewtubePlayer extends StatelessWidget {
-  const WebviewtubePlayer(this.videoId, {super.key});
+  const WebviewtubePlayer(this.videoId, {super.key, this.options});
   final String videoId;
+  final WebviewtubeOptions? options;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-        create: (_) => WebviewtubeController(),
+        create: (_) => WebviewtubeController(options: options),
         child: WebviewtubePlayerView(videoId));
   }
 }
@@ -132,10 +132,11 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
     _webviewController.complete(webViewController);
     context.read<WebviewtubeController>().onWebviewCreated(webViewController);
   }
-}
 
-String _generateIframePage(String videoId) {
-  return '''
+  String _generateIframePage(String videoId) {
+    final options = context.read<WebviewtubeController>().options;
+
+    return '''
 <!DOCTYPE html>
 <html>
 
@@ -163,7 +164,10 @@ String _generateIframePage(String videoId) {
                     'rel': 0,
                     'showinfo': 0,
                     'iv_load_policy': 3,
-                    'modestbranding': 1
+                    'modestbranding': 1,
+                    'cc_load_policy': ${_boolean(options.enableCaption)},
+                    'cc_lang_pref': '${options.captionLanguage}',
+                    'start': ${options.startAt}
                 },
                 events: {
                     onReady: function (event) { sendMessageToDart('Ready'); },
@@ -209,7 +213,7 @@ String _generateIframePage(String videoId) {
                         'position': player.getCurrentTime(),
                         'buffered': player.getVideoLoadedFraction()
                     });
-            }, 100);
+            }, ${options.currentTimeUpdateInterval});
         }
 
 
@@ -269,4 +273,7 @@ String _generateIframePage(String videoId) {
 
 </html>
 ''';
+  }
 }
+
+int _boolean(value) => value ? 1 : 0;
