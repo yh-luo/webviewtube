@@ -106,7 +106,13 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
           initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
           javascriptChannels: _buildJavascriptChannel(),
         ),
-        const Center(child: ActionButton()),
+        Center(
+            child: Column(
+          children: [
+            ActionButton(),
+            ProgressBar(),
+          ],
+        )),
       ],
     );
   }
