@@ -82,6 +82,21 @@ enum PlaybackQuality {
   }
 }
 
+enum PlaybackRate {
+  quarter(0.25),
+  half(0.5),
+  threeQuarter(0.75),
+  normal(1),
+  oneAndAQuarter(1.25),
+  oneAndAHalf(1.5),
+  oneAndAThreeQuarter(1.75),
+  twice(2),
+  unknown(null);
+
+  final double? rate;
+  const PlaybackRate(this.rate);
+}
+
 enum PlayerError {
   empty(null),
   invalidParameter(2),
@@ -127,6 +142,7 @@ class WebviewTubeValue {
     this.isMuted = false,
     this.playerState = PlayerState.unstarted,
     this.playbackQuality = PlaybackQuality.hd720,
+    this.playbackRate = PlaybackRate.normal,
     this.position = Duration.zero,
     this.buffered = 0,
     this.playerError = PlayerError.empty,
@@ -137,6 +153,7 @@ class WebviewTubeValue {
   final bool isMuted;
   final PlayerState playerState;
   final PlaybackQuality playbackQuality;
+  final PlaybackRate playbackRate;
   final Duration position;
   final double buffered;
   final PlayerError playerError;
@@ -147,6 +164,7 @@ class WebviewTubeValue {
     bool? isMuted,
     PlayerState? playerState,
     PlaybackQuality? playbackQuality,
+    PlaybackRate? playbackRate,
     Duration? position,
     double? buffered,
     PlayerError? playerError,
@@ -157,6 +175,7 @@ class WebviewTubeValue {
       isMuted: isMuted ?? this.isMuted,
       playerState: playerState ?? this.playerState,
       playbackQuality: playbackQuality ?? this.playbackQuality,
+      playbackRate: playbackRate ?? this.playbackRate,
       position: position ?? this.position,
       buffered: buffered ?? this.buffered,
       playerError: playerError ?? this.playerError,
@@ -171,6 +190,7 @@ class WebviewTubeValue {
       other.isMuted == isMuted &&
       other.playerState == playerState &&
       other.playbackQuality == playbackQuality &&
+      other.playbackRate == playbackRate &&
       other.position == position &&
       other.buffered == buffered &&
       other.playerError == playerError &&
@@ -178,7 +198,7 @@ class WebviewTubeValue {
 
   @override
   int get hashCode => hashValues(isReady, isMuted, playerState, playbackQuality,
-      position, buffered, playerError, videoMetadata);
+      playbackRate, position, buffered, playerError, videoMetadata);
 }
 
 @immutable

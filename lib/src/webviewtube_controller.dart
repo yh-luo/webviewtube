@@ -68,6 +68,12 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     value = value.copyWith(isMuted: false);
   }
 
+  /// Set playback rate
+  void setPlaybackRate(PlaybackRate playbackRate) {
+    _callMethod('setPlaybackRate(${playbackRate.rate})');
+    value = value.copyWith(playbackRate: playbackRate);
+  }
+
   /// Sets the volume of player.
   ///
   /// This won't work for mobile devices. For mobile devices, the volume depends
