@@ -114,6 +114,7 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
             ActionButton(),
             ProgressBar(),
             VolumeButton(),
+            PlaybackSpeedButton(),
           ],
         )),
       ],
