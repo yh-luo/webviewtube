@@ -34,38 +34,36 @@ class _ActionButtonState extends State<ActionButton>
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: () {
-        if (context.read<WebviewtubeController>().value.playerState ==
-            PlayerState.playing) {
-          context.read<WebviewtubeController>().pause();
-        } else if (context.read<WebviewtubeController>().value.playerState ==
-            PlayerState.paused) {
-          context.read<WebviewtubeController>().play();
+    return Selector<WebviewtubeController, PlayerState>(
+      selector: (_, controller) => controller.value.playerState,
+      builder: (context, playerState, __) {
+        switch (playerState) {
+          case PlayerState.playing:
+            _animationController.forward();
+            break;
+          case PlayerState.paused:
+            _animationController.reverse();
+            break;
+          default:
+            break;
         }
-      },
-      child: Selector<WebviewtubeController, PlayerState>(
-        selector: (_, controller) => controller.value.playerState,
-        builder: (_, playerState, __) {
-          switch (playerState) {
-            case PlayerState.playing:
-              _animationController.forward();
-              break;
-            case PlayerState.paused:
-              _animationController.reverse();
-              break;
-            default:
-              break;
-          }
 
-          return AnimatedIcon(
+        return InkWell(
+          onTap: () {
+            if (playerState == PlayerState.playing) {
+              context.read<WebviewtubeController>().pause();
+            } else if (playerState == PlayerState.paused) {
+              context.read<WebviewtubeController>().play();
+            }
+          },
+          child: AnimatedIcon(
             icon: AnimatedIcons.play_pause,
             progress: _animationController.view,
             color: Colors.red,
             size: 60.0,
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

@@ -8,46 +8,43 @@ class PlaybackSpeedButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final playbackRate =
-        context.watch<WebviewtubeController>().value.playbackRate;
-
     return PopupMenuButton<PlaybackRate>(
       icon: Icon(Icons.speed, color: Colors.red),
       onSelected: (playbackRate) =>
           context.read<WebviewtubeController>().setPlaybackRate(playbackRate),
-      initialValue: playbackRate,
-      itemBuilder: (context) => [
+      initialValue: context.watch<WebviewtubeController>().value.playbackRate,
+      itemBuilder: (context) => const [
         PopupMenuItem<PlaybackRate>(
-          child: Text('0.25'),
           value: PlaybackRate.quarter,
+          child: Text('0.25'),
         ),
         PopupMenuItem<PlaybackRate>(
-          child: Text('0.5'),
           value: PlaybackRate.half,
+          child: Text('0.5'),
         ),
         PopupMenuItem<PlaybackRate>(
-          child: Text('0.75'),
           value: PlaybackRate.threeQuarter,
+          child: Text('0.75'),
         ),
         PopupMenuItem<PlaybackRate>(
-          child: Text('1'),
           value: PlaybackRate.normal,
+          child: Text('1'),
         ),
         PopupMenuItem<PlaybackRate>(
-          child: Text('1.25'),
           value: PlaybackRate.oneAndAQuarter,
+          child: Text('1.25'),
         ),
         PopupMenuItem<PlaybackRate>(
-          child: Text('1.5'),
           value: PlaybackRate.oneAndAHalf,
+          child: Text('1.5'),
         ),
         PopupMenuItem<PlaybackRate>(
-          child: Text('1.75'),
           value: PlaybackRate.oneAndAThreeQuarter,
+          child: Text('1.75'),
         ),
         PopupMenuItem<PlaybackRate>(
-          child: Text('2.0'),
           value: PlaybackRate.twice,
+          child: Text('2.0'),
         ),
       ],
     );

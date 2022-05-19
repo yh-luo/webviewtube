@@ -67,8 +67,7 @@ class _ProgressBarState extends State<ProgressBar> {
   // TODO: add drag-and-seek capibility with GestureDetector
   @override
   Widget build(BuildContext context) {
-    return Container(
-      color: Colors.transparent,
+    return SizedBox(
       width: MediaQuery.of(context).size.width,
       child: Consumer<WebviewtubeController>(builder: (context, controller, _) {
         var playedRatio = 0.0;

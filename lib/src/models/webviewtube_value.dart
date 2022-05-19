@@ -11,6 +11,7 @@ enum PlayerState {
 
   final int? stateCode;
   const PlayerState(this.stateCode);
+
   factory PlayerState.fromData(int data) {
     late final PlayerState playerState;
     switch (data) {
