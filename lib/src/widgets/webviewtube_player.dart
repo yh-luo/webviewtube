@@ -6,6 +6,7 @@ import 'package:webview_flutter/webview_flutter.dart';
 import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
+import 'widgets.dart';
 
 class WebviewtubePlayer extends StatelessWidget {
   const WebviewtubePlayer(this.videoId, {super.key});
@@ -93,32 +94,20 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: Center(
-        child: WebView(
+    // TODO: fix the position
+    return Stack(
+      fit: StackFit.expand,
+      children: [
+        WebView(
           onWebViewCreated: _onWebViewCreated,
-          // TODO: test if this works as expected
           onPageFinished: (_) =>
               context.read<WebviewtubeController>().onLoaded(),
           javascriptMode: JavascriptMode.unrestricted,
           initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
           javascriptChannels: _buildJavascriptChannel(),
         ),
-      ),
-      floatingActionButton: Consumer<WebviewtubeController>(
-        builder: (_, notifier, __) {
-          if (notifier.value.isReady) {
-            if (notifier.value.playerState == PlayerState.playing) {
-              return PauseButton();
-            } else if (notifier.value.playerState == PlayerState.paused) {
-              return PlayButton();
-            }
-
-            return Icon(Icons.question_mark);
-          }
-          return Icon(Icons.error);
-        },
-      ),
+        const Center(child: ActionButton()),
+      ],
     );
   }
 
@@ -133,34 +122,6 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
 
     _webviewController.complete(webViewController);
     context.read<WebviewtubeController>().onWebviewCreated(webViewController);
-  }
-}
-
-class PlayButton extends StatelessWidget {
-  const PlayButton({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () => context.read<WebviewtubeController>().play(),
-      child: const Icon(Icons.play_arrow),
-    );
-  }
-}
-
-class PauseButton extends StatelessWidget {
-  const PauseButton({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return FloatingActionButton(
-      onPressed: () => context.read<WebviewtubeController>().pause(),
-      child: const Icon(Icons.pause),
-    );
   }
 }
 
@@ -186,6 +147,7 @@ String _generateIframePage(String videoId) {
                 width: '640',
                 videoId: '$videoId',
                 playerVars: {
+                    'controls': 0,
                     'playsinline': 1,
                     'enablejsapi': 1,
                     'fs': 0,
