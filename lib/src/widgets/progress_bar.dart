@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:webviewtube/webviewtube.dart';
+
+import '../webviewtube.dart';
 
 /// Defines different colors for [ProgressBar].
 class ProgressBarColors {

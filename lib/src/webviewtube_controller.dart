@@ -25,8 +25,13 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   void onError(int data) =>
       value = value.copyWith(playerError: PlayerError.fromData(data));
 
-  void onPlayerStateChange(int data) =>
-      value = value.copyWith(playerState: PlayerState.fromData(data));
+  void onPlayerStateChange(int data) {
+    final playerState = PlayerState.fromData(data);
+    value = value.copyWith(
+      playerState: playerState,
+      isReady: !(playerState == PlayerState.buffering),
+    );
+  }
 
   void onPlayerQualityChange(String data) =>
       value = value.copyWith(playbackQuality: PlaybackQuality.fromData(data));
@@ -82,6 +87,18 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   void setVolume(int volume) => volume >= 0 && volume <= 100
       ? _callMethod('setVolume($volume)')
       : throw Exception("Volume should be between 0 and 100");
+
+  /// Seek to any position. Video auto plays after seeking.
+  /// The optional allowSeekAhead parameter determines whether the player will make a new request to the server
+  /// if the seconds parameter specifies a time outside of the currently buffered video data.
+  /// Default allowSeekAhead = false
+  void seekTo(Duration position, {bool allowSeekAhead = false}) {
+    _callMethod('seekTo(${position.inSeconds}, $allowSeekAhead)');
+    value = value.copyWith(position: position);
+    play();
+  }
+
+  void replay() => seekTo(Duration.zero);
 
   /// Reloads the player.
   ///

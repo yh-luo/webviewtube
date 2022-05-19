@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:webviewtube/src/widgets/loading_indicator.dart';
 
 import '../webviewtube.dart';
 
@@ -111,10 +112,13 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
           mainAxisAlignment: MainAxisAlignment.center,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            ActionButton(),
+            context.watch<WebviewtubeController>().value.isReady
+                ? ActionButton()
+                : LoadingIndicator(),
             ProgressBar(),
             VolumeButton(),
             PlaybackSpeedButton(),
+            DurationIndicator(),
           ],
         )),
       ],
@@ -254,8 +258,8 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
             player.setVolume(volume);
         }
 
-        function seekTo(position, seekAhead) {
-            player.seekTo(position, seekAhead);
+        function seekTo(seconds, allowSeekAhead) {
+            player.seekTo(seconds, allowSeekAhead);
         }
 
         function setSize(width, height) {
