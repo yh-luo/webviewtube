@@ -108,9 +108,12 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
         ),
         Center(
             child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             ActionButton(),
             ProgressBar(),
+            VolumeButton(),
           ],
         )),
       ],
@@ -153,7 +156,7 @@ String _generateIframePage(String videoId) {
                 width: '640',
                 videoId: '$videoId',
                 playerVars: {
-                    'controls': 0,
+                    'controls': 1,
                     'playsinline': 1,
                     'enablejsapi': 1,
                     'fs': 0,
