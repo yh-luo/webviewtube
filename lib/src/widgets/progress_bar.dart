@@ -4,6 +4,14 @@ import 'package:webviewtube/webviewtube.dart';
 
 /// Defines different colors for [ProgressBar].
 class ProgressBarColors {
+  /// Creates [ProgressBarColors].
+  const ProgressBarColors({
+    required this.backgroundColor,
+    required this.playedColor,
+    required this.bufferedColor,
+    required this.handleColor,
+  });
+
   /// Defines background color of the [ProgressBar].
   final Color backgroundColor;
 
@@ -15,14 +23,6 @@ class ProgressBarColors {
 
   /// Defines color for handle of the [ProgressBar].
   final Color handleColor;
-
-  /// Creates [ProgressBarColors].
-  const ProgressBarColors({
-    required this.backgroundColor,
-    required this.playedColor,
-    required this.bufferedColor,
-    required this.handleColor,
-  });
 
   ProgressBarColors copyWith({
     Color? backgroundColor,
@@ -64,6 +64,7 @@ class _ProgressBarState extends State<ProgressBar> {
     super.didChangeDependencies();
   }
 
+  // TODO: add drag-and-seek capibility with GestureDetector
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -77,6 +78,7 @@ class _ProgressBarState extends State<ProgressBar> {
           final val = controller.value.position.inMilliseconds / durationMs;
           playedRatio = double.parse(val.toStringAsFixed(3));
         }
+
         return CustomPaint(
           painter: ProgressBarPainter(
             progressWidth: 2.0,
@@ -93,13 +95,6 @@ class _ProgressBarState extends State<ProgressBar> {
 }
 
 class ProgressBarPainter extends CustomPainter {
-  final double progressWidth;
-  final double handleRadius;
-  final double playedRatio;
-  final double bufferedRatio;
-  final bool touchDown;
-  final ProgressBarColors colors;
-
   ProgressBarPainter({
     required this.progressWidth,
     required this.handleRadius,
@@ -108,6 +103,13 @@ class ProgressBarPainter extends CustomPainter {
     required this.touchDown,
     required this.colors,
   });
+
+  final double progressWidth;
+  final double handleRadius;
+  final double playedRatio;
+  final double bufferedRatio;
+  final bool touchDown;
+  final ProgressBarColors colors;
 
   @override
   bool shouldRepaint(ProgressBarPainter oldDelegate) {

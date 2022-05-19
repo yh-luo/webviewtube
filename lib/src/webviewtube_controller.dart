@@ -54,12 +54,21 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   void pause() => _callMethod('pause()');
 
   /// Mutes the player.
-  void mute() => _callMethod('mute()');
+  void mute() {
+    _callMethod('mute()');
+    value = value.copyWith(isMuted: true);
+  }
 
   /// Unmutes the player.
-  void unMute() => _callMethod('unMute()');
+  void unMute() {
+    _callMethod('unMute()');
+    value = value.copyWith(isMuted: false);
+  }
 
   /// Sets the volume of player.
+  ///
+  /// This won't work for mobile devices. For mobile devices, the volume depends
+  /// on the device's own setting and not the player.
   /// Max = 100 , Min = 0
   void setVolume(int volume) => volume >= 0 && volume <= 100
       ? _callMethod('setVolume($volume)')

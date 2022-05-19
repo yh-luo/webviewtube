@@ -122,16 +122,9 @@ enum PlayerError {
 
 @immutable
 class WebviewTubeValue {
-  final bool isReady;
-  final PlayerState playerState;
-  final PlaybackQuality playbackQuality;
-  final Duration position;
-  final double buffered;
-  final PlayerError playerError;
-  final VideoMetadata videoMetadata;
-
   const WebviewTubeValue({
     this.isReady = false,
+    this.isMuted = false,
     this.playerState = PlayerState.unstarted,
     this.playbackQuality = PlaybackQuality.hd720,
     this.position = Duration.zero,
@@ -140,8 +133,18 @@ class WebviewTubeValue {
     this.videoMetadata = VideoMetadata.empty,
   });
 
+  final bool isReady;
+  final bool isMuted;
+  final PlayerState playerState;
+  final PlaybackQuality playbackQuality;
+  final Duration position;
+  final double buffered;
+  final PlayerError playerError;
+  final VideoMetadata videoMetadata;
+
   WebviewTubeValue copyWith({
     bool? isReady,
+    bool? isMuted,
     PlayerState? playerState,
     PlaybackQuality? playbackQuality,
     Duration? position,
@@ -151,6 +154,7 @@ class WebviewTubeValue {
   }) {
     return WebviewTubeValue(
       isReady: isReady ?? this.isReady,
+      isMuted: isMuted ?? this.isMuted,
       playerState: playerState ?? this.playerState,
       playbackQuality: playbackQuality ?? this.playbackQuality,
       position: position ?? this.position,
@@ -164,6 +168,7 @@ class WebviewTubeValue {
   bool operator ==(Object other) =>
       other is WebviewTubeValue &&
       other.isReady == isReady &&
+      other.isMuted == isMuted &&
       other.playerState == playerState &&
       other.playbackQuality == playbackQuality &&
       other.position == position &&
@@ -172,23 +177,23 @@ class WebviewTubeValue {
       other.videoMetadata == videoMetadata;
 
   @override
-  int get hashCode => hashValues(isReady, playerState, playbackQuality,
+  int get hashCode => hashValues(isReady, isMuted, playerState, playbackQuality,
       position, buffered, playerError, videoMetadata);
 }
 
 @immutable
 class VideoMetadata {
-  final String videoId;
-  final String title;
-  final String author;
-  final Duration duration;
-
   const VideoMetadata({
     required this.videoId,
     required this.title,
     required this.author,
     required this.duration,
   });
+
+  final String videoId;
+  final String title;
+  final String author;
+  final Duration duration;
 
   static const VideoMetadata empty = VideoMetadata(
       videoId: '', title: '', author: '', duration: Duration.zero);
