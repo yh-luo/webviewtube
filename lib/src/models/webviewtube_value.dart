@@ -134,6 +134,8 @@ enum PlayerError {
 
     return playerError;
   }
+
+  bool get isEmpty => this == empty;
 }
 
 @immutable
@@ -215,6 +217,8 @@ class VideoMetadata {
   final String title;
   final String author;
   final Duration duration;
+
+  bool get isEmpty => this == empty;
 
   static const VideoMetadata empty = VideoMetadata(
       videoId: '', title: '', author: '', duration: Duration.zero);
