@@ -3,6 +3,7 @@ class WebviewtubeOptions {
     this.autoPlay = true,
     this.mute = false,
     this.loop = false,
+    this.forceHd = false,
     this.interfaceLanguage = 'en',
     this.enableCaption = true,
     this.captionLanguage = 'en',
@@ -30,6 +31,11 @@ class WebviewtubeOptions {
   ///
   /// Defaults to false.
   final bool loop;
+
+  /// Forces High Definition video quality when possible
+  ///
+  /// Defaults to false.
+  final bool forceHd;
 
   /// The player's interface language.
   ///

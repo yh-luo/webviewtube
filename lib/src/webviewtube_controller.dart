@@ -5,7 +5,7 @@ import 'models/models.dart';
 
 class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   WebviewtubeController({WebviewtubeOptions? options})
-      : options = options ?? WebviewtubeOptions(),
+      : options = options ?? const WebviewtubeOptions(),
         super(const WebviewTubeValue());
 
   WebViewController? _webViewController;
@@ -24,6 +24,15 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
   void onError(int data) =>
       value = value.copyWith(playerError: PlayerError.fromData(data));
+
+  void onWebResourceError(WebResourceError error) {
+    value = value.copyWith(playerError: PlayerError.unknown);
+    debugPrint('WebResourceError(errorCode: ${error.errorCode}, '
+        'description: ${error.description}, '
+        'domain: ${error.domain}, '
+        'errorType: ${error.errorType},'
+        'failingUrl: ${error.failingUrl})');
+  }
 
   void onPlayerStateChange(int data) {
     final playerState = PlayerState.fromData(data);

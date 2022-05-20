@@ -98,9 +98,14 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
       aspectRatio: 16 / 9,
       child: WebView(
         onWebViewCreated: _onWebViewCreated,
+        onWebResourceError: _onWebResourceError,
         javascriptMode: JavascriptMode.unrestricted,
+        allowsInlineMediaPlayback: true,
         initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
         javascriptChannels: _buildJavascriptChannel(),
+        userAgent: context.read<WebviewtubeController>().options.forceHd
+            ? hdUserAgent
+            : null,
       ),
     );
   }
@@ -117,6 +122,9 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
     _webviewController.complete(webViewController);
     context.read<WebviewtubeController>().onWebviewCreated(webViewController);
   }
+
+  void _onWebResourceError(WebResourceError error) =>
+      context.read<WebviewtubeController>().onWebResourceError(error);
 
   String _generateIframePage(String videoId) {
     final options = context.read<WebviewtubeController>().options;
@@ -279,3 +287,6 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
 }
 
 int _boolean(value) => value ? 1 : 0;
+
+String hdUserAgent =
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36';
