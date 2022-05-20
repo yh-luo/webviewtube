@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:provider/provider.dart';
@@ -52,7 +52,6 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
               case 'Ready':
                 {
                   context.read<WebviewtubeController>().onReady();
-                  log('onReady', name: 'Player');
                   break;
                 }
               case 'StateChange':
@@ -61,7 +60,6 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
                   context
                       .read<WebviewtubeController>()
                       .onPlayerStateChange(data);
-                  log('onPlayerStateChange', name: 'Player');
                   break;
                 }
               case 'PlaybackQualityChange':
@@ -70,21 +68,18 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
                   context
                       .read<WebviewtubeController>()
                       .onPlaybackQualityChange(data);
-                  log('onPlaybackQualityChange', name: 'Player');
                   break;
                 }
               case 'Errors':
                 {
                   final data = json['args']['errorCode'] as int;
                   context.read<WebviewtubeController>().onError(data);
-                  log('onError', name: 'Player');
                   break;
                 }
               case 'VideoData':
                 {
                   final data = json['args'] as Map<String, dynamic>;
                   context.read<WebviewtubeController>().onVideoDataChange(data);
-                  log('onVideoDataChange', name: 'Player');
                   break;
                 }
               case 'CurrentTime':
@@ -93,7 +88,6 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
                   context
                       .read<WebviewtubeController>()
                       .onCurrentTimeChange(data);
-                  log('onCurrentTimeChange', name: 'Player');
                   break;
                 }
             }
