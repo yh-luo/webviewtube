@@ -13,6 +13,9 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// Additional options to control the player
   WebviewtubeOptions options;
 
+  /// Current loaded `WebViewController`
+  WebViewController? get webViewController => _webViewController;
+
   /// Provides `WebViewController` to the controller.
   void onWebviewCreated(WebViewController webViewController) {
     _webViewController = webViewController;
@@ -36,7 +39,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     debugPrint('WebResourceError(errorCode: ${error.errorCode}, '
         'description: ${error.description}, '
         'domain: ${error.domain}, '
-        'errorType: ${error.errorType},'
+        'errorType: ${error.errorType}, '
         'failingUrl: ${error.failingUrl})');
   }
 
@@ -68,6 +71,10 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
   /// Interacts with IFrame API via javascript channels
   void _callMethod(String method) {
+    if (_webViewController == null) {
+      throw Exception('WebViewController is not provided.');
+    }
+
     if (value.isReady) {
       _webViewController?.runJavascript(method);
     } else {
@@ -97,19 +104,6 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   void setPlaybackRate(PlaybackRate playbackRate) {
     _callMethod('setPlaybackRate(${playbackRate.rate})');
     value = value.copyWith(playbackRate: playbackRate);
-  }
-
-  /// Sets the volume of player.
-  ///
-  /// This won't work for mobile devices. For mobile devices, the volume depends
-  /// on the device's own setting and not the player.
-  /// Max = 100 , Min = 0
-  void setVolume(int volume) {
-    if (volume < 0 || volume > 100) {
-      throw Exception('Volume should be between 0 and 100');
-    }
-
-    _callMethod('setVolume($volume)');
   }
 
   /// Seeks to a specified time in the video.
