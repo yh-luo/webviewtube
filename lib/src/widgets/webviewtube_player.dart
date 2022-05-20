@@ -174,7 +174,6 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
                     'enablejsapi': 1,
                     'fs': 0,
                     'hl': '${options.interfaceLanguage}',
-                    'showinfo': 0,
                     'iv_load_policy': 3,
                     'loop': ${_boolean(options.loop)},
                     'modestbranding': 1,
