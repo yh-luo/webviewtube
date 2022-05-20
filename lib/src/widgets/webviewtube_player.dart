@@ -7,16 +7,25 @@ import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
 
+/// Plays YouTube videos using the official [YouTube IFrame Player API](https://developers.google.com/youtube/iframe_api_reference).
+///
+/// The player is created via `WebView` from `webview_flutter` package. The
+/// player is controlled by [WebviewtubeController], which can be configured by
+/// [WebviewtubeOptions].
 class WebviewtubePlayer extends StatelessWidget {
-  const WebviewtubePlayer(this.videoId, {super.key, this.options});
+  WebviewtubePlayer(this.videoId,
+      {super.key, WebviewtubeController? controller})
+      : controller = controller ?? WebviewtubeController();
+
   final String videoId;
-  final WebviewtubeOptions? options;
+  final WebviewtubeController controller;
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-        create: (_) => WebviewtubeController(options: options),
-        child: WebviewtubePlayerView(videoId));
+    return ChangeNotifierProvider.value(
+      value: controller,
+      child: WebviewtubePlayerView(videoId),
+    );
   }
 }
 
@@ -60,8 +69,8 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
                   final data = json['args']['playbackQuality'] as String;
                   context
                       .read<WebviewtubeController>()
-                      .onPlayerQualityChange(data);
-                  log('onPlayerQualityChange', name: 'Player');
+                      .onPlaybackQualityChange(data);
+                  log('onPlaybackQualityChange', name: 'Player');
                   break;
                 }
               case 'Errors':

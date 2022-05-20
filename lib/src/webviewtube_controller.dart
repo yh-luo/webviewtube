@@ -9,12 +9,16 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
         super(const WebviewTubeValue());
 
   WebViewController? _webViewController;
+
+  /// Additional options to control the player
   WebviewtubeOptions options;
 
+  /// Provides `WebViewController` to the controller.
   void onWebviewCreated(WebViewController webViewController) {
     _webViewController = webViewController;
   }
 
+  /// Invoked handler when the player is ready.
   void onReady() {
     value = value.copyWith(isReady: true);
     if (options.mute) {
@@ -22,9 +26,11 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     }
   }
 
+  /// Invoked handler when the player returns an error.
   void onError(int data) =>
       value = value.copyWith(playerError: PlayerError.fromData(data));
 
+  /// Invoked handler when WebView returns an error.
   void onWebResourceError(WebResourceError error) {
     value = value.copyWith(playerError: PlayerError.unknown);
     debugPrint('WebResourceError(errorCode: ${error.errorCode}, '
@@ -34,6 +40,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
         'failingUrl: ${error.failingUrl})');
   }
 
+  /// Invoked handler when the player state changes.
   void onPlayerStateChange(int data) {
     final playerState = PlayerState.fromData(data);
     value = value.copyWith(
@@ -42,12 +49,15 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     );
   }
 
-  void onPlayerQualityChange(String data) =>
+  /// Invoked handler when the playback quality changes
+  void onPlaybackQualityChange(String data) =>
       value = value.copyWith(playbackQuality: PlaybackQuality.fromData(data));
 
+  /// Invoked handler when the video data changes
   void onVideoDataChange(Map<String, dynamic> data) =>
       value = value.copyWith(videoMetadata: VideoMetadata.fromData(data));
 
+  /// Invoked handler for updates on buffered ratio and elapsed time.
   void onCurrentTimeChange(Map<String, dynamic> data) {
     final position = data['position'] as num;
     final buffered = data['buffered'] as num;
@@ -56,6 +66,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
         buffered: buffered.toDouble());
   }
 
+  /// Interacts with IFrame API via javascript channels
   void _callMethod(String method) {
     if (value.isReady) {
       _webViewController?.runJavascript(method);
@@ -82,7 +93,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     value = value.copyWith(isMuted: false);
   }
 
-  /// Set playback rate
+  /// Sets the playback rate
   void setPlaybackRate(PlaybackRate playbackRate) {
     _callMethod('setPlaybackRate(${playbackRate.rate})');
     value = value.copyWith(playbackRate: playbackRate);
@@ -93,24 +104,29 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// This won't work for mobile devices. For mobile devices, the volume depends
   /// on the device's own setting and not the player.
   /// Max = 100 , Min = 0
-  void setVolume(int volume) => volume >= 0 && volume <= 100
-      ? _callMethod('setVolume($volume)')
-      : throw Exception("Volume should be between 0 and 100");
+  void setVolume(int volume) {
+    if (volume < 0 || volume > 100) {
+      throw Exception('Volume should be between 0 and 100');
+    }
 
-  /// Seek to any position. Video auto plays after seeking.
-  /// The optional allowSeekAhead parameter determines whether the player will make a new request to the server
-  /// if the seconds parameter specifies a time outside of the currently buffered video data.
-  /// Default allowSeekAhead = false
+    _callMethod('setVolume($volume)');
+  }
+
+  /// Seeks to a specified time in the video.
+  ///
+  /// Video will play after seeking. The optional [allowSeekAhead] parameter
+  /// determines whether the player will make a new request to the server if the
+  /// position is outside of the currently buffered video data.
+  /// [allowSeekAhead] defaults to false.
   void seekTo(Duration position, {bool allowSeekAhead = false}) {
     _callMethod('seekTo(${position.inSeconds}, $allowSeekAhead)');
     value = value.copyWith(position: position);
     play();
   }
 
+  /// Replays the video.
   void replay() => seekTo(Duration.zero);
 
   /// Reloads the player.
-  ///
-  /// The video id will reset to [initialVideoId] after reload.
   void reload() => _webViewController?.reload();
 }

@@ -1,3 +1,4 @@
+/// Options for the player
 class WebviewtubeOptions {
   const WebviewtubeOptions({
     this.autoPlay = true,
@@ -58,15 +59,14 @@ class WebviewtubeOptions {
   /// Defaults to `en`.
   final String captionLanguage;
 
-  /// Interval in milliseconds to get buffered ratio and elapsed seconds
-  ///
-  /// Smaller values result in smoother updating of the progress bar but reduce
-  /// performance.
-  /// Defaults to 150.
-  final int currentTimeUpdateInterval;
-
   /// The default starting point of the video in seconds
   ///
   /// Defaults to 0.
   final int startAt;
+
+  /// Interval in milliseconds to get buffered ratio and elapsed seconds
+  ///
+  /// Smaller values result in more frequent updates but reduce the performance.
+  /// Defaults to 130.
+  final int currentTimeUpdateInterval;
 }
