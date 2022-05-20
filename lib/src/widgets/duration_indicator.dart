@@ -10,7 +10,6 @@ class DurationIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
-      mainAxisAlignment: MainAxisAlignment.start,
       children: const [
         CurrentTime(),
         Text(' / '),
