@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:provider/provider.dart';
-import 'package:webviewtube/src/widgets/loading_indicator.dart';
 
 import '../webviewtube.dart';
 
@@ -95,33 +94,14 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: fix the position
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        WebView(
-          onWebViewCreated: _onWebViewCreated,
-          onPageFinished: (_) =>
-              context.read<WebviewtubeController>().onLoaded(),
-          javascriptMode: JavascriptMode.unrestricted,
-          initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
-          javascriptChannels: _buildJavascriptChannel(),
-        ),
-        Center(
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            context.watch<WebviewtubeController>().value.isReady
-                ? ActionButton()
-                : LoadingIndicator(),
-            ProgressBar(),
-            VolumeButton(),
-            PlaybackSpeedButton(),
-            DurationIndicator(),
-          ],
-        )),
-      ],
+    return AspectRatio(
+      aspectRatio: 16 / 9,
+      child: WebView(
+        onWebViewCreated: _onWebViewCreated,
+        javascriptMode: JavascriptMode.unrestricted,
+        initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+        javascriptChannels: _buildJavascriptChannel(),
+      ),
     );
   }
 
@@ -144,7 +124,21 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
     return '''
 <!DOCTYPE html>
 <html>
-
+    <head>
+        <style>
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                background-color: #000000;
+                overflow: hidden;
+                position: fixed;
+                height: 100%;
+                width: 100%;
+            }
+        </style>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+    </head>
 <body>
     <div id="player"></div>
 
@@ -158,20 +152,23 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
         var timerId;
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                height: '390',
-                width: '640',
+                height: '100%',
+                width: '100%',
                 videoId: '$videoId',
                 playerVars: {
-                    'controls': 1,
-                    'playsinline': 1,
-                    'enablejsapi': 1,
-                    'fs': 0,
-                    'rel': 0,
-                    'showinfo': 0,
-                    'iv_load_policy': 3,
-                    'modestbranding': 1,
+                    'autoplay': ${_boolean(options.autoPlay)},
                     'cc_load_policy': ${_boolean(options.enableCaption)},
                     'cc_lang_pref': '${options.captionLanguage}',
+                    'controls': 1,
+                    'enablejsapi': 1,
+                    'fs': 0,
+                    'hl': '${options.interfaceLanguage}',
+                    'showinfo': 0,
+                    'iv_load_policy': 3,
+                    'loop': ${_boolean(options.loop)},
+                    'modestbranding': 1,
+                    'playsinline': 1,
+                    'rel': 0,
                     'start': ${options.startAt}
                 },
                 events: {
