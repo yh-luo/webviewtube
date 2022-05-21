@@ -260,5 +260,32 @@ void main() {
         verify(webViewController.reload());
       });
     });
+
+    group('load', () {
+      test('calls loadById', () {
+        var videoId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.load(videoId);
+
+        verify(
+            webViewController.runJavascript('loadById({videoId: "$videoId"})'));
+      });
+
+      test('calls with startAt', () {
+        var videoId = 'test123';
+        var startAt = 5;
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.load(videoId, startAt: 5);
+
+        verify(webViewController.runJavascript(
+            'loadById({videoId: "$videoId", startSeconds: $startAt})'));
+      });
+    });
   });
 }
