@@ -170,7 +170,7 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
                     'autoplay': ${_boolean(options.autoPlay)},
                     'cc_load_policy': ${_boolean(options.enableCaption)},
                     'cc_lang_pref': '${options.captionLanguage}',
-                    'controls': 1,
+                    'controls': ${_boolean(options.showControls)},
                     'enablejsapi': 1,
                     'fs': 0,
                     'hl': '${options.interfaceLanguage}',

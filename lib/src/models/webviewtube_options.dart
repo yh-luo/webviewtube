@@ -1,6 +1,7 @@
 /// Options for the player
 class WebviewtubeOptions {
   const WebviewtubeOptions({
+    this.showControls = true,
     this.autoPlay = true,
     this.mute = false,
     this.loop = false,
@@ -12,6 +13,12 @@ class WebviewtubeOptions {
     this.endAt,
     this.currentTimeUpdateInterval = 130,
   });
+
+  /// Display the YouTube video player controls
+  ///
+  /// Set to false if you want to use customized controls.
+  /// Defaults to true.
+  final bool showControls;
 
   /// Automatically starts the video after initialization.
   ///
