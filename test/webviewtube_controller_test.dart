@@ -287,5 +287,32 @@ void main() {
             'loadById({videoId: "$videoId", startSeconds: $startAt})'));
       });
     });
+
+    group('cue', () {
+      test('calls cueById', () {
+        var videoId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.cue(videoId);
+
+        verify(
+            webViewController.runJavascript('cueById({videoId: "$videoId"})'));
+      });
+
+      test('calls with startAt', () {
+        var videoId = 'test123';
+        var startAt = 5;
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.cue(videoId, startAt: 5);
+
+        verify(webViewController.runJavascript(
+            'cueById({videoId: "$videoId", startSeconds: $startAt})'));
+      });
+    });
   });
 }
