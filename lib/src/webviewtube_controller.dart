@@ -125,19 +125,33 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   void reload() => _webViewController?.reload();
 
   /// Loads and plays the specified video
-  void load(String videoId, {int startAt = 0}) {
+  void load(String videoId, {int startAt = 0, int? endAt}) {
+    if (endAt != null) {
+      assert(startAt < endAt);
+    }
+
     var params = 'videoId: "$videoId"';
     if (startAt > 0) {
       params += ', startSeconds: $startAt';
+    }
+    if (endAt != null) {
+      params += ', endSeconds:$endAt';
     }
     _callMethod('loadById({$params})');
   }
 
   /// Loads the specified video's thumbnail and prepares the player
-  void cue(String videoId, {int startAt = 0}) {
+  void cue(String videoId, {int startAt = 0, int? endAt}) {
+    if (endAt != null) {
+      assert(startAt < endAt);
+    }
+
     var params = 'videoId: "$videoId"';
     if (startAt > 0) {
       params += ', startSeconds: $startAt';
+    }
+    if (endAt != null) {
+      params += ', endSeconds:$endAt';
     }
     _callMethod('cueById({$params})');
   }
