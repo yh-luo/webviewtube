@@ -9,6 +9,7 @@ class WebviewtubeOptions {
     this.enableCaption = true,
     this.captionLanguage = 'en',
     this.startAt = 0,
+    this.endAt,
     this.currentTimeUpdateInterval = 130,
   });
 
@@ -63,6 +64,12 @@ class WebviewtubeOptions {
   ///
   /// Defaults to 0.
   final int startAt;
+
+  /// The default end point of the video in seconds
+  ///
+  /// If not set, this parameter is not passed to the player.
+  /// Defaults to null.
+  final int? endAt;
 
   /// Interval in milliseconds to get buffered ratio and elapsed seconds
   ///

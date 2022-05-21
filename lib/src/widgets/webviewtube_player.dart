@@ -179,7 +179,8 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
                     'modestbranding': 1,
                     'playsinline': 1,
                     'rel': 0,
-                    'start': ${options.startAt}
+                    'start': ${options.startAt},
+                    'end': ${options.endAt}
                 },
                 events: {
                     onReady: function (event) { sendMessageToDart('Ready'); },
