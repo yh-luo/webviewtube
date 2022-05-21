@@ -97,18 +97,22 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
 
   @override
   Widget build(BuildContext context) {
-    return AspectRatio(
-      aspectRatio: 16 / 9,
-      child: WebView(
-        onWebViewCreated: _onWebViewCreated,
-        onWebResourceError: _onWebResourceError,
-        javascriptMode: JavascriptMode.unrestricted,
-        allowsInlineMediaPlayback: true,
-        initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
-        javascriptChannels: _buildJavascriptChannel(),
-        userAgent: context.read<WebviewtubeController>().options.forceHd
-            ? hdUserAgent
-            : null,
+    return Material(
+      elevation: 0,
+      color: Colors.black,
+      child: AspectRatio(
+        aspectRatio: 16 / 9,
+        child: WebView(
+          onWebViewCreated: _onWebViewCreated,
+          onWebResourceError: _onWebResourceError,
+          javascriptMode: JavascriptMode.unrestricted,
+          allowsInlineMediaPlayback: true,
+          initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
+          javascriptChannels: _buildJavascriptChannel(),
+          userAgent: context.read<WebviewtubeController>().options.forceHd
+              ? hdUserAgent
+              : null,
+        ),
       ),
     );
   }
