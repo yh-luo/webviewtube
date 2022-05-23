@@ -9,7 +9,13 @@ class PlaybackSpeedButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return PopupMenuButton<PlaybackRate>(
-      icon: Icon(Icons.speed, color: Colors.red),
+      icon: const Icon(
+        Icons.speed,
+        color: Colors.white,
+        shadows: <Shadow>[
+          Shadow(offset: Offset(1, 1), blurRadius: 5, color: Colors.black87),
+        ],
+      ),
       onSelected: (playbackRate) =>
           context.read<WebviewtubeController>().setPlaybackRate(playbackRate),
       initialValue: context.watch<WebviewtubeController>().value.playbackRate,

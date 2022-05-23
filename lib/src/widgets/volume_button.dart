@@ -22,9 +22,27 @@ class VolumeButton extends StatelessWidget {
         builder: (context, isMuted, __) {
           switch (isMuted) {
             case true:
-              return Icon(Icons.volume_up, color: Colors.red);
+              return Icon(
+                Icons.volume_up,
+                color: Colors.white,
+                shadows: <Shadow>[
+                  Shadow(
+                      offset: Offset(1, 1),
+                      blurRadius: 5,
+                      color: Colors.black87)
+                ],
+              );
             case false:
-              return Icon(Icons.volume_off, color: Colors.red);
+              return Icon(
+                Icons.volume_off,
+                color: Colors.white,
+                shadows: <Shadow>[
+                  Shadow(
+                      offset: Offset(1, 1),
+                      blurRadius: 5,
+                      color: Colors.black87)
+                ],
+              );
           }
 
           throw Exception();

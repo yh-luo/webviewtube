@@ -3,6 +3,13 @@ import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
 
+const textStyle = TextStyle(
+  color: Colors.white,
+  shadows: <Shadow>[
+    Shadow(offset: Offset(1, 1), blurRadius: 5, color: Colors.black87),
+  ],
+);
+
 class DurationIndicator extends StatelessWidget {
   const DurationIndicator({Key? key}) : super(key: key);
 
@@ -10,9 +17,12 @@ class DurationIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       mainAxisSize: MainAxisSize.min,
-      children: const [
+      children: const <Widget>[
         CurrentTime(),
-        Text(' / '),
+        Text(
+          ' / ',
+          style: textStyle,
+        ),
         VideoDuration(),
       ],
     );
@@ -28,7 +38,10 @@ class CurrentTime extends StatelessWidget {
       selector: (_, controller) =>
           durationFormatter(controller.value.position.inMilliseconds),
       builder: (_, text, __) {
-        return Text(text);
+        return Text(
+          text,
+          style: textStyle,
+        );
       },
     );
   }
@@ -43,7 +56,7 @@ class VideoDuration extends StatelessWidget {
       selector: (_, controller) => durationFormatter(
           controller.value.videoMetadata.duration.inMilliseconds),
       builder: (_, text, __) {
-        return Text(text);
+        return Text(text, style: textStyle);
       },
     );
   }
