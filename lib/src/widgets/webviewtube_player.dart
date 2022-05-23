@@ -15,15 +15,15 @@ import '../webviewtube.dart';
 class WebviewtubePlayer extends StatelessWidget {
   WebviewtubePlayer(this.videoId,
       {super.key, WebviewtubeController? controller})
-      : controller = controller ?? WebviewtubeController();
+      : _controller = controller ?? WebviewtubeController();
 
   final String videoId;
-  final WebviewtubeController controller;
+  final WebviewtubeController _controller;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
-      value: controller,
+      value: _controller,
       child: WebviewtubePlayerView(videoId),
     );
   }
