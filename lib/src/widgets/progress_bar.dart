@@ -81,7 +81,7 @@ class _ProgressBarState extends State<ProgressBar> {
 
         return CustomPaint(
           painter: ProgressBarPainter(
-            progressWidth: 2.0,
+            progressWidth: 3.0,
             handleRadius: 5.0,
             playedRatio: playedRatio,
             bufferedRatio: controller.value.buffered,
