@@ -22,7 +22,7 @@ class VolumeButton extends StatelessWidget {
         builder: (context, isMuted, __) {
           switch (isMuted) {
             case true:
-              return Icon(
+              return const Icon(
                 Icons.volume_up,
                 color: Colors.white,
                 shadows: <Shadow>[
@@ -33,7 +33,7 @@ class VolumeButton extends StatelessWidget {
                 ],
               );
             case false:
-              return Icon(
+              return const Icon(
                 Icons.volume_off,
                 color: Colors.white,
                 shadows: <Shadow>[

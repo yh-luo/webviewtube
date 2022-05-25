@@ -57,7 +57,7 @@ class _ActionButtonState extends State<ActionButton>
               _animationController.reverse();
               break;
             case PlayerState.ended:
-              return Icon(Icons.replay, color: Colors.red, size: 60.0);
+              return const Icon(Icons.replay, color: Colors.red, size: 60.0);
             default:
               break;
           }
