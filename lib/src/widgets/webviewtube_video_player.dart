@@ -53,6 +53,7 @@ class WebviewtubeVideoPlayerView extends StatelessWidget {
             );
           },
           child: Row(
+            mainAxisSize: MainAxisSize.min,
             children: const [
               DurationIndicator(),
               VolumeButton(),
@@ -63,8 +64,8 @@ class WebviewtubeVideoPlayerView extends StatelessWidget {
         Consumer<WebviewtubeController>(
           builder: (context, controller, child) {
             return Positioned(
-              left: 10,
-              bottom: 0,
+              left: 5,
+              bottom: 1,
               child: AnimatedOpacity(
                 opacity:
                     controller.value.playerState == PlayerState.playing ? 0 : 1,

@@ -50,8 +50,10 @@ class ProgressBar extends StatefulWidget {
 }
 
 class _ProgressBarState extends State<ProgressBar> {
-  late final ProgressBarColors colors;
-  bool touchDown = false;
+  late ProgressBarColors colors;
+  Duration _position = Duration.zero;
+  bool _touchDown = false;
+  bool _positionChanged = false;
 
   @override
   void didChangeDependencies() {
@@ -65,28 +67,82 @@ class _ProgressBarState extends State<ProgressBar> {
     super.didChangeDependencies();
   }
 
-  // TODO: add drag-and-seek capibility with GestureDetector
+  Duration _getRelativePosition(Offset globalPosition) {
+    final box = context.findRenderObject() as RenderBox;
+    var touchPoint = box.globalToLocal(globalPosition);
+    if (touchPoint.dx <= 0) {
+      touchPoint = Offset(0, touchPoint.dy);
+    }
+    if (touchPoint.dx >= context.size!.width) {
+      touchPoint = Offset(context.size!.width, touchPoint.dy);
+    }
+
+    final relative = touchPoint.dx / box.size.width;
+    final position =
+        context.read<WebviewtubeController>().value.videoMetadata.duration *
+            relative;
+
+    return position;
+  }
+
+  void _onHorizontalDragDown(DragDownDetails details) {
+    setState(() {
+      _touchDown = true;
+      _position = _getRelativePosition(details.globalPosition);
+      _positionChanged = true;
+    });
+  }
+
+  void _onHorizontalDragUpdate(DragUpdateDetails details) {
+    setState(() {
+      _position = _getRelativePosition(details.globalPosition);
+      _positionChanged = true;
+    });
+  }
+
+  void _onHorizontalDragEnd() {
+    setState(() {
+      _touchDown = false;
+      _positionChanged = false;
+    });
+    context
+        .read<WebviewtubeController>()
+        .seekTo(_position, allowSeekAhead: true);
+  }
+
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      width: MediaQuery.of(context).size.width,
+    return GestureDetector(
+      behavior: HitTestBehavior.translucent,
+      onHorizontalDragDown: _onHorizontalDragDown,
+      onHorizontalDragUpdate: _onHorizontalDragUpdate,
+      onHorizontalDragEnd: (_) => _onHorizontalDragEnd(),
+      onHorizontalDragCancel: _onHorizontalDragEnd,
       child: Consumer<WebviewtubeController>(builder: (context, controller, _) {
         var playedRatio = 0.0;
         final durationMs =
             controller.value.videoMetadata.duration.inMilliseconds;
         if (!durationMs.isNaN && durationMs != 0) {
-          final val = controller.value.position.inMilliseconds / durationMs;
+          double val;
+          if (_positionChanged) {
+            val = _position.inMilliseconds / durationMs;
+            _positionChanged = false;
+          } else {
+            val = controller.value.position.inMilliseconds / durationMs;
+          }
+
           playedRatio = double.parse(val.toStringAsFixed(3));
         }
 
         return CustomPaint(
+          size: Size(MediaQuery.of(context).size.width, 12),
           painter: ProgressBarPainter(
             progressWidth: 3.0,
-            handleRadius: 5.0,
+            handleRadius: 6.0,
             playedRatio: playedRatio,
             bufferedRatio: controller.value.buffered,
             colors: colors,
-            touchDown: touchDown,
+            touchDown: _touchDown,
           ),
         );
       }),
