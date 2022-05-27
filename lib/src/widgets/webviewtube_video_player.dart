@@ -39,11 +39,22 @@ class WebviewtubeVideoPlayerView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(
+      alignment: Alignment.center,
       clipBehavior: Clip.none,
       children: [
         WebviewtubePlayer(
           videoId,
           controller: context.read<WebviewtubeController>(),
+        ),
+        Selector<WebviewtubeController, bool>(
+          selector: (_, controller) => controller.value.isReady,
+          builder: (context, value, __) {
+            if (value) {
+              return const SizedBox.shrink();
+            }
+
+            return const LoadingIndicator();
+          },
         ),
         Consumer<WebviewtubeController>(
           builder: (context, controller, child) {
