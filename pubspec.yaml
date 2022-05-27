@@ -1,5 +1,5 @@
 name: webviewtube
-description: A Very Good Project created by Very Good CLI.
+description: Play YouTube videos using the IFrame Player API with Flutter official support of WebView.
 version: 1.0.0+1
 publish_to: none
 

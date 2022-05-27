@@ -13,10 +13,7 @@ class WebviewtubeVideoPlayer extends StatelessWidget {
       {super.key, WebviewtubeController? controller})
       : _controller = controller ??
             WebviewtubeController(
-              options: const WebviewtubeOptions(
-                showControls: false,
-              ),
-            );
+                options: const WebviewtubeOptions(showControls: false));
 
   /// The video id of the video to play.
   final String videoId;

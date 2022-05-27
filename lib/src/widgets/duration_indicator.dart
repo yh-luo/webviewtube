@@ -41,7 +41,7 @@ class CurrentTime extends StatelessWidget {
   Widget build(BuildContext context) {
     return Selector<WebviewtubeController, String>(
       selector: (_, controller) =>
-          durationFormatter(controller.value.position.inMilliseconds),
+          _durationFormatter(controller.value.position.inMilliseconds),
       builder: (_, text, __) {
         return Text(
           text,
@@ -60,7 +60,7 @@ class VideoDuration extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Selector<WebviewtubeController, String>(
-      selector: (_, controller) => durationFormatter(
+      selector: (_, controller) => _durationFormatter(
           controller.value.videoMetadata.duration.inMilliseconds),
       builder: (_, text, __) {
         return Text(text, style: _textStyle);
@@ -70,7 +70,7 @@ class VideoDuration extends StatelessWidget {
 }
 
 /// Formats duration in milliseconds to xx:xx:xx format.
-String durationFormatter(int milliSeconds) {
+String _durationFormatter(int milliSeconds) {
   final duration = Duration(milliseconds: milliSeconds);
   final hours = duration.inHours.toInt();
   final hoursString = hours.toString().padLeft(2, '0');
