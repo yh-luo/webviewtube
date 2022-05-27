@@ -34,7 +34,7 @@ class VolumeButton extends StatelessWidget {
                       color: Colors.black87)
                 ],
               );
-            case false:
+            default:
               return const Icon(
                 Icons.volume_off,
                 color: Colors.white,
@@ -46,8 +46,6 @@ class VolumeButton extends StatelessWidget {
                 ],
               );
           }
-
-          throw Exception();
         },
       ),
     );
