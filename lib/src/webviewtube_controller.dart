@@ -136,7 +136,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
       params += ', startSeconds: $startAt';
     }
     if (endAt != null) {
-      params += ', endSeconds:$endAt';
+      params += ', endSeconds: $endAt';
     }
     _callMethod('loadById({$params})');
   }
@@ -152,7 +152,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
       params += ', startSeconds: $startAt';
     }
     if (endAt != null) {
-      params += ', endSeconds:$endAt';
+      params += ', endSeconds: $endAt';
     }
     _callMethod('cueById({$params})');
   }

@@ -281,10 +281,25 @@ void main() {
         controller.onWebviewCreated(webViewController);
         controller.onReady();
 
-        controller.load(videoId, startAt: 5);
+        controller.load(videoId, startAt: startAt);
 
         verify(webViewController.runJavascript(
             'loadById({videoId: "$videoId", startSeconds: $startAt})'));
+      });
+
+      test('calls with endAt', () {
+        var videoId = 'test123';
+        var startAt = 1;
+        var endAt = 5;
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.load(videoId, startAt: startAt, endAt: endAt);
+
+        verify(webViewController.runJavascript(
+            'loadById({videoId: "$videoId", startSeconds: $startAt, '
+            'endSeconds: $endAt})'));
       });
     });
 
@@ -308,10 +323,25 @@ void main() {
         controller.onWebviewCreated(webViewController);
         controller.onReady();
 
-        controller.cue(videoId, startAt: 5);
+        controller.cue(videoId, startAt: startAt);
 
         verify(webViewController.runJavascript(
             'cueById({videoId: "$videoId", startSeconds: $startAt})'));
+      });
+
+      test('calls with endAt', () {
+        var videoId = 'test123';
+        var startAt = 1;
+        var endAt = 5;
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.cue(videoId, startAt: startAt, endAt: endAt);
+
+        verify(webViewController.runJavascript(
+            'cueById({videoId: "$videoId", startSeconds: $startAt, '
+            'endSeconds: $endAt})'));
       });
     });
   });
