@@ -224,6 +224,7 @@ enum PlayerError {
 /// Current value [WebviewtubeController] holds.
 @immutable
 class WebviewTubeValue {
+  /// Constructor for [WebviewTubeValue].
   const WebviewTubeValue({
     this.isReady = false,
     this.isMuted = false,
@@ -309,6 +310,7 @@ class WebviewTubeValue {
 /// The metadata of the video.
 @immutable
 class VideoMetadata {
+  /// Constructor for [VideoMetadata].
   const VideoMetadata({
     required this.videoId,
     required this.title,
@@ -324,6 +326,8 @@ class VideoMetadata {
 
   /// The author of the current loaded video.
   final String author;
+
+  /// The duration of the current loaded video.
   final Duration duration;
 
   /// Whether the metadata is empty. The metadata is available after the video

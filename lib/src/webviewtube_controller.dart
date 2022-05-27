@@ -3,10 +3,11 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import 'models/models.dart';
 
+/// Controls the player and provides information about the player state.
 class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
-  WebviewtubeController({WebviewtubeOptions? options})
-      : options = options ?? const WebviewtubeOptions(),
-        super(const WebviewTubeValue());
+  /// Constructor for [WebviewtubeController].
+  WebviewtubeController({this.options = const WebviewtubeOptions()})
+      : super(const WebviewTubeValue());
 
   WebViewController? _webViewController;
 
