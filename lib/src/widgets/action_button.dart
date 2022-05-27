@@ -3,10 +3,10 @@ import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
 
+/// A widget to display buttons to play, pause and replay the video.
 class ActionButton extends StatefulWidget {
-  const ActionButton({
-    super.key,
-  });
+  /// Constructor for [ActionButton].
+  const ActionButton({Key? key}) : super(key: key);
 
   @override
   State<ActionButton> createState() => _ActionButtonState();

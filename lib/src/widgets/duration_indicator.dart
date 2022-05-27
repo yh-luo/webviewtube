@@ -3,14 +3,17 @@ import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
 
-const textStyle = TextStyle(
+const _textStyle = TextStyle(
   color: Colors.white,
   shadows: <Shadow>[
     Shadow(offset: Offset(1, 1), blurRadius: 5, color: Colors.black87),
   ],
 );
 
+/// A widget to display the current position and the remaining duration of the
+/// video.
 class DurationIndicator extends StatelessWidget {
+  /// Constructor for [DurationIndicator].
   const DurationIndicator({Key? key}) : super(key: key);
 
   @override
@@ -21,7 +24,7 @@ class DurationIndicator extends StatelessWidget {
         CurrentTime(),
         Text(
           ' / ',
-          style: textStyle,
+          style: _textStyle,
         ),
         VideoDuration(),
       ],
@@ -29,7 +32,9 @@ class DurationIndicator extends StatelessWidget {
   }
 }
 
+/// A widget to display the current position of the video.
 class CurrentTime extends StatelessWidget {
+  /// Constructor for [CurrentTime].
   const CurrentTime({Key? key}) : super(key: key);
 
   @override
@@ -40,14 +45,16 @@ class CurrentTime extends StatelessWidget {
       builder: (_, text, __) {
         return Text(
           text,
-          style: textStyle,
+          style: _textStyle,
         );
       },
     );
   }
 }
 
+/// A widget to display the duration of the video.
 class VideoDuration extends StatelessWidget {
+  /// Constructor for [VideoDuration].
   const VideoDuration({Key? key}) : super(key: key);
 
   @override
@@ -56,7 +63,7 @@ class VideoDuration extends StatelessWidget {
       selector: (_, controller) => durationFormatter(
           controller.value.videoMetadata.duration.inMilliseconds),
       builder: (_, text, __) {
-        return Text(text, style: textStyle);
+        return Text(text, style: _textStyle);
       },
     );
   }
