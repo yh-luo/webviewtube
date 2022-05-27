@@ -3,9 +3,10 @@ import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
 
-/// Defines different colors for [ProgressBar].
+/// Colors for [ProgressBar].
+@immutable
 class ProgressBarColors {
-  /// Creates [ProgressBarColors].
+  /// Constructor for [ProgressBarColors].
   const ProgressBarColors({
     required this.backgroundColor,
     required this.playedColor,
@@ -25,6 +26,7 @@ class ProgressBarColors {
   /// Defines color for handle of the [ProgressBar].
   final Color handleColor;
 
+  /// Returns a new [ProgressBarColors] with updated parameters.
   ProgressBarColors copyWith({
     Color? backgroundColor,
     Color? playedColor,
@@ -40,9 +42,12 @@ class ProgressBarColors {
   }
 }
 
+/// A widget to display the progress bar of the video.
 class ProgressBar extends StatefulWidget {
+  /// Constructor for [ProgressBar].
   const ProgressBar({Key? key, this.colors}) : super(key: key);
 
+  /// Defines colors for the [ProgressBar].
   final ProgressBarColors? colors;
 
   @override
@@ -136,7 +141,7 @@ class _ProgressBarState extends State<ProgressBar> {
 
         return CustomPaint(
           size: Size(MediaQuery.of(context).size.width, 12),
-          painter: ProgressBarPainter(
+          painter: _ProgressBarPainter(
             progressWidth: 3.0,
             handleRadius: 6.0,
             playedRatio: playedRatio,
@@ -150,8 +155,8 @@ class _ProgressBarState extends State<ProgressBar> {
   }
 }
 
-class ProgressBarPainter extends CustomPainter {
-  ProgressBarPainter({
+class _ProgressBarPainter extends CustomPainter {
+  _ProgressBarPainter({
     required this.progressWidth,
     required this.handleRadius,
     required this.playedRatio,
@@ -168,7 +173,7 @@ class ProgressBarPainter extends CustomPainter {
   final ProgressBarColors colors;
 
   @override
-  bool shouldRepaint(ProgressBarPainter oldDelegate) {
+  bool shouldRepaint(_ProgressBarPainter oldDelegate) {
     return playedRatio != oldDelegate.playedRatio ||
         bufferedRatio != oldDelegate.bufferedRatio ||
         touchDown != oldDelegate.touchDown;
