@@ -7,6 +7,7 @@ import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
 
+/// {@template webviewtube_player}
 /// Plays YouTube videos using the official [YouTube IFrame Player API](https://developers.google.com/youtube/iframe_api_reference).
 ///
 /// The player is created via `WebView` from the `webview_flutter` package.
@@ -15,6 +16,29 @@ import '../webviewtube.dart';
 /// If controller is not provided, a [WebviewtubeController] with default
 /// options will be created. The controller is passed down the widget tree and
 /// is accessible via `ChangeNotifierProvider` from the `provider` package.
+///
+/// Example:
+/// ```dart
+/// Scaffold(
+///  body: WebviewtubePlayer('4AoFA19gbLo'),
+/// );
+/// ```
+///
+/// With controller:
+/// ```dart
+/// final webviewtubeController = WebviewtubeController(
+///   options: const WebviewtubeOptions(
+///       forceHd: true,
+///       enableCaption: false),
+/// );
+///
+/// Scaffold(
+///   body: WebviewtubePlayer(
+///     '4AoFA19gbLo',
+///     controller: webviewtubeController),
+/// );
+/// ```
+/// {@endtemplate}
 class WebviewtubePlayer extends StatelessWidget {
   /// Constructor for [WebviewtubePlayer].
   WebviewtubePlayer(

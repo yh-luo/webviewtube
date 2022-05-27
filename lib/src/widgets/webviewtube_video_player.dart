@@ -3,10 +3,37 @@ import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
 
+/// {@template webviewtube_video_player}
 /// A widgets-decorated [WebviewtubePlayer]. It's less performant but
 /// customizable.
 /// If controller is not provided, a [WebviewtubeController] hides the default
 /// YouTube player controls is created.
+///
+/// Example:
+/// ```dart
+/// Scaffold(
+///   body: WebviewtubeVideoPlayer('4AoFA19gbLo'),
+/// );
+/// ```
+///
+/// With controller:
+/// ```dart
+/// final webviewtubeController = WebviewtubeController(
+///   options: const WebviewtubeOptions(
+///       // remember to set `showControls` to false to hide the
+///       // iframe player controls
+///       showControls: false,
+///       forceHd: true,
+///       enableCaption: false),
+/// );
+///
+/// Scaffold(
+///   body: WebviewtubeVideoPlayer(
+///     '4AoFA19gbLo',
+///     controller: webviewtubeController),
+/// );
+/// ```
+/// {@endtemplate}
 class WebviewtubeVideoPlayer extends StatelessWidget {
   /// Constructor for [WebviewtubeVideoPlayer].
   WebviewtubeVideoPlayer(this.videoId,

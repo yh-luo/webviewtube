@@ -47,7 +47,8 @@ class ProgressBar extends StatefulWidget {
   /// Constructor for [ProgressBar].
   const ProgressBar({Key? key, this.colors}) : super(key: key);
 
-  /// Defines colors for the [ProgressBar].
+  /// Defines colors for the [ProgressBar]. If null,
+  /// `Theme.of(context).colorScheme.secondary` is used.
   final ProgressBarColors? colors;
 
   @override
