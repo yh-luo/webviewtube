@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
 
+/// A widget to display a menu to change the current playback speed.
 class PlaybackSpeedButton extends StatelessWidget {
+  /// Constructor for [PlaybackSpeedButton].
   const PlaybackSpeedButton({Key? key}) : super(key: key);
 
   @override

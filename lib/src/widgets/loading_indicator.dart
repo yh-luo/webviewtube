@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
+/// A widget to indicate the playing is loading the video.
 class LoadingIndicator extends StatelessWidget {
-  const LoadingIndicator({
-    super.key,
-  });
+  /// Constructor for [LoadingIndicator].
+  const LoadingIndicator({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
