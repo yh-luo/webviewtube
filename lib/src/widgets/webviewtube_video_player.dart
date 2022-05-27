@@ -3,7 +3,12 @@ import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
 
+/// A widgets-decorated [WebviewtubePlayer]. It's less performant but
+/// customizable.
+/// If controller is not provided, a [WebviewtubeController] hides the default
+/// YouTube player controls is created.
 class WebviewtubeVideoPlayer extends StatelessWidget {
+  /// Constructor for [WebviewtubeVideoPlayer].
   WebviewtubeVideoPlayer(this.videoId,
       {super.key, WebviewtubeController? controller})
       : _controller = controller ??
@@ -13,6 +18,7 @@ class WebviewtubeVideoPlayer extends StatelessWidget {
               ),
             );
 
+  /// The video id of the video to play.
   final String videoId;
   final WebviewtubeController _controller;
 
@@ -25,9 +31,12 @@ class WebviewtubeVideoPlayer extends StatelessWidget {
   }
 }
 
+/// The player view.
 class WebviewtubeVideoPlayerView extends StatelessWidget {
+  /// Constructor for [WebviewtubeVideoPlayerView].
   const WebviewtubeVideoPlayerView(this.videoId, {super.key});
 
+  /// The video id of the video to play.
   final String videoId;
 
   @override

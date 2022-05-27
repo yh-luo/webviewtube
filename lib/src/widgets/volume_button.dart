@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
 
+/// A widget to display buttons to mute/unmute the video.
 class VolumeButton extends StatelessWidget {
+  /// Constructor for [VolumeButton].
   const VolumeButton({Key? key}) : super(key: key);
 
   @override

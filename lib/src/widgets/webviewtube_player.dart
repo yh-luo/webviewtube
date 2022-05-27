@@ -9,15 +9,24 @@ import '../webviewtube.dart';
 
 /// Plays YouTube videos using the official [YouTube IFrame Player API](https://developers.google.com/youtube/iframe_api_reference).
 ///
-/// The player is created via `WebView` from `webview_flutter` package. The
-/// player is controlled by [WebviewtubeController], which can be configured by
-/// [WebviewtubeOptions].
+/// The player is created via `WebView` from the `webview_flutter` package.
+/// The player is controlled by [WebviewtubeController], which can be configured
+/// by [WebviewtubeOptions].
+/// If controller is not provided, a [WebviewtubeController] with default
+/// options will be created. The controller is passed down the widget tree and
+/// is accessible via `ChangeNotifierProvider` from the `provider` package.
 class WebviewtubePlayer extends StatelessWidget {
-  WebviewtubePlayer(this.videoId,
-      {super.key, WebviewtubeController? controller})
-      : _controller = controller ?? WebviewtubeController();
+  /// Constructor for [WebviewtubePlayer].
+  WebviewtubePlayer(
+    this.videoId, {
+    Key? key,
+    WebviewtubeController? controller,
+  })  : _controller = controller ?? WebviewtubeController(),
+        super(key: key);
 
+  /// The video id of the video to play.
   final String videoId;
+
   final WebviewtubeController _controller;
 
   @override
@@ -29,9 +38,12 @@ class WebviewtubePlayer extends StatelessWidget {
   }
 }
 
+/// The player view.
 class WebviewtubePlayerView extends StatefulWidget {
+  /// Constructor for [WebviewtubePlayerView].
   const WebviewtubePlayerView(this.videoId, {super.key});
 
+  /// The video id of the video to play.
   final String videoId;
 
   @override
@@ -295,5 +307,6 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
 
 int _boolean(value) => value ? 1 : 0;
 
+/// The user agent to force the video plays in HD.
 String hdUserAgent =
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36';
