@@ -1,5 +1,6 @@
 /// Options for the player
 class WebviewtubeOptions {
+  /// Constructor for [WebviewtubeOptions].
   const WebviewtubeOptions({
     this.showControls = true,
     this.autoPlay = true,
