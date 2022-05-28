@@ -91,6 +91,15 @@ void main() {
       });
     });
 
+    group('onPlaybackRateChange', () {
+      test('updates value', () {
+        final controller = WebviewtubeController();
+
+        controller.onPlaybackRateChange(0.75);
+        expect(controller.value.playbackRate, PlaybackRate.threeQuarter);
+      });
+    });
+
     group('onVideoDataChange', () {
       test('updates value', () {
         final controller = WebviewtubeController();
@@ -192,15 +201,6 @@ void main() {
 
         controller.setPlaybackRate(PlaybackRate.half);
         verify(webViewController.runJavascript('setPlaybackRate(0.5)'));
-      });
-
-      test('updates value', () {
-        final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
-        controller.onReady();
-
-        controller.setPlaybackRate(PlaybackRate.half);
-        expect(controller.value.playbackRate, PlaybackRate.half);
       });
     });
 

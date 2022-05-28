@@ -111,16 +111,62 @@ void main() {
   });
 
   group('PlaybackRate', () {
-    test('rate is correct', () {
-      expect(PlaybackRate.quarter.rate, 0.25);
-      expect(PlaybackRate.half.rate, 0.5);
-      expect(PlaybackRate.threeQuarter.rate, 0.75);
-      expect(PlaybackRate.normal.rate, 1);
-      expect(PlaybackRate.oneAndAQuarter.rate, 1.25);
-      expect(PlaybackRate.oneAndAHalf.rate, 1.5);
-      expect(PlaybackRate.oneAndAThreeQuarter.rate, 1.75);
-      expect(PlaybackRate.twice.rate, 2);
-      expect(PlaybackRate.unknown.rate, null);
+    group('fromData', () {
+      test('0.25', () {
+        final actual = PlaybackRate.fromData(0.25);
+
+        expect(actual, PlaybackRate.quarter);
+        expect(actual.rate, 0.25);
+      });
+
+      test('0.5', () {
+        final actual = PlaybackRate.fromData(0.5);
+
+        expect(actual, PlaybackRate.half);
+        expect(actual.rate, 0.5);
+      });
+
+      test('1.0', () {
+        final actual = PlaybackRate.fromData(1.0);
+
+        expect(actual, PlaybackRate.normal);
+        expect(actual.rate, 1.0);
+      });
+
+      test('1.25', () {
+        final actual = PlaybackRate.fromData(1.25);
+
+        expect(actual, PlaybackRate.oneAndAQuarter);
+        expect(actual.rate, 1.25);
+      });
+
+      test('1.5', () {
+        final actual = PlaybackRate.fromData(1.5);
+
+        expect(actual, PlaybackRate.oneAndAHalf);
+        expect(actual.rate, 1.5);
+      });
+
+      test('1.75', () {
+        final actual = PlaybackRate.fromData(1.75);
+
+        expect(actual, PlaybackRate.oneAndAThreeQuarter);
+        expect(actual.rate, 1.75);
+      });
+
+      test('2.0', () {
+        final actual = PlaybackRate.fromData(2.0);
+
+        expect(actual, PlaybackRate.twice);
+        expect(actual.rate, 2.0);
+      });
+
+      test('unknown', () {
+        final actual = PlaybackRate.fromData(1.1);
+
+        expect(actual, PlaybackRate.unknown);
+        expect(actual.rate, null);
+      });
     });
   });
 
