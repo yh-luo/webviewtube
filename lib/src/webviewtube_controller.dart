@@ -47,10 +47,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// Invoked handler when the player state changes.
   void onPlayerStateChange(int data) {
     final playerState = PlayerState.fromData(data);
-    value = value.copyWith(
-      playerState: playerState,
-      isReady: !(playerState == PlayerState.buffering),
-    );
+    value = value.copyWith(playerState: playerState);
   }
 
   /// Invoked handler when the playback quality changes
