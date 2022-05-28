@@ -3,45 +3,6 @@ import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
 
-/// Colors for [ProgressBar].
-@immutable
-class ProgressBarColors {
-  /// Constructor for [ProgressBarColors].
-  const ProgressBarColors({
-    required this.backgroundColor,
-    required this.playedColor,
-    required this.bufferedColor,
-    required this.handleColor,
-  });
-
-  /// Defines background color of the [ProgressBar].
-  final Color backgroundColor;
-
-  /// Defines color for played portion of the [ProgressBar].
-  final Color playedColor;
-
-  /// Defines color for buffered portion of the [ProgressBar].
-  final Color bufferedColor;
-
-  /// Defines color for handle of the [ProgressBar].
-  final Color handleColor;
-
-  /// Returns a new [ProgressBarColors] with updated parameters.
-  ProgressBarColors copyWith({
-    Color? backgroundColor,
-    Color? playedColor,
-    Color? bufferedColor,
-    Color? handleColor,
-  }) {
-    return ProgressBarColors(
-      backgroundColor: backgroundColor ?? this.backgroundColor,
-      handleColor: handleColor ?? this.handleColor,
-      bufferedColor: bufferedColor ?? this.bufferedColor,
-      playedColor: playedColor ?? this.playedColor,
-    );
-  }
-}
-
 /// A widget to display the progress bar of the video.
 class ProgressBar extends StatefulWidget {
   /// Constructor for [ProgressBar].
@@ -132,7 +93,6 @@ class _ProgressBarState extends State<ProgressBar> {
           double val;
           if (_positionChanged) {
             val = _position.inMilliseconds / durationMs;
-            _positionChanged = false;
           } else {
             val = controller.value.position.inMilliseconds / durationMs;
           }
