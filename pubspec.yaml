@@ -1,7 +1,7 @@
 name: webviewtube
-description: Play YouTube videos using the IFrame Player API with Flutter official support of WebView.
-version: 1.0.0+1
-publish_to: none
+description: Play YouTube videos with WebView and IFrame Player API.
+version: 1.0.0
+repository: https://github.com/yh-luo/webviewtube
 
 environment:
   sdk: ">=2.17.0 <3.0.0"
