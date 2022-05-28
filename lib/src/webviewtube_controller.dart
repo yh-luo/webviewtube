@@ -57,6 +57,10 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   void onPlaybackQualityChange(String data) =>
       value = value.copyWith(playbackQuality: PlaybackQuality.fromData(data));
 
+  /// Invoked handler when the playback rate changes
+  void onPlaybackRateChange(num data) =>
+      value = value.copyWith(playbackRate: PlaybackRate.fromData(data));
+
   /// Invoked handler when the video data changes
   void onVideoDataChange(Map<String, dynamic> data) =>
       value = value.copyWith(videoMetadata: VideoMetadata.fromData(data));
@@ -102,10 +106,8 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   }
 
   /// Sets the playback rate
-  void setPlaybackRate(PlaybackRate playbackRate) {
-    _callMethod('setPlaybackRate(${playbackRate.rate})');
-    value = value.copyWith(playbackRate: playbackRate);
-  }
+  void setPlaybackRate(PlaybackRate playbackRate) =>
+      _callMethod('setPlaybackRate(${playbackRate.rate})');
 
   /// Seeks to a specified time in the video.
   ///

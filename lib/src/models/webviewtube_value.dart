@@ -159,6 +159,43 @@ enum PlaybackRate {
   /// The playback rate.
   final double? rate;
   const PlaybackRate(this.rate);
+
+  /// Returns the [PlaybackRate] for the given [rate].
+  factory PlaybackRate.fromData(num data) {
+    late final PlaybackRate playbackRate;
+    final percentage = (data * 100).toInt();
+    switch (percentage) {
+      case 25:
+        playbackRate = PlaybackRate.quarter;
+        break;
+      case 50:
+        playbackRate = PlaybackRate.half;
+        break;
+      case 75:
+        playbackRate = PlaybackRate.threeQuarter;
+        break;
+      case 100:
+        playbackRate = PlaybackRate.normal;
+        break;
+      case 125:
+        playbackRate = PlaybackRate.oneAndAQuarter;
+        break;
+      case 150:
+        playbackRate = PlaybackRate.oneAndAHalf;
+        break;
+      case 175:
+        playbackRate = PlaybackRate.oneAndAThreeQuarter;
+        break;
+      case 200:
+        playbackRate = PlaybackRate.twice;
+        break;
+      default:
+        playbackRate = PlaybackRate.unknown;
+        break;
+    }
+
+    return playbackRate;
+  }
 }
 
 /// Current error the player encountered.

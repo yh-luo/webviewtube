@@ -106,6 +106,14 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
                       .onPlaybackQualityChange(data);
                   break;
                 }
+              case 'PlaybackRateChange':
+                {
+                  final data = json['args']['playbackRate'] as num;
+                  context
+                      .read<WebviewtubeController>()
+                      .onPlaybackRateChange(data);
+                  break;
+                }
               case 'Errors':
                 {
                   final data = json['args']['errorCode'] as int;
@@ -329,7 +337,7 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
   }
 }
 
-int _boolean(value) => value ? 1 : 0;
+int _boolean(bool value) => value ? 1 : 0;
 
 /// The user agent to force the video plays in HD.
 String hdUserAgent =
