@@ -4,6 +4,16 @@ Play YouTube videos on mobile devices with [webview_flutter](https://pub.dev/pac
 
 This package is largely inspired by the popular [youtube_player_flutter](https://pub.dev/packages/youtube_player_flutter), but with the official Flutter support of WebView and simpler state management via [provider](https://pub.dev/packages/provider).
 
+## Demo
+
+### IFrame player
+
+![default iframe player view](https://github.com/yh-luo/webviewtube/blob/main/resources/default_1.png)
+
+### Decorated player
+
+![decorated player view](https://github.com/yh-luo/webviewtube/blob/main/resources/decorated_1.png)
+
 ## Why another package?
 
 `youtube_player_flutter` and its dependency `flutter_inappwebview` have been in hiatus for a while. It's more reassuring to use the official [webview_flutter](https://pub.dev/packages/webview_flutter). Also, the performance issues of `youtube_player_flutter` are not resolved and make it problematic to use in some situations.
