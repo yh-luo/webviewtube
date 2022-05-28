@@ -101,10 +101,10 @@ class _ProgressBarState extends State<ProgressBar> {
         }
 
         return CustomPaint(
-          size: Size(MediaQuery.of(context).size.width, 12),
+          size: Size(MediaQuery.of(context).size.width, 14),
           painter: _ProgressBarPainter(
-            progressWidth: 3.0,
-            handleRadius: 6.0,
+            progressWidth: 4.0,
+            handleRadius: 7.0,
             playedRatio: playedRatio,
             bufferedRatio: controller.value.buffered,
             colors: colors,

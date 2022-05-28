@@ -87,7 +87,7 @@ class WebviewtubeVideoPlayerView extends StatelessWidget {
           builder: (context, controller, child) {
             return Positioned(
               left: 10,
-              bottom: 0,
+              bottom: -5,
               child: AnimatedOpacity(
                 opacity:
                     controller.value.playerState == PlayerState.playing ? 0 : 1,
@@ -109,7 +109,7 @@ class WebviewtubeVideoPlayerView extends StatelessWidget {
           builder: (context, controller, child) {
             return Positioned(
               left: 5,
-              bottom: 1,
+              bottom: 35,
               child: AnimatedOpacity(
                 opacity:
                     controller.value.playerState == PlayerState.playing ? 0 : 1,
