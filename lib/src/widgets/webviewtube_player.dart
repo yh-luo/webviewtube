@@ -78,6 +78,13 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
   final Completer<WebViewController> _webviewController =
       Completer<WebViewController>();
 
+  @override
+  void deactivate() {
+    // Pauses video when the player is not active
+    context.read<WebviewtubeController>().pause();
+    super.deactivate();
+  }
+
   Set<JavascriptChannel> _buildJavascriptChannel() {
     return {
       JavascriptChannel(
