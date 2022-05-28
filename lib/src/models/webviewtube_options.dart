@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart';
+
 /// Options for the player
+@immutable
 class WebviewtubeOptions {
   /// Constructor for [WebviewtubeOptions].
   const WebviewtubeOptions({
