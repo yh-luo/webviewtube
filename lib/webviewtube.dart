@@ -1,4 +1,4 @@
-/// Play YouTube videos using the IFrame Player API with of WebView.
+/// Play YouTube videos using WebView and the IFrame Player API.
 ///
 /// Use [WebviewtubeVideoPlayer] for the IFrame player.
 /// ```dart
