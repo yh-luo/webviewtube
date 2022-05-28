@@ -44,3 +44,7 @@ app.*.map.json
 # docs
 coverage/
 doc/
+
+# ignore example build files
+**/example/android/
+**/example/ios/
