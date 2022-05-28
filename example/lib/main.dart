@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:webviewtube/webviewtube.dart';
 
 import 'customized_player.dart';
-import 'default_player.dart';
 import 'webviewtube_decorated_player.dart';
 
 void main() {
@@ -18,13 +18,14 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const WebviewtubeDemo(),
+      home: WebviewtubeDemo(),
     );
   }
 }
 
 class WebviewtubeDemo extends StatelessWidget {
-  const WebviewtubeDemo({Key? key}) : super(key: key);
+  WebviewtubeDemo({Key? key}) : super(key: key);
+  final controller = WebviewtubeController();
 
   @override
   Widget build(BuildContext context) {
@@ -35,10 +36,25 @@ class WebviewtubeDemo extends StatelessWidget {
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 10),
         children: <Widget>[
-          const DefaultPlayer(),
+          Column(
+            children: <Widget>[
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Text(
+                  'Default IFrame Player',
+                  style: Theme.of(context).textTheme.headlineSmall,
+                ),
+              ),
+              WebviewtubePlayer(
+                '4AoFA19gbLo',
+                controller: controller,
+              ),
+            ],
+          ),
           const SizedBox(height: 70),
           ElevatedButton(
             onPressed: () {
+              controller.pause();
               Navigator.of(context).push(MaterialPageRoute(
                   builder: (_) => const WebviewtubeDecoratedPlayer()));
             },
@@ -49,6 +65,7 @@ class WebviewtubeDemo extends StatelessWidget {
           ),
           ElevatedButton(
             onPressed: () {
+              controller.pause();
               Navigator.of(context).push(
                   MaterialPageRoute(builder: (_) => const CustomizedPlayer()));
             },
