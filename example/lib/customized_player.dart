@@ -11,7 +11,8 @@ class CustomizedPlayer extends StatefulWidget {
 
 class _CustomizedPlayerState extends State<CustomizedPlayer> {
   final webviewtubeController = WebviewtubeController(
-      options: const WebviewtubeOptions(showControls: false));
+      options:
+          const WebviewtubeOptions(showControls: false, enableCaption: false));
   final videoIds = ['qV9pqHWxYgI', 'cyFM2emjbQ8', 'PKGguGUwSYE'];
   String _title = '';
   String _author = '';
