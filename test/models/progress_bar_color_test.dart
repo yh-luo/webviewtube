@@ -19,17 +19,17 @@ void main() {
     });
 
     test('copyWith', () {
-      final progressBar = ProgressBarColors(
+      final colors = ProgressBarColors(
         backgroundColor: Colors.white,
         playedColor: Colors.black,
         bufferedColor: Colors.black,
         handleColor: Colors.black,
       );
-      final actual = progressBar.copyWith(playedColor: Colors.amber);
+      final actual = colors.copyWith(playedColor: Colors.amber);
 
-      expect(progressBar != actual, true);
+      expect(colors != actual, true);
       expect(actual.playedColor, Colors.amber);
-      expect(actual.backgroundColor, progressBar.backgroundColor);
+      expect(actual.backgroundColor, colors.backgroundColor);
       expect(
           actual,
           ProgressBarColors(

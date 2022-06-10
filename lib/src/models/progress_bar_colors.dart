@@ -32,9 +32,9 @@ class ProgressBarColors {
   }) {
     return ProgressBarColors(
       backgroundColor: backgroundColor ?? this.backgroundColor,
-      handleColor: handleColor ?? this.handleColor,
-      bufferedColor: bufferedColor ?? this.bufferedColor,
       playedColor: playedColor ?? this.playedColor,
+      bufferedColor: bufferedColor ?? this.bufferedColor,
+      handleColor: handleColor ?? this.handleColor,
     );
   }
 
