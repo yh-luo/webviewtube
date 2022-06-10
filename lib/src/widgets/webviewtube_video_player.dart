@@ -83,16 +83,19 @@ class WebviewtubeVideoPlayerView extends StatelessWidget {
             return const LoadingIndicator();
           },
         ),
-        Consumer<WebviewtubeController>(
-          builder: (context, controller, child) {
+        Selector<WebviewtubeController, PlayerState>(
+          selector: (_, controller) => controller.value.playerState,
+          builder: (context, value, child) {
             return Positioned(
               left: 10,
               bottom: -5,
               child: AnimatedOpacity(
-                opacity:
-                    controller.value.playerState == PlayerState.playing ? 0 : 1,
+                opacity: value == PlayerState.playing ? 0 : 1,
                 duration: const Duration(milliseconds: 300),
-                child: child,
+                child: IgnorePointer(
+                  ignoring: value == PlayerState.playing,
+                  child: child,
+                ),
               ),
             );
           },
@@ -105,16 +108,20 @@ class WebviewtubeVideoPlayerView extends StatelessWidget {
             ],
           ),
         ),
-        Consumer<WebviewtubeController>(
-          builder: (context, controller, child) {
+        Selector<WebviewtubeController, PlayerState>(
+          selector: (_, controller) => controller.value.playerState,
+          builder: (context, value, child) {
             return Positioned(
               left: 5,
+              right: 5,
               bottom: 35,
               child: AnimatedOpacity(
-                opacity:
-                    controller.value.playerState == PlayerState.playing ? 0 : 1,
+                opacity: value == PlayerState.playing ? 0 : 1,
                 duration: const Duration(milliseconds: 300),
-                child: child,
+                child: IgnorePointer(
+                  ignoring: value == PlayerState.playing,
+                  child: child,
+                ),
               ),
             );
           },
