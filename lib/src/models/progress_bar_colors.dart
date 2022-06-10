@@ -47,6 +47,6 @@ class ProgressBarColors {
       other.handleColor == handleColor;
 
   @override
-  int get hashCode =>
-      hashValues(backgroundColor, playedColor, bufferedColor, handleColor);
+  int get hashCode => Object.hash(
+      runtimeType, backgroundColor, playedColor, bufferedColor, handleColor);
 }

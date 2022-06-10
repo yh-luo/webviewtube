@@ -340,8 +340,17 @@ class WebviewTubeValue {
       other.videoMetadata == videoMetadata;
 
   @override
-  int get hashCode => hashValues(isReady, isMuted, playerState, playbackQuality,
-      playbackRate, position, buffered, playerError, videoMetadata);
+  int get hashCode => Object.hash(
+      runtimeType,
+      isReady,
+      isMuted,
+      playerState,
+      playbackQuality,
+      playbackRate,
+      position,
+      buffered,
+      playerError,
+      videoMetadata);
 }
 
 /// The metadata of the video.
@@ -408,5 +417,6 @@ class VideoMetadata {
       other.duration == duration;
 
   @override
-  int get hashCode => hashValues(videoId, title, author, duration);
+  int get hashCode =>
+      Object.hash(runtimeType, videoId, title, author, duration);
 }
