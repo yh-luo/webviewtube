@@ -86,6 +86,18 @@ class WebviewtubeVideoPlayerView extends StatelessWidget {
         Selector<WebviewtubeController, PlayerState>(
           selector: (_, controller) => controller.value.playerState,
           builder: (context, value, child) {
+            if (value == PlayerState.ended) {
+              return Positioned(
+                left: 10,
+                bottom: -5,
+                child: IconButton(
+                  onPressed: () =>
+                      context.read<WebviewtubeController>().replay(),
+                  icon: const Icon(Icons.replay, color: Colors.white),
+                ),
+              );
+            }
+
             return Positioned(
               left: 10,
               bottom: -5,
