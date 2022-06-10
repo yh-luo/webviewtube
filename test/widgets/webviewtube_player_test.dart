@@ -375,12 +375,15 @@ void main() {
   });
 
   group('WebviewtubeVideoPlayer', () {
+    final options = WebviewtubeOptions(showControls: false);
+
     testWidgets('initiate widgets properly', (WidgetTester tester) async {
       provideMockedNetworkImages(() async {
         await tester.pumpWidget(TestApp(
           child: WebviewtubeVideoPlayer(videoId),
         ));
 
+        expect(find.byType(LoadingIndicator), findsOneWidget);
         expect(find.byType(WebviewtubeVideoPlayer), findsOneWidget);
         expect(find.byType(WebviewtubeVideoPlayerView), findsOneWidget);
         expect(find.byType(DurationIndicator), findsOneWidget);
@@ -391,88 +394,134 @@ void main() {
       });
     });
 
-    testWidgets('tap VolumeButton to mute', (WidgetTester tester) async {
-      final options = WebviewtubeOptions();
-      final controller = MockWebviewtubeController();
-      final value =
-          WebviewTubeValue(isReady: true, playerState: PlayerState.paused);
-      when(controller.options).thenReturn(options);
-      when(controller.value).thenReturn(value);
+    group('VolumeButton', () {
+      testWidgets('tap to mute', (WidgetTester tester) async {
+        final controller = MockWebviewtubeController();
+        final value =
+            WebviewTubeValue(isReady: true, playerState: PlayerState.paused);
+        when(controller.options).thenReturn(options);
+        when(controller.value).thenReturn(value);
 
-      provideMockedNetworkImages(() async {
-        await tester.pumpWidget(TestApp(
-          child: WebviewtubeVideoPlayer(
-            videoId,
-            controller: controller,
-          ),
-        ));
+        provideMockedNetworkImages(() async {
+          await tester.pumpWidget(TestApp(
+            child: WebviewtubeVideoPlayer(
+              videoId,
+              controller: controller,
+            ),
+          ));
 
-        expect(find.byIcon(Icons.volume_off), findsOneWidget);
-        final volumeButton = find.byType(VolumeButton);
+          expect(find.byIcon(Icons.volume_off), findsOneWidget);
+          final volumeButton = find.byType(VolumeButton);
 
-        await tester.tap(volumeButton);
-        await tester.pumpAndSettle();
+          await tester.tap(volumeButton);
+          await tester.pumpAndSettle();
 
-        verify(controller.mute());
+          verify(controller.mute());
+        });
+      });
+
+      testWidgets('tap to unMute', (WidgetTester tester) async {
+        final controller = MockWebviewtubeController();
+        final value = WebviewTubeValue(
+            isReady: true, isMuted: true, playerState: PlayerState.paused);
+        when(controller.options).thenReturn(options);
+        when(controller.value).thenReturn(value);
+
+        provideMockedNetworkImages(() async {
+          await tester.pumpWidget(TestApp(
+            child: WebviewtubeVideoPlayer(
+              videoId,
+              controller: controller,
+            ),
+          ));
+          expect(find.byIcon(Icons.volume_up), findsOneWidget);
+          final volumeButton = find.byType(VolumeButton);
+
+          await tester.tap(volumeButton);
+          await tester.pumpAndSettle();
+
+          verify(controller.unMute());
+        });
       });
     });
 
-    testWidgets('tap VolumeButton to unMute', (WidgetTester tester) async {
-      final options = WebviewtubeOptions();
-      final controller = MockWebviewtubeController();
-      final value = WebviewTubeValue(
-          isReady: true, isMuted: true, playerState: PlayerState.paused);
-      when(controller.options).thenReturn(options);
-      when(controller.value).thenReturn(value);
+    group('PlaybackSpeedButton', () {
+      testWidgets('tap to change the playback speed',
+          (WidgetTester tester) async {
+        final controller = MockWebviewtubeController();
+        final value =
+            WebviewTubeValue(isReady: true, playerState: PlayerState.paused);
+        when(controller.options).thenReturn(options);
+        when(controller.value).thenReturn(value);
 
-      provideMockedNetworkImages(() async {
-        await tester.pumpWidget(TestApp(
-          child: WebviewtubeVideoPlayer(
-            videoId,
-            controller: controller,
-          ),
-        ));
-        expect(find.byIcon(Icons.volume_up), findsOneWidget);
-        final volumeButton = find.byType(VolumeButton);
+        provideMockedNetworkImages(() async {
+          await tester.pumpWidget(TestApp(
+            child: WebviewtubeVideoPlayer(
+              videoId,
+              controller: controller,
+            ),
+          ));
 
-        await tester.tap(volumeButton);
-        await tester.pumpAndSettle();
+          final playbackSpeedButton = find.byType(PlaybackSpeedButton);
 
-        verify(controller.unMute());
+          await tester.tap(playbackSpeedButton);
+          await tester.pumpAndSettle();
+          await tester.tap(find.text('0.75').last);
+          await tester.pumpAndSettle();
+
+          verify(controller.setPlaybackRate(PlaybackRate.threeQuarter));
+        });
       });
     });
 
-    testWidgets('tap PlaybackSpeedButton to change the playback speed',
-        (WidgetTester tester) async {
-      final options = WebviewtubeOptions();
-      final controller = MockWebviewtubeController();
-      final value =
-          WebviewTubeValue(isReady: true, playerState: PlayerState.paused);
-      when(controller.options).thenReturn(options);
-      when(controller.value).thenReturn(value);
+    group('replay button', () {
+      testWidgets('shows it when the video is finished',
+          (WidgetTester tester) async {
+        final controller = MockWebviewtubeController();
+        final value =
+            WebviewTubeValue(isReady: true, playerState: PlayerState.ended);
+        when(controller.options).thenReturn(options);
+        when(controller.value).thenReturn(value);
 
-      provideMockedNetworkImages(() async {
-        await tester.pumpWidget(TestApp(
-          child: WebviewtubeVideoPlayer(
-            videoId,
-            controller: controller,
-          ),
-        ));
+        provideMockedNetworkImages(() async {
+          await tester.pumpWidget(TestApp(
+            child: WebviewtubeVideoPlayer(
+              videoId,
+              controller: controller,
+            ),
+          ));
 
-        final playbackSpeedButton = find.byType(PlaybackSpeedButton);
+          final replayButton = find.byIcon(Icons.replay);
+          expect(replayButton, findsOneWidget);
+        });
+      });
 
-        await tester.tap(playbackSpeedButton);
-        await tester.pumpAndSettle();
-        await tester.tap(find.text('0.75').last);
-        await tester.pumpAndSettle();
+      testWidgets('tap it to replay', (WidgetTester tester) async {
+        final controller = MockWebviewtubeController();
+        final value =
+            WebviewTubeValue(isReady: true, playerState: PlayerState.ended);
+        when(controller.options).thenReturn(options);
+        when(controller.value).thenReturn(value);
 
-        verify(controller.setPlaybackRate(PlaybackRate.threeQuarter));
+        provideMockedNetworkImages(() async {
+          await tester.pumpWidget(TestApp(
+            child: WebviewtubeVideoPlayer(
+              videoId,
+              controller: controller,
+            ),
+          ));
+
+          final replayButton = find.byIcon(Icons.replay);
+          await tester.tap(replayButton);
+          await tester.pumpAndSettle();
+
+          verify(controller.replay());
+        });
       });
     });
 
     group('ProgressBar', () {
       testWidgets('onHorizontalDragDown', (WidgetTester tester) async {
-        final options = WebviewtubeOptions();
         final controller = MockWebviewtubeController();
         final value =
             WebviewTubeValue(isReady: true, playerState: PlayerState.paused);
