@@ -46,7 +46,7 @@ class WebviewtubeDemo extends StatelessWidget {
                 ),
               ),
               WebviewtubePlayer(
-                '4AoFA19gbLo',
+                videoId: '4AoFA19gbLo',
                 controller: controller,
               ),
             ],

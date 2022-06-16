@@ -11,7 +11,7 @@ class WebviewtubeDecoratedPlayer extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Webviewtube Decorated Player'),
       ),
-      body: WebviewtubeVideoPlayer('rIaaH87z1-g'),
+      body: WebviewtubeVideoPlayer(videoId: 'rIaaH87z1-g'),
     );
   }
 }

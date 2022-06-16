@@ -3,16 +3,35 @@ import 'package:webview_flutter/webview_flutter.dart';
 
 import 'models/models.dart';
 
+/// Optional callback invoked when the player is ready.
+typedef PlayerReadyCallback = void Function();
+
+/// Optional callback invoked when the player returns an error
+typedef PlayerErrorCallback = void Function(PlayerError error);
+
 /// Controls the player and provides information about the player state.
 class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// Constructor for [WebviewtubeController].
-  WebviewtubeController({this.options = const WebviewtubeOptions()})
-      : super(const WebviewTubeValue());
+  WebviewtubeController({
+    this.options = const WebviewtubeOptions(),
+    this.onPlayerReady,
+    this.onPlayerError,
+    this.onPlayerWebResourceError,
+  }) : super(const WebviewTubeValue());
 
   WebViewController? _webViewController;
 
   /// Additional options to control the player
-  WebviewtubeOptions options;
+  final WebviewtubeOptions options;
+
+  /// Invoked when the player is ready
+  final PlayerReadyCallback? onPlayerReady;
+
+  /// Invoked when the player returns an error
+  final PlayerErrorCallback? onPlayerError;
+
+  /// Invoked when a web resource has failed to load.
+  final WebResourceErrorCallback? onPlayerWebResourceError;
 
   /// Current loaded `WebViewController`
   WebViewController? get webViewController => _webViewController;
@@ -28,20 +47,26 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     if (options.mute) {
       mute();
     }
+    if (onPlayerReady != null) {
+      onPlayerReady!();
+    }
   }
 
   /// Invoked handler when the player returns an error.
-  void onError(int data) =>
-      value = value.copyWith(playerError: PlayerError.fromData(data));
+  void onError(int data) {
+    final playerError = PlayerError.fromData(data);
+    value = value.copyWith(playerError: playerError);
+    if (onPlayerError != null) {
+      onPlayerError!(playerError);
+    }
+  }
 
   /// Invoked handler when WebView returns an error.
   void onWebResourceError(WebResourceError error) {
     value = value.copyWith(playerError: PlayerError.unknown);
-    debugPrint('WebResourceError(errorCode: ${error.errorCode}, '
-        'description: ${error.description}, '
-        'domain: ${error.domain}, '
-        'errorType: ${error.errorType}, '
-        'failingUrl: ${error.failingUrl})');
+    if (onPlayerWebResourceError != null) {
+      onPlayerWebResourceError!(error);
+    }
   }
 
   /// Invoked handler when the player state changes.

@@ -20,7 +20,7 @@ import '../webviewtube.dart';
 /// Example:
 /// ```dart
 /// Scaffold(
-///  body: WebviewtubePlayer('4AoFA19gbLo'),
+///  body: WebviewtubePlayer(videoId: '4AoFA19gbLo'),
 /// );
 /// ```
 ///
@@ -34,16 +34,16 @@ import '../webviewtube.dart';
 ///
 /// Scaffold(
 ///   body: WebviewtubePlayer(
-///     '4AoFA19gbLo',
+///     videoId: '4AoFA19gbLo',
 ///     controller: webviewtubeController),
 /// );
 /// ```
 /// {@endtemplate}
 class WebviewtubePlayer extends StatelessWidget {
   /// Constructor for [WebviewtubePlayer].
-  WebviewtubePlayer(
-    this.videoId, {
+  WebviewtubePlayer({
     Key? key,
+    required this.videoId,
     WebviewtubeController? controller,
   })  : _controller = controller ?? WebviewtubeController(),
         super(key: key);
@@ -57,7 +57,7 @@ class WebviewtubePlayer extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
       value: _controller,
-      child: WebviewtubePlayerView(videoId),
+      child: WebviewtubePlayerView(videoId: videoId),
     );
   }
 }
@@ -65,7 +65,10 @@ class WebviewtubePlayer extends StatelessWidget {
 /// The player view.
 class WebviewtubePlayerView extends StatefulWidget {
   /// Constructor for [WebviewtubePlayerView].
-  const WebviewtubePlayerView(this.videoId, {super.key});
+  const WebviewtubePlayerView({
+    Key? key,
+    required this.videoId,
+  }) : super(key: key);
 
   /// The video id of the video to play.
   final String videoId;
@@ -317,10 +320,6 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
             player.unMute();
         }
 
-        function setVolume(volume) {
-            player.setVolume(volume);
-        }
-
         function seekTo(seconds, allowSeekAhead) {
             player.seekTo(seconds, allowSeekAhead);
         }
@@ -331,10 +330,6 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
 
         function setPlaybackRate(rate) {
             player.setPlaybackRate(rate);
-        }
-
-        function setTopMargin(margin) {
-            document.getElementById("player").style.marginTop = margin;
         }
     </script>
 </body>

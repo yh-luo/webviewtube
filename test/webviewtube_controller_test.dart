@@ -44,6 +44,16 @@ void main() {
         controller.onReady();
         verify(webViewController.runJavascript('mute()'));
       });
+
+      test('calls callback', () {
+        var called = false;
+        final controller = WebviewtubeController(onPlayerReady: () {
+          called = true;
+        });
+
+        controller.onReady();
+        expect(called, true);
+      });
     });
 
     group('onError', () {
@@ -52,6 +62,16 @@ void main() {
 
         controller.onError(100);
         expect(controller.value.playerError, PlayerError.videoNotFound);
+      });
+
+      test('calls callback', () {
+        var called = false;
+        final controller = WebviewtubeController(onPlayerError: (error) {
+          called = true;
+        });
+
+        controller.onError(100);
+        expect(called, true);
       });
     });
 
@@ -62,6 +82,18 @@ void main() {
 
         controller.onWebResourceError(error);
         expect(controller.value.playerError, PlayerError.unknown);
+      });
+
+      test('calls callback', () {
+        var called = false;
+        final controller =
+            WebviewtubeController(onPlayerWebResourceError: (error) {
+          called = true;
+        });
+
+        controller.onWebResourceError(
+            WebResourceError(errorCode: 1, description: 'test'));
+        expect(called, true);
       });
     });
 
