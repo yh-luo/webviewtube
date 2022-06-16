@@ -74,7 +74,7 @@ void main() {
     testWidgets('initiate widgets properly', (WidgetTester tester) async {
       provideMockedNetworkImages(() async {
         await tester.pumpWidget(TestApp(
-          child: WebviewtubePlayer(videoId),
+          child: WebviewtubePlayer(videoId: videoId),
         ));
 
         expect(find.byType(WebviewtubePlayer), findsOneWidget);
@@ -108,7 +108,7 @@ void main() {
       provideMockedNetworkImages(() async {
         await tester.pumpWidget(TestApp(
           child: WebviewtubePlayer(
-            videoId,
+            videoId: videoId,
             controller: controller,
           ),
         ));
@@ -131,7 +131,7 @@ void main() {
         (WidgetTester tester) async {
       provideMockedNetworkImages(() async {
         await tester.pumpWidget(TestApp(
-          child: WebviewtubePlayer(videoId),
+          child: WebviewtubePlayer(videoId: videoId),
         ));
 
         final JavascriptChannelRegistry channelRegistry = captureBuildArgs(
@@ -155,7 +155,7 @@ void main() {
         provideMockedNetworkImages(() async {
           await tester.pumpWidget(TestApp(
             child: WebviewtubePlayer(
-              videoId,
+              videoId: videoId,
               controller: controller,
             ),
           ));
@@ -180,7 +180,7 @@ void main() {
         provideMockedNetworkImages(() async {
           await tester.pumpWidget(TestApp(
             child: WebviewtubePlayer(
-              videoId,
+              videoId: videoId,
               controller: controller,
             ),
           ));
@@ -208,7 +208,7 @@ void main() {
         provideMockedNetworkImages(() async {
           await tester.pumpWidget(TestApp(
             child: WebviewtubePlayer(
-              videoId,
+              videoId: videoId,
               controller: controller,
             ),
           ));
@@ -236,7 +236,7 @@ void main() {
         provideMockedNetworkImages(() async {
           await tester.pumpWidget(TestApp(
             child: WebviewtubePlayer(
-              videoId,
+              videoId: videoId,
               controller: controller,
             ),
           ));
@@ -264,7 +264,7 @@ void main() {
         provideMockedNetworkImages(() async {
           await tester.pumpWidget(TestApp(
             child: WebviewtubePlayer(
-              videoId,
+              videoId: videoId,
               controller: controller,
             ),
           ));
@@ -292,7 +292,7 @@ void main() {
         provideMockedNetworkImages(() async {
           await tester.pumpWidget(TestApp(
             child: WebviewtubePlayer(
-              videoId,
+              videoId: videoId,
               controller: controller,
             ),
           ));
@@ -320,7 +320,7 @@ void main() {
         provideMockedNetworkImages(() async {
           await tester.pumpWidget(TestApp(
             child: WebviewtubePlayer(
-              videoId,
+              videoId: videoId,
               controller: controller,
             ),
           ));
@@ -353,7 +353,7 @@ void main() {
         provideMockedNetworkImages(() async {
           await tester.pumpWidget(TestApp(
             child: WebviewtubePlayer(
-              videoId,
+              videoId: videoId,
               controller: controller,
             ),
           ));
@@ -380,7 +380,9 @@ void main() {
     testWidgets('initiate widgets properly', (WidgetTester tester) async {
       provideMockedNetworkImages(() async {
         await tester.pumpWidget(TestApp(
-          child: WebviewtubeVideoPlayer(videoId),
+          child: WebviewtubeVideoPlayer(
+            videoId: videoId,
+          ),
         ));
 
         expect(find.byType(LoadingIndicator), findsOneWidget);
@@ -405,7 +407,7 @@ void main() {
         provideMockedNetworkImages(() async {
           await tester.pumpWidget(TestApp(
             child: WebviewtubeVideoPlayer(
-              videoId,
+              videoId: videoId,
               controller: controller,
             ),
           ));
@@ -430,7 +432,7 @@ void main() {
         provideMockedNetworkImages(() async {
           await tester.pumpWidget(TestApp(
             child: WebviewtubeVideoPlayer(
-              videoId,
+              videoId: videoId,
               controller: controller,
             ),
           ));
@@ -457,7 +459,7 @@ void main() {
         provideMockedNetworkImages(() async {
           await tester.pumpWidget(TestApp(
             child: WebviewtubeVideoPlayer(
-              videoId,
+              videoId: videoId,
               controller: controller,
             ),
           ));
@@ -486,7 +488,7 @@ void main() {
         provideMockedNetworkImages(() async {
           await tester.pumpWidget(TestApp(
             child: WebviewtubeVideoPlayer(
-              videoId,
+              videoId: videoId,
               controller: controller,
             ),
           ));
@@ -506,7 +508,7 @@ void main() {
         provideMockedNetworkImages(() async {
           await tester.pumpWidget(TestApp(
             child: WebviewtubeVideoPlayer(
-              videoId,
+              videoId: videoId,
               controller: controller,
             ),
           ));
@@ -532,7 +534,7 @@ void main() {
         provideMockedNetworkImages(() async {
           await tester.pumpWidget(TestApp(
             child: WebviewtubeVideoPlayer(
-              videoId,
+              videoId: videoId,
               controller: controller,
             ),
           ));

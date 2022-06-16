@@ -12,7 +12,7 @@ import '../webviewtube.dart';
 /// Example:
 /// ```dart
 /// Scaffold(
-///   body: WebviewtubeVideoPlayer('4AoFA19gbLo'),
+///   body: WebviewtubeVideoPlayer(videoId: '4AoFA19gbLo'),
 /// );
 /// ```
 ///
@@ -29,18 +29,19 @@ import '../webviewtube.dart';
 ///
 /// Scaffold(
 ///   body: WebviewtubeVideoPlayer(
-///     '4AoFA19gbLo',
+///     videoId: '4AoFA19gbLo',
 ///     controller: webviewtubeController),
 /// );
 /// ```
 /// {@endtemplate}
 class WebviewtubeVideoPlayer extends StatelessWidget {
   /// Constructor for [WebviewtubeVideoPlayer].
-  WebviewtubeVideoPlayer(this.videoId,
-      {super.key, WebviewtubeController? controller})
+  WebviewtubeVideoPlayer(
+      {Key? key, required this.videoId, WebviewtubeController? controller})
       : _controller = controller ??
             WebviewtubeController(
-                options: const WebviewtubeOptions(showControls: false));
+                options: const WebviewtubeOptions(showControls: false)),
+        super(key: key);
 
   /// The video id of the video to play.
   final String videoId;
@@ -50,7 +51,7 @@ class WebviewtubeVideoPlayer extends StatelessWidget {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
       value: _controller,
-      child: WebviewtubeVideoPlayerView(videoId),
+      child: WebviewtubeVideoPlayerView(videoId: videoId),
     );
   }
 }
@@ -58,7 +59,10 @@ class WebviewtubeVideoPlayer extends StatelessWidget {
 /// The player view.
 class WebviewtubeVideoPlayerView extends StatelessWidget {
   /// Constructor for [WebviewtubeVideoPlayerView].
-  const WebviewtubeVideoPlayerView(this.videoId, {super.key});
+  const WebviewtubeVideoPlayerView({
+    Key? key,
+    required this.videoId,
+  }) : super(key: key);
 
   /// The video id of the video to play.
   final String videoId;
@@ -70,7 +74,7 @@ class WebviewtubeVideoPlayerView extends StatelessWidget {
       clipBehavior: Clip.none,
       children: [
         WebviewtubePlayer(
-          videoId,
+          videoId: videoId,
           controller: context.read<WebviewtubeController>(),
         ),
         Selector<WebviewtubeController, bool>(

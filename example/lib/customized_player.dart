@@ -66,7 +66,7 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
       body: ListView(
         children: <Widget>[
           WebviewtubePlayer(
-            videoIds.first,
+            videoId: videoIds.first,
             controller: webviewtubeController,
           ),
           Column(
