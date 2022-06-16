@@ -10,9 +10,8 @@ class CustomizedPlayer extends StatefulWidget {
 }
 
 class _CustomizedPlayerState extends State<CustomizedPlayer> {
-  final webviewtubeController = WebviewtubeController(
-      options:
-          const WebviewtubeOptions(showControls: false, enableCaption: false));
+  late final WebviewtubeController webviewtubeController;
+
   final videoIds = ['qV9pqHWxYgI', 'cyFM2emjbQ8', 'PKGguGUwSYE'];
   String _title = '';
   String _author = '';
@@ -22,6 +21,13 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
   @override
   void initState() {
     super.initState();
+    webviewtubeController = WebviewtubeController(
+      options: const WebviewtubeOptions(
+        showControls: false,
+        enableCaption: false,
+      ),
+      onPlayerReady: _onPlayerReady,
+    );
     webviewtubeController.addListener(_valueHandler);
   }
 
@@ -55,6 +61,10 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
         _author = author;
       });
     }
+  }
+
+  void _onPlayerReady() {
+    debugPrint('The player is ready');
   }
 
   @override
