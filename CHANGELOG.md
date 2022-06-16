@@ -1,3 +1,9 @@
+# 1.2.0
+
+- refactor: remove unused functions
+- feat: add onPlayerReady, onPlayerError and onPlayerWebResourceError callbacks
+- __BREAKING__ refactor!: make videoId a named parameter
+
 # 1.1.0
 
 ## Fixed
