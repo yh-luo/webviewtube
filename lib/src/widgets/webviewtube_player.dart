@@ -320,10 +320,6 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
             player.unMute();
         }
 
-        function setVolume(volume) {
-            player.setVolume(volume);
-        }
-
         function seekTo(seconds, allowSeekAhead) {
             player.seekTo(seconds, allowSeekAhead);
         }
@@ -334,10 +330,6 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
 
         function setPlaybackRate(rate) {
             player.setPlaybackRate(rate);
-        }
-
-        function setTopMargin(margin) {
-            document.getElementById("player").style.marginTop = margin;
         }
     </script>
 </body>
