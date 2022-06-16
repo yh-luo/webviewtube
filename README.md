@@ -56,7 +56,7 @@ Check out `example/lib/` for more details.
 ### Default IFrame player
 
 ```dart
-WebviewtubePlayer('4AoFA19gbLo')
+WebviewtubePlayer(videoId: '4AoFA19gbLo')
 ```
 
 With configuration:
@@ -69,13 +69,13 @@ final webviewtubeController = WebviewtubeController(
   ),
 );
 
-WebviewtubePlayer('4AoFA19gbLo', controller: webviewtubeController);
+WebviewtubePlayer(videoId: '4AoFA19gbLo', controller: webviewtubeController);
 ```
 
 ### With material widgets
 
 ```dart
-WebviewtubeVideoPlayer('4AoFA19gbLo')
+WebviewtubeVideoPlayer(videoId: '4AoFA19gbLo')
 ```
 
 With configuration:
@@ -90,7 +90,7 @@ final webviewtubeController = WebviewtubeController(
       enableCaption: false),
 );
 
-WebviewtubeVideoPlayer('4AoFA19gbLo', controller: webviewtubeController)
+WebviewtubeVideoPlayer(videoId: '4AoFA19gbLo', controller: webviewtubeController)
 ```
 
 ## Customize the player
