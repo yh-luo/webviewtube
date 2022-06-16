@@ -14,12 +14,15 @@ jobs:
 
       - name: Dependencies
         run: flutter packages get
-      
+
       - name: Format
         run: flutter format --set-exit-if-changed .
 
+      - name: Code generation
+        run: flutter pub run build_runner build --delete-conflicting-outputs
+
       - name: Analyze
         run: flutter analyze lib test example
-      
+
       - name: Test
         run: flutter test --no-pub --coverage
