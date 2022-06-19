@@ -10,12 +10,14 @@ import '../webviewtube.dart';
 /// {@template webviewtube_player}
 /// Plays YouTube videos using the official [YouTube IFrame Player API](https://developers.google.com/youtube/iframe_api_reference).
 ///
-/// The player is created via `WebView` from the `webview_flutter` package.
-/// The player is controlled by [WebviewtubeController], which can be configured
-/// by [WebviewtubeOptions].
-/// If controller is not provided, a [WebviewtubeController] with default
-/// options will be created. The controller is passed down the widget tree and
-/// is accessible via `ChangeNotifierProvider` from the `provider` package.
+/// The player can be which can be configured by [WebviewtubeOptions] and
+/// controlled by [WebviewtubeController].
+///
+/// If a controller is not provided, a [WebviewtubeController] with default
+/// options will be created using `ChangeNotifierProvider` constructor. It will
+/// be automatically disposed when [WebviewtubePlayer] is removed from the
+/// widget tree. Otherwise the user is responsible for disposing the given
+/// controller.
 ///
 /// Example:
 /// ```dart
@@ -32,6 +34,13 @@ import '../webviewtube.dart';
 ///       enableCaption: false),
 /// );
 ///
+/// // Remember to dispose the controller to avoid memory leak
+/// @override
+/// void dispose() {
+///   webviewtubeController.dispose();
+///   super.dispose();
+/// }
+///
 /// Scaffold(
 ///   body: WebviewtubePlayer(
 ///     videoId: '4AoFA19gbLo',
@@ -44,21 +53,36 @@ class WebviewtubePlayer extends StatelessWidget {
   WebviewtubePlayer({
     Key? key,
     required this.videoId,
+    WebviewtubeOptions? options,
     WebviewtubeController? controller,
-  })  : _controller = controller ?? WebviewtubeController(),
+  })  : _controller = controller,
+        _options = options ?? const WebviewtubeOptions(),
         super(key: key);
 
   /// The video id of the video to play.
   final String videoId;
 
-  final WebviewtubeController _controller;
+  /// Additional options to control the player
+  final WebviewtubeOptions _options;
+
+  final WebviewtubeController? _controller;
+
+  late final _child =
+      WebviewtubePlayerView(videoId: videoId, options: _options);
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: _controller,
-      child: WebviewtubePlayerView(videoId: videoId),
-    );
+    final controller = _controller;
+
+    return controller != null
+        ? ChangeNotifierProvider<WebviewtubeController>.value(
+            value: controller,
+            child: _child,
+          )
+        : ChangeNotifierProvider<WebviewtubeController>(
+            create: (_) => WebviewtubeController(),
+            child: _child,
+          );
   }
 }
 
@@ -68,10 +92,13 @@ class WebviewtubePlayerView extends StatefulWidget {
   const WebviewtubePlayerView({
     Key? key,
     required this.videoId,
+    required this.options,
   }) : super(key: key);
 
   /// The video id of the video to play.
   final String videoId;
+
+  final WebviewtubeOptions options;
 
   @override
   State<WebviewtubePlayerView> createState() => _WebviewtubePlayerViewState();
@@ -98,6 +125,9 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
               case 'Ready':
                 {
                   context.read<WebviewtubeController>().onReady();
+                  if (widget.options.mute) {
+                    context.read<WebviewtubeController>().mute();
+                  }
                   break;
                 }
               case 'StateChange':
@@ -163,9 +193,7 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
           allowsInlineMediaPlayback: true,
           initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
           javascriptChannels: _buildJavascriptChannel(),
-          userAgent: context.read<WebviewtubeController>().options.forceHd
-              ? hdUserAgent
-              : null,
+          userAgent: widget.options.forceHd ? hdUserAgent : null,
         ),
       ),
     );
@@ -188,7 +216,7 @@ class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
       context.read<WebviewtubeController>().onWebResourceError(error);
 
   String _generateIframePage(String videoId) {
-    final options = context.read<WebviewtubeController>().options;
+    final options = widget.options;
 
     return '''
 <!DOCTYPE html>

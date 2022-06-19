@@ -37,22 +37,39 @@ import '../webviewtube.dart';
 class WebviewtubeVideoPlayer extends StatelessWidget {
   /// Constructor for [WebviewtubeVideoPlayer].
   WebviewtubeVideoPlayer(
-      {Key? key, required this.videoId, WebviewtubeController? controller})
-      : _controller = controller ??
-            WebviewtubeController(
-                options: const WebviewtubeOptions(showControls: false)),
+      {Key? key,
+      required this.videoId,
+      WebviewtubeOptions? options,
+      WebviewtubeController? controller})
+      : _controller = controller,
+        _options = options?.copyWith(showControls: false) ??
+            const WebviewtubeOptions(showControls: false),
         super(key: key);
 
   /// The video id of the video to play.
   final String videoId;
-  final WebviewtubeController _controller;
+
+  /// Additional options to control the player
+  final WebviewtubeOptions _options;
+
+  final WebviewtubeController? _controller;
+
+  late final _child =
+      WebviewtubeVideoPlayerView(videoId: videoId, options: _options);
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: _controller,
-      child: WebviewtubeVideoPlayerView(videoId: videoId),
-    );
+    final controller = _controller;
+
+    return controller != null
+        ? ChangeNotifierProvider<WebviewtubeController>.value(
+            value: controller,
+            child: _child,
+          )
+        : ChangeNotifierProvider<WebviewtubeController>(
+            create: (_) => WebviewtubeController(),
+            child: _child,
+          );
   }
 }
 
@@ -62,10 +79,13 @@ class WebviewtubeVideoPlayerView extends StatelessWidget {
   const WebviewtubeVideoPlayerView({
     Key? key,
     required this.videoId,
+    required this.options,
   }) : super(key: key);
 
   /// The video id of the video to play.
   final String videoId;
+
+  final WebviewtubeOptions options;
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +95,7 @@ class WebviewtubeVideoPlayerView extends StatelessWidget {
       children: [
         WebviewtubePlayer(
           videoId: videoId,
+          options: options,
           controller: context.read<WebviewtubeController>(),
         ),
         Selector<WebviewtubeController, bool>(

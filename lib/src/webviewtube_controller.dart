@@ -13,16 +13,12 @@ typedef PlayerErrorCallback = void Function(PlayerError error);
 class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// Constructor for [WebviewtubeController].
   WebviewtubeController({
-    this.options = const WebviewtubeOptions(),
     this.onPlayerReady,
     this.onPlayerError,
     this.onPlayerWebResourceError,
   }) : super(const WebviewTubeValue());
 
   WebViewController? _webViewController;
-
-  /// Additional options to control the player
-  final WebviewtubeOptions options;
 
   /// Invoked when the player is ready
   final PlayerReadyCallback? onPlayerReady;
@@ -44,9 +40,6 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// Invoked handler when the player is ready.
   void onReady() {
     value = value.copyWith(isReady: true);
-    if (options.mute) {
-      mute();
-    }
     if (onPlayerReady != null) {
       onPlayerReady!();
     }
