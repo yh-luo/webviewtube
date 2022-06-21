@@ -38,7 +38,7 @@ class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
   @override
   void dispose() {
     // If a controller is passed to the player, remember to dispose it when
-    // it's not need.
+    // it's not in need.
     controller.dispose();
     super.dispose();
   }

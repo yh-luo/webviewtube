@@ -33,7 +33,7 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
   @override
   void dispose() {
     // If a controller is passed to the player, remember to dispose it when
-    // it's not need.
+    // it's not in need.
     webviewtubeController.dispose();
     super.dispose();
   }
