@@ -10,14 +10,12 @@ import '../webviewtube.dart';
 /// {@template webviewtube_player}
 /// Plays YouTube videos using the official [YouTube IFrame Player API](https://developers.google.com/youtube/iframe_api_reference).
 ///
-/// The player can be which can be configured by [WebviewtubeOptions] and
-/// controlled by [WebviewtubeController].
-///
+/// The player can be configured by [options] and controlled by [controller].
 /// If a controller is not provided, a [WebviewtubeController] with default
 /// options will be created using `ChangeNotifierProvider` constructor. It will
-/// be automatically disposed when [WebviewtubePlayer] is removed from the
-/// widget tree. Otherwise the user is responsible for disposing the given
-/// controller.
+/// be automatically disposed when the [WebviewtubePlayer] widget is removed
+/// from the widget tree. Otherwise the user is responsible for disposing the
+/// given controller.
 ///
 /// Example:
 /// ```dart
@@ -28,11 +26,7 @@ import '../webviewtube.dart';
 ///
 /// With controller:
 /// ```dart
-/// final webviewtubeController = WebviewtubeController(
-///   options: const WebviewtubeOptions(
-///       forceHd: true,
-///       enableCaption: false),
-/// );
+/// final webviewtubeController = WebviewtubeController();
 ///
 /// // Remember to dispose the controller to avoid memory leak
 /// @override
@@ -62,13 +56,14 @@ class WebviewtubePlayer extends StatelessWidget {
   /// The video id of the video to play.
   final String videoId;
 
-  /// Additional options to control the player
+  /// Additional options to control the player.
   final WebviewtubeOptions _options;
 
+  /// The controller to control the player.
   final WebviewtubeController? _controller;
 
   late final _child =
-      WebviewtubePlayerView(videoId: videoId, options: _options);
+      _WebviewtubePlayerView(videoId: videoId, options: _options);
 
   @override
   Widget build(BuildContext context) {
@@ -86,25 +81,22 @@ class WebviewtubePlayer extends StatelessWidget {
   }
 }
 
-/// The player view.
-class WebviewtubePlayerView extends StatefulWidget {
-  /// Constructor for [WebviewtubePlayerView].
-  const WebviewtubePlayerView({
+class _WebviewtubePlayerView extends StatefulWidget {
+  const _WebviewtubePlayerView({
     Key? key,
     required this.videoId,
     required this.options,
   }) : super(key: key);
 
-  /// The video id of the video to play.
   final String videoId;
 
   final WebviewtubeOptions options;
 
   @override
-  State<WebviewtubePlayerView> createState() => _WebviewtubePlayerViewState();
+  State<_WebviewtubePlayerView> createState() => _WebviewtubePlayerViewState();
 }
 
-class _WebviewtubePlayerViewState extends State<WebviewtubePlayerView> {
+class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
   final Completer<WebViewController> _webviewController =
       Completer<WebViewController>();
 

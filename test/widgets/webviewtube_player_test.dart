@@ -80,7 +80,6 @@ void main() {
         ));
 
         expect(find.byType(WebviewtubePlayer), findsOneWidget);
-        expect(find.byType(WebviewtubePlayerView), findsOneWidget);
         expect(find.byType(DurationIndicator), findsNothing);
         expect(find.byType(WebView), findsOneWidget);
       });
@@ -145,8 +144,6 @@ void main() {
     });
 
     group('handle JavaScript channel messages properly', () {
-      final options = WebviewtubeOptions();
-
       testWidgets('Ready', (WidgetTester tester) async {
         final controller = MockWebviewtubeController();
 
@@ -372,8 +369,6 @@ void main() {
   });
 
   group('WebviewtubeVideoPlayer', () {
-    final options = WebviewtubeOptions(showControls: false);
-
     testWidgets('initiate widgets properly', (WidgetTester tester) async {
       provideMockedNetworkImages(() async {
         await tester.pumpWidget(TestApp(
@@ -384,7 +379,6 @@ void main() {
 
         expect(find.byType(LoadingIndicator), findsOneWidget);
         expect(find.byType(WebviewtubeVideoPlayer), findsOneWidget);
-        expect(find.byType(WebviewtubeVideoPlayerView), findsOneWidget);
         expect(find.byType(DurationIndicator), findsOneWidget);
         expect(find.byType(VolumeButton), findsOneWidget);
         expect(find.byType(PlaybackSpeedButton), findsOneWidget);
