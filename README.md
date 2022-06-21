@@ -14,6 +14,22 @@ This package is largely inspired by the popular [youtube_player_flutter](https:/
 
 ![decorated player view](https://github.com/yh-luo/webviewtube/blob/main/resources/decorated_1.png)
 
+- [Webviewtube](#webviewtube)
+  - [Why another package?](#why-another-package)
+  - [Supported Platforms](#supported-platforms)
+  - [Setup](#setup)
+    - [Android](#android)
+    - [iOS](#ios)
+  - [Usage](#usage)
+    - [Default IFrame player](#default-iframe-player)
+    - [Widgets decorated player](#widgets-decorated-player)
+    - [Configure the player](#configure-the-player)
+      - [WebviewtubeOptions](#webviewtubeoptions)
+      - [WebviewtubeController](#webviewtubecontroller)
+  - [Customize the player](#customize-the-player)
+  - [Acknowledgments](#acknowledgments)
+
+
 ## Why another package?
 
 `youtube_player_flutter` and its dependency `flutter_inappwebview` have been in hiatus for a while. It's more reassuring to use the official [webview_flutter](https://pub.dev/packages/webview_flutter). Also, the performance issues of `youtube_player_flutter` are not resolved and make it problematic to use in some situations.
@@ -59,39 +75,51 @@ Check out `example/lib/` for more details.
 WebviewtubePlayer(videoId: '4AoFA19gbLo')
 ```
 
-With configuration:
-
-```dart
-final webviewtubeController = WebviewtubeController(
-  options: const WebviewtubeOptions(
-    forceHd: true,
-    enableCaption: false,
-  ),
-);
-
-WebviewtubePlayer(videoId: '4AoFA19gbLo', controller: webviewtubeController);
-```
-
-### With material widgets
+### Widgets decorated player
 
 ```dart
 WebviewtubeVideoPlayer(videoId: '4AoFA19gbLo')
 ```
 
-With configuration:
+### Configure the player
 
+#### WebviewtubeOptions
+
+If you only wish to change the behavior of the player, pass a `WebviewtubeOptions` to the player.
 ```dart
-final webviewtubeController = WebviewtubeController(
-  options: const WebviewtubeOptions(
-      // remember to set `showControls` to false to hide the
-      // iframe player controls
-      showControls: false,
-      forceHd: true,
-      enableCaption: false),
+final options = const WebviewtubeOptions(
+    forceHd: true,
+    enableCaption: false,
 );
 
-WebviewtubeVideoPlayer(videoId: '4AoFA19gbLo', controller: webviewtubeController)
+
+/// `showControls` will always be false for [WebviewtubeVideoPlayer]
+WebviewtubeVideoPlayer(videoId: '4AoFA19gbLo', options: options);
 ```
+
+#### WebviewtubeController
+
+If you want to listen to the player value (e.g., video metadata) and control the player (e.g., pause or load other videos), pass a `WebviewtubeController` and remember to dispose the controller when it's not need.
+```dart
+// ...
+// inside a state of a stateful widget
+final controller = WebviewtubeController();
+
+@override
+void dispose() {
+  controller.dispose();
+  super.dispose();
+}
+
+@override
+Widget build(BuildContext context) {
+    return WebviewtubeVideoPlayer(
+      videoId: '4AoFA19gbLo',
+      controller: controller,
+      );
+}
+```
+
 
 ## Customize the player
 

@@ -32,7 +32,8 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
 
   @override
   void dispose() {
-    webviewtubeController.removeListener(_valueHandler);
+    // If a controller is passed to the player, remember to dispose it when
+    // it's not need.
     webviewtubeController.dispose();
     super.dispose();
   }
@@ -64,7 +65,7 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
   }
 
   void _onPlayerReady() {
-    debugPrint('The player is ready');
+    debugPrint('The customized player is ready');
   }
 
   @override
