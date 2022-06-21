@@ -7,22 +7,40 @@
 ///
 /// Use [WebviewtubeVideoPlayer] for a more decorated player.
 /// ```dart
-/// WebviewtubeVideoPlayer('4AoFA19gbLo')
+/// WebviewtubeVideoPlayer(videoId: '4AoFA19gbLo')
 /// ```
 ///
-/// To configure the player, use [WebviewtubeController] with
-/// [WebviewtubeOptions].
+/// To configure the player, use [WebviewtubeOptions]
 /// ```dart
-/// final webviewtubeController = WebviewtubeController(
-///   options: const WebviewtubeOptions(
-///       // remember to set `showControls` to false to hide the
-///       // iframe player controls
-///       showControls: false,
-///       forceHd: true,
-///       enableCaption: false),
+/// final options = const WebviewtubeOptions(
+///     forceHd: true,
+///     enableCaption: false,
 /// );
 ///
-/// WebviewtubeVideoPlayer('4AoFA19gbLo', controller: webviewtubeController)
+/// WebviewtubeVideoPlayer('4AoFA19gbLo', options: options)
+/// ```
+///
+/// To listen to the player value (e.g., video metadata) or control the player
+/// (e.g., pause or load other videos), pass a [WebviewtubeController] and
+/// remember to dispose the controller when it's not in need.
+/// ```dart
+/// // ...
+/// // inside a state of a stateful widget
+/// final controller = WebviewtubeController();
+///
+/// @override
+/// void dispose() {
+///   controller.dispose();
+///   super.dispose();
+/// }
+///
+/// @override
+/// Widget build(BuildContext context) {
+///     return WebviewtubeVideoPlayer(
+///       videoId: '4AoFA19gbLo',
+///       controller: controller,
+///       );
+/// }
 /// ```
 ///
 /// See also:

@@ -36,7 +36,7 @@ This package is largely inspired by the popular [youtube_player_flutter](https:/
 
 This package aims to solve the problems by:
 - Depends on the official [webview_flutter](https://pub.dev/packages/webview_flutter) to provide a default IFrame player.
-  - `WebviewtubePlayer` is a pure IFrame player and does not require any Flutter widgets. It's just a WebView, (mostly) free from the janks.
+  - `WebviewtubePlayer` is a WebView and does not bundle with any other widgets.
 - Proper state management with [provider](https://pub.dev/packages/provider).
   - `WebviewtubeVideoPlayer` combines the default player with customized widgets. The state management is carefully handled, which makes the player more maintainable, testable, and easily customizable.
 
@@ -83,23 +83,18 @@ WebviewtubeVideoPlayer(videoId: '4AoFA19gbLo')
 
 ### Configure the player
 
-#### WebviewtubeOptions
-
-If you only wish to change the behavior of the player, pass a `WebviewtubeOptions` to the player.
+To configure the player, pass a `WebviewtubeOptions` to the player.
 ```dart
 final options = const WebviewtubeOptions(
     forceHd: true,
     enableCaption: false,
 );
 
-
 /// `showControls` will always be false for [WebviewtubeVideoPlayer]
 WebviewtubeVideoPlayer(videoId: '4AoFA19gbLo', options: options);
 ```
 
-#### WebviewtubeController
-
-If you want to listen to the player value (e.g., video metadata) and control the player (e.g., pause or load other videos), pass a `WebviewtubeController` and remember to dispose the controller when it's not need.
+To listen to the player value (e.g., video metadata) and control the player (e.g., pause or load other videos), pass a `WebviewtubeController` and remember to dispose the controller when it's not in need.
 ```dart
 // ...
 // inside a state of a stateful widget
