@@ -18,14 +18,30 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: WebviewtubeDemo(),
+      home: const WebviewtubeDemo(),
     );
   }
 }
 
-class WebviewtubeDemo extends StatelessWidget {
-  WebviewtubeDemo({Key? key}) : super(key: key);
+class WebviewtubeDemo extends StatefulWidget {
+  const WebviewtubeDemo({Key? key}) : super(key: key);
+
+  @override
+  State<WebviewtubeDemo> createState() => _WebviewtubeDemoState();
+}
+
+class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
   final controller = WebviewtubeController();
+  final options = const WebviewtubeOptions(
+      forceHd: true, loop: true, interfaceLanguage: 'zh-Hant');
+
+  @override
+  void dispose() {
+    // If a controller is passed to the player, remember to dispose it when
+    // it's not in need.
+    controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,16 +63,23 @@ class WebviewtubeDemo extends StatelessWidget {
               ),
               WebviewtubePlayer(
                 videoId: '4AoFA19gbLo',
+                options: options,
                 controller: controller,
               ),
             ],
           ),
           const SizedBox(height: 70),
           ElevatedButton(
-            onPressed: () {
+            onPressed: () async {
               controller.pause();
-              Navigator.of(context).push(MaterialPageRoute(
+              debugPrint(
+                  '${controller.value.videoMetadata.title} paused at ${controller.value.position}');
+              await Navigator.of(context).push<void>(MaterialPageRoute(
                   builder: (_) => const WebviewtubeDecoratedPlayer()));
+              // when popping back, the player continues to play
+              controller.play();
+              debugPrint(
+                  'Continue to play ${controller.value.videoMetadata.title}');
             },
             child: const Text(
               'Webviewtube Decorated Player',

@@ -6,23 +6,23 @@ import 'models/models.dart';
 /// Optional callback invoked when the player is ready.
 typedef PlayerReadyCallback = void Function();
 
-/// Optional callback invoked when the player returns an error
+/// Optional callback invoked when the player returns an error.
 typedef PlayerErrorCallback = void Function(PlayerError error);
 
 /// Controls the player and provides information about the player state.
+///
+/// When making a new player widget for fine-grained controls, the controller
+/// must be provided a [WebViewController] using [onWebviewCreated] before any
+/// method call, e.g., play, load, etc, or an error will be thrown.
 class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// Constructor for [WebviewtubeController].
   WebviewtubeController({
-    this.options = const WebviewtubeOptions(),
     this.onPlayerReady,
     this.onPlayerError,
     this.onPlayerWebResourceError,
   }) : super(const WebviewTubeValue());
 
-  WebViewController? _webViewController;
-
-  /// Additional options to control the player
-  final WebviewtubeOptions options;
+  late final WebViewController _webViewController;
 
   /// Invoked when the player is ready
   final PlayerReadyCallback? onPlayerReady;
@@ -44,9 +44,6 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// Invoked handler when the player is ready.
   void onReady() {
     value = value.copyWith(isReady: true);
-    if (options.mute) {
-      mute();
-    }
     if (onPlayerReady != null) {
       onPlayerReady!();
     }
@@ -98,12 +95,8 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
   /// Interacts with IFrame API via javascript channels
   void _callMethod(String method) {
-    if (_webViewController == null) {
-      throw Exception('WebViewController is not provided.');
-    }
-
     if (value.isReady) {
-      _webViewController?.runJavascript(method);
+      _webViewController.runJavascript(method);
     } else {
       debugPrint('The controller is not ready for method calls.');
     }
@@ -147,7 +140,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   void replay() => seekTo(Duration.zero);
 
   /// Reloads the player.
-  void reload() => _webViewController?.reload();
+  void reload() => _webViewController.reload();
 
   /// Loads and plays the specified video
   void load(String videoId, {int startAt = 0, int? endAt}) {

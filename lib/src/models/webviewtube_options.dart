@@ -87,4 +87,64 @@ class WebviewtubeOptions {
   /// Smaller values result in more frequent updates but reduce the performance.
   /// Defaults to 130.
   final int currentTimeUpdateInterval;
+
+  WebviewtubeOptions copyWith({
+    bool? showControls,
+    bool? autoPlay,
+    bool? mute,
+    bool? loop,
+    bool? forceHd,
+    String? interfaceLanguage,
+    bool? enableCaption,
+    String? captionLanguage,
+    int? startAt,
+    int? endAt,
+    int? currentTimeUpdateInterval = 130,
+  }) {
+    return WebviewtubeOptions(
+      showControls: showControls ?? this.showControls,
+      autoPlay: autoPlay ?? this.autoPlay,
+      mute: mute ?? this.mute,
+      loop: loop ?? this.loop,
+      forceHd: forceHd ?? this.forceHd,
+      interfaceLanguage: interfaceLanguage ?? this.interfaceLanguage,
+      enableCaption: enableCaption ?? this.enableCaption,
+      captionLanguage: captionLanguage ?? this.captionLanguage,
+      startAt: startAt ?? this.startAt,
+      endAt: endAt ?? this.endAt,
+      currentTimeUpdateInterval:
+          currentTimeUpdateInterval ?? this.currentTimeUpdateInterval,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      other is WebviewtubeOptions &&
+      other.showControls == showControls &&
+      other.autoPlay == autoPlay &&
+      other.mute == mute &&
+      other.loop == loop &&
+      other.forceHd == forceHd &&
+      other.interfaceLanguage == interfaceLanguage &&
+      other.enableCaption == enableCaption &&
+      other.captionLanguage == captionLanguage &&
+      other.startAt == startAt &&
+      other.endAt == endAt &&
+      other.currentTimeUpdateInterval == currentTimeUpdateInterval;
+
+  @override
+  int get hashCode => Object.hash(
+        runtimeType,
+        showControls,
+        autoPlay,
+        mute,
+        loop,
+        forceHd,
+        interfaceLanguage,
+        enableCaption,
+        captionLanguage,
+        startAt,
+        endAt,
+        currentTimeUpdateInterval,
+      );
 }

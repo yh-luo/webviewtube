@@ -4,10 +4,15 @@ import 'package:provider/provider.dart';
 import '../webviewtube.dart';
 
 /// {@template webviewtube_video_player}
-/// A widgets-decorated [WebviewtubePlayer]. It's less performant but
-/// customizable.
-/// If controller is not provided, a [WebviewtubeController] hides the default
-/// YouTube player controls is created.
+/// A widgets-decorated [WebviewtubePlayer].
+///
+/// It's less performant but has more customized widgets. The player can be
+/// configured by [options] and controlled by [controller]. If a controller is
+/// not provided, a [WebviewtubeController] with default options will be created
+/// using `ChangeNotifierProvider` constructor. It will be automatically
+/// disposed when the [WebviewtubeVideoPlayer] widget is removed from the
+/// widget tree. Otherwise the user is responsible for disposing the given
+/// controller.
 ///
 /// Example:
 /// ```dart
@@ -18,14 +23,14 @@ import '../webviewtube.dart';
 ///
 /// With controller:
 /// ```dart
-/// final webviewtubeController = WebviewtubeController(
-///   options: const WebviewtubeOptions(
-///       // remember to set `showControls` to false to hide the
-///       // iframe player controls
-///       showControls: false,
-///       forceHd: true,
-///       enableCaption: false),
-/// );
+/// final webviewtubeController = WebviewtubeController();
+///
+/// // Remember to dispose the controller to avoid memory leak
+/// @override
+/// void dispose() {
+///   webviewtubeController.dispose();
+///   super.dispose();
+/// }
 ///
 /// Scaffold(
 ///   body: WebviewtubeVideoPlayer(
@@ -37,35 +42,55 @@ import '../webviewtube.dart';
 class WebviewtubeVideoPlayer extends StatelessWidget {
   /// Constructor for [WebviewtubeVideoPlayer].
   WebviewtubeVideoPlayer(
-      {Key? key, required this.videoId, WebviewtubeController? controller})
-      : _controller = controller ??
-            WebviewtubeController(
-                options: const WebviewtubeOptions(showControls: false)),
+      {Key? key,
+      required this.videoId,
+      WebviewtubeOptions? options,
+      WebviewtubeController? controller})
+      : _controller = controller,
+        _options = options?.copyWith(showControls: false) ??
+            const WebviewtubeOptions(showControls: false),
         super(key: key);
 
   /// The video id of the video to play.
   final String videoId;
-  final WebviewtubeController _controller;
+
+  /// Additional options to control the player.
+  final WebviewtubeOptions _options;
+
+  /// The controller to control the player.
+  final WebviewtubeController? _controller;
+
+  late final _child =
+      _WebviewtubeVideoPlayerView(videoId: videoId, options: _options);
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider.value(
-      value: _controller,
-      child: WebviewtubeVideoPlayerView(videoId: videoId),
-    );
+    final controller = _controller;
+
+    return controller != null
+        ? ChangeNotifierProvider<WebviewtubeController>.value(
+            value: controller,
+            child: _child,
+          )
+        : ChangeNotifierProvider<WebviewtubeController>(
+            create: (_) => WebviewtubeController(),
+            child: _child,
+          );
   }
 }
 
 /// The player view.
-class WebviewtubeVideoPlayerView extends StatelessWidget {
-  /// Constructor for [WebviewtubeVideoPlayerView].
-  const WebviewtubeVideoPlayerView({
+class _WebviewtubeVideoPlayerView extends StatelessWidget {
+  const _WebviewtubeVideoPlayerView({
     Key? key,
     required this.videoId,
+    required this.options,
   }) : super(key: key);
 
   /// The video id of the video to play.
   final String videoId;
+
+  final WebviewtubeOptions options;
 
   @override
   Widget build(BuildContext context) {
@@ -75,6 +100,7 @@ class WebviewtubeVideoPlayerView extends StatelessWidget {
       children: [
         WebviewtubePlayer(
           videoId: videoId,
+          options: options,
           controller: context.read<WebviewtubeController>(),
         ),
         Selector<WebviewtubeController, bool>(

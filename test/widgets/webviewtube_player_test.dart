@@ -46,6 +46,7 @@ void main() {
     // Source: https://github.com/flutter/plugins/blob/main/packages/webview_flutter/webview_flutter/test/webview_flutter_test.dart
     late MockWebViewPlatform mockWebViewPlatform;
     late MockWebViewPlatformController mockWebViewPlatformController;
+    late MockWebviewtubeController controller;
 
     setUp(() {
       mockWebViewPlatformController = MockWebViewPlatformController();
@@ -69,6 +70,7 @@ void main() {
       });
 
       WebView.platform = mockWebViewPlatform;
+      controller = MockWebviewtubeController();
     });
 
     testWidgets('initiate widgets properly', (WidgetTester tester) async {
@@ -78,7 +80,6 @@ void main() {
         ));
 
         expect(find.byType(WebviewtubePlayer), findsOneWidget);
-        expect(find.byType(WebviewtubePlayerView), findsOneWidget);
         expect(find.byType(DurationIndicator), findsNothing);
         expect(find.byType(WebView), findsOneWidget);
       });
@@ -87,10 +88,8 @@ void main() {
     testWidgets('initiate the player with configuration',
         (WidgetTester tester) async {
       final options = MockWebviewtubeOptions();
-      final controller = MockWebviewtubeController();
       final value =
           WebviewTubeValue(isReady: true, playerState: PlayerState.paused);
-      when(controller.options).thenReturn(options);
       when(options.showControls).thenReturn(false);
       when(options.autoPlay).thenReturn(false);
       when(options.mute).thenReturn(true);
@@ -109,6 +108,7 @@ void main() {
         await tester.pumpWidget(TestApp(
           child: WebviewtubePlayer(
             videoId: videoId,
+            options: options,
             controller: controller,
           ),
         ));
@@ -144,18 +144,19 @@ void main() {
     });
 
     group('handle JavaScript channel messages properly', () {
-      final options = WebviewtubeOptions();
-
       testWidgets('Ready', (WidgetTester tester) async {
+        final options = WebviewtubeOptions(mute: true);
         final controller = MockWebviewtubeController();
-        when(controller.options).thenReturn(options);
+
         when(controller.onWebviewCreated(any)).thenAnswer((_) {});
         when(controller.onReady()).thenAnswer((_) {});
+        when(controller.mute()).thenAnswer((_) {});
 
         provideMockedNetworkImages(() async {
           await tester.pumpWidget(TestApp(
             child: WebviewtubePlayer(
               videoId: videoId,
+              options: options,
               controller: controller,
             ),
           ));
@@ -167,13 +168,13 @@ void main() {
           final message = jsonEncode({'method': 'Ready', 'args': {}});
           channelRegistry.onJavascriptChannelMessage('Webviewtube', message);
 
-          verify(controller.onReady());
+          verify(controller.onReady()).called(1);
+          verify(controller.mute()).called(1);
         });
       });
 
       testWidgets('StateChange', (WidgetTester tester) async {
         final controller = MockWebviewtubeController();
-        when(controller.options).thenReturn(options);
         when(controller.onWebviewCreated(any)).thenAnswer((_) {});
         when(controller.onPlayerStateChange(any)).thenAnswer((_) {});
 
@@ -201,7 +202,6 @@ void main() {
 
       testWidgets('PlaybackQualityChange', (WidgetTester tester) async {
         final controller = MockWebviewtubeController();
-        when(controller.options).thenReturn(options);
         when(controller.onWebviewCreated(any)).thenAnswer((_) {});
         when(controller.onPlaybackQualityChange(any)).thenAnswer((_) {});
 
@@ -229,7 +229,6 @@ void main() {
 
       testWidgets('PlaybackQualityChange', (WidgetTester tester) async {
         final controller = MockWebviewtubeController();
-        when(controller.options).thenReturn(options);
         when(controller.onWebviewCreated(any)).thenAnswer((_) {});
         when(controller.onPlaybackQualityChange(any)).thenAnswer((_) {});
 
@@ -257,7 +256,6 @@ void main() {
 
       testWidgets('PlaybackRateChange', (WidgetTester tester) async {
         final controller = MockWebviewtubeController();
-        when(controller.options).thenReturn(options);
         when(controller.onWebviewCreated(any)).thenAnswer((_) {});
         when(controller.onPlaybackRateChange(any)).thenAnswer((_) {});
 
@@ -285,7 +283,7 @@ void main() {
 
       testWidgets('Errors', (WidgetTester tester) async {
         final controller = MockWebviewtubeController();
-        when(controller.options).thenReturn(options);
+
         when(controller.onWebviewCreated(any)).thenAnswer((_) {});
         when(controller.onError(any)).thenAnswer((_) {});
 
@@ -313,7 +311,7 @@ void main() {
 
       testWidgets('VideoData', (WidgetTester tester) async {
         final controller = MockWebviewtubeController();
-        when(controller.options).thenReturn(options);
+
         when(controller.onWebviewCreated(any)).thenAnswer((_) {});
         when(controller.onVideoDataChange(any)).thenAnswer((_) {});
 
@@ -346,7 +344,7 @@ void main() {
 
       testWidgets('CurrentTime', (WidgetTester tester) async {
         final controller = MockWebviewtubeController();
-        when(controller.options).thenReturn(options);
+
         when(controller.onWebviewCreated(any)).thenAnswer((_) {});
         when(controller.onCurrentTimeChange(any)).thenAnswer((_) {});
 
@@ -375,8 +373,6 @@ void main() {
   });
 
   group('WebviewtubeVideoPlayer', () {
-    final options = WebviewtubeOptions(showControls: false);
-
     testWidgets('initiate widgets properly', (WidgetTester tester) async {
       provideMockedNetworkImages(() async {
         await tester.pumpWidget(TestApp(
@@ -387,7 +383,6 @@ void main() {
 
         expect(find.byType(LoadingIndicator), findsOneWidget);
         expect(find.byType(WebviewtubeVideoPlayer), findsOneWidget);
-        expect(find.byType(WebviewtubeVideoPlayerView), findsOneWidget);
         expect(find.byType(DurationIndicator), findsOneWidget);
         expect(find.byType(VolumeButton), findsOneWidget);
         expect(find.byType(PlaybackSpeedButton), findsOneWidget);
@@ -396,12 +391,56 @@ void main() {
       });
     });
 
+    testWidgets('initiate the player with configuration',
+        (WidgetTester tester) async {
+      final options = MockWebviewtubeOptions();
+      final controller = MockWebviewtubeController();
+      final value =
+          WebviewTubeValue(isReady: true, playerState: PlayerState.paused);
+      when(options.copyWith(showControls: false)).thenReturn(options);
+      when(options.showControls).thenReturn(false);
+      when(options.autoPlay).thenReturn(false);
+      when(options.mute).thenReturn(true);
+      when(options.loop).thenReturn(true);
+      when(options.forceHd).thenReturn(true);
+      when(options.interfaceLanguage).thenReturn('zh_tw');
+      when(options.enableCaption).thenReturn(false);
+      when(options.captionLanguage).thenReturn('zh_tw');
+      when(options.startAt).thenReturn(1);
+      when(options.endAt).thenReturn(5);
+      when(options.currentTimeUpdateInterval).thenReturn(200);
+      when(controller.value).thenReturn(value);
+      when(controller.onWebviewCreated(any)).thenAnswer((_) {});
+
+      provideMockedNetworkImages(() async {
+        await tester.pumpWidget(TestApp(
+          child: WebviewtubeVideoPlayer(
+            videoId: videoId,
+            options: options,
+            controller: controller,
+          ),
+        ));
+
+        verify(controller.onWebviewCreated(any));
+        verify(options.showControls);
+        verify(options.autoPlay);
+        verify(options.loop);
+        verify(options.forceHd);
+        verify(options.interfaceLanguage);
+        verify(options.enableCaption);
+        verify(options.captionLanguage);
+        verify(options.startAt);
+        verify(options.endAt);
+        verify(options.currentTimeUpdateInterval);
+      });
+    });
+
     group('VolumeButton', () {
       testWidgets('tap to mute', (WidgetTester tester) async {
         final controller = MockWebviewtubeController();
         final value =
             WebviewTubeValue(isReady: true, playerState: PlayerState.paused);
-        when(controller.options).thenReturn(options);
+
         when(controller.value).thenReturn(value);
 
         provideMockedNetworkImages(() async {
@@ -426,7 +465,7 @@ void main() {
         final controller = MockWebviewtubeController();
         final value = WebviewTubeValue(
             isReady: true, isMuted: true, playerState: PlayerState.paused);
-        when(controller.options).thenReturn(options);
+
         when(controller.value).thenReturn(value);
 
         provideMockedNetworkImages(() async {
@@ -453,7 +492,7 @@ void main() {
         final controller = MockWebviewtubeController();
         final value =
             WebviewTubeValue(isReady: true, playerState: PlayerState.paused);
-        when(controller.options).thenReturn(options);
+
         when(controller.value).thenReturn(value);
 
         provideMockedNetworkImages(() async {
@@ -482,7 +521,7 @@ void main() {
         final controller = MockWebviewtubeController();
         final value =
             WebviewTubeValue(isReady: true, playerState: PlayerState.ended);
-        when(controller.options).thenReturn(options);
+
         when(controller.value).thenReturn(value);
 
         provideMockedNetworkImages(() async {
@@ -502,7 +541,7 @@ void main() {
         final controller = MockWebviewtubeController();
         final value =
             WebviewTubeValue(isReady: true, playerState: PlayerState.ended);
-        when(controller.options).thenReturn(options);
+
         when(controller.value).thenReturn(value);
 
         provideMockedNetworkImages(() async {
@@ -527,7 +566,7 @@ void main() {
         final controller = MockWebviewtubeController();
         final value =
             WebviewTubeValue(isReady: true, playerState: PlayerState.paused);
-        when(controller.options).thenReturn(options);
+
         when(controller.value).thenReturn(value);
         when(controller.seekTo(any, allowSeekAhead: true)).thenAnswer((_) {});
 

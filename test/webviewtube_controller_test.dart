@@ -36,15 +36,6 @@ void main() {
         verifyNoMoreInteractions(webViewController);
       });
 
-      test('calls mute if options.mute=true', () {
-        final controller =
-            WebviewtubeController(options: WebviewtubeOptions(mute: true));
-        controller.onWebviewCreated(webViewController);
-
-        controller.onReady();
-        verify(webViewController.runJavascript('mute()'));
-      });
-
       test('calls callback', () {
         var called = false;
         final controller = WebviewtubeController(onPlayerReady: () {

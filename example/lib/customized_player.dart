@@ -10,6 +10,9 @@ class CustomizedPlayer extends StatefulWidget {
 }
 
 class _CustomizedPlayerState extends State<CustomizedPlayer> {
+  final options = const WebviewtubeOptions(
+    enableCaption: false,
+  );
   late final WebviewtubeController webviewtubeController;
 
   final videoIds = ['qV9pqHWxYgI', 'cyFM2emjbQ8', 'PKGguGUwSYE'];
@@ -22,10 +25,6 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
   void initState() {
     super.initState();
     webviewtubeController = WebviewtubeController(
-      options: const WebviewtubeOptions(
-        showControls: false,
-        enableCaption: false,
-      ),
       onPlayerReady: _onPlayerReady,
     );
     webviewtubeController.addListener(_valueHandler);
@@ -33,7 +32,9 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
 
   @override
   void dispose() {
-    webviewtubeController.removeListener(_valueHandler);
+    // If a controller is passed to the player, remember to dispose it when
+    // it's not in need.
+    webviewtubeController.dispose();
     super.dispose();
   }
 
@@ -64,7 +65,7 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
   }
 
   void _onPlayerReady() {
-    debugPrint('The player is ready');
+    debugPrint('The customized player is ready');
   }
 
   @override
@@ -77,6 +78,7 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
         children: <Widget>[
           WebviewtubePlayer(
             videoId: videoIds.first,
+            options: options,
             controller: webviewtubeController,
           ),
           Column(
