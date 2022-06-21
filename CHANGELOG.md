@@ -1,3 +1,12 @@
+# 1.3.0
+
+- doc: update outdated documentation
+- refactor: finalize webview controller
+- doc: update example and readme for player configuration
+- __BREAKING__ refactor!: decouple options from controller
+- refactor: dispose the default controller automatically
+  - If a controller is provided to the player, the user should dispose it manually.
+
 # 1.2.0
 
 - refactor: remove unused functions
