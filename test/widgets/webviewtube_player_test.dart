@@ -145,15 +145,18 @@ void main() {
 
     group('handle JavaScript channel messages properly', () {
       testWidgets('Ready', (WidgetTester tester) async {
+        final options = WebviewtubeOptions(mute: true);
         final controller = MockWebviewtubeController();
 
         when(controller.onWebviewCreated(any)).thenAnswer((_) {});
         when(controller.onReady()).thenAnswer((_) {});
+        when(controller.mute()).thenAnswer((_) {});
 
         provideMockedNetworkImages(() async {
           await tester.pumpWidget(TestApp(
             child: WebviewtubePlayer(
               videoId: videoId,
+              options: options,
               controller: controller,
             ),
           ));
@@ -165,7 +168,8 @@ void main() {
           final message = jsonEncode({'method': 'Ready', 'args': {}});
           channelRegistry.onJavascriptChannelMessage('Webviewtube', message);
 
-          verify(controller.onReady());
+          verify(controller.onReady()).called(1);
+          verify(controller.mute()).called(1);
         });
       });
 
