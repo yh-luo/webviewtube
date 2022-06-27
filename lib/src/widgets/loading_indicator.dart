@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 
+/// {@template loading_indicator}
 /// A widget to indicate the playing is loading the video.
+/// {@endtemplate}
 class LoadingIndicator extends StatelessWidget {
-  /// Constructor for [LoadingIndicator].
+  /// {@macro loading_indicator}
   const LoadingIndicator({Key? key}) : super(key: key);
 
   @override

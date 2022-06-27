@@ -3,9 +3,13 @@ import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
 
+/// {@template progress_bar}
 /// A widget to display the progress bar of the video.
+///
+/// Colors of the progress bar can be configured with [ProgressBarColors].
+/// {@endtemplate}
 class ProgressBar extends StatefulWidget {
-  /// Constructor for [ProgressBar].
+  /// {@macro progress_bar}
   const ProgressBar({Key? key, this.colors}) : super(key: key);
 
   /// Defines colors for the [ProgressBar]. If null,

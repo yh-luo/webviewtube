@@ -1,3 +1,9 @@
+# 1.3.1
+
+- refactor: implement `toString` for models
+- doc: use templates for constructors
+- doc: add more explanation for `WebviewtubeController`
+
 # 1.3.0
 
 - doc: update outdated documentation

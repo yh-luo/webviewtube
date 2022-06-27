@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
-/// Options for the player
+/// {@template webviewtube_options}
+/// Options for the player.
+/// {@endtemplate}
 @immutable
 class WebviewtubeOptions {
-  /// Constructor for [WebviewtubeOptions].
+  /// {@macro webviewtube_options}
   const WebviewtubeOptions({
     this.showControls = true,
     this.autoPlay = true,
@@ -147,4 +149,20 @@ class WebviewtubeOptions {
         endAt,
         currentTimeUpdateInterval,
       );
+
+  @override
+  String toString() {
+    return 'WebviewtubeOptions('
+        'showControls: $showControls, '
+        'autoPlay: $autoPlay, '
+        'mute: $mute, '
+        'loop: $loop, '
+        'forceHd: $forceHd, '
+        'interfaceLanguage: $interfaceLanguage, '
+        'enableCaption: $enableCaption, '
+        'captionLanguage: $captionLanguage, '
+        'startAt: $startAt, '
+        'endAt: $endAt, '
+        'currentTimeUpdateInterval: $currentTimeUpdateInterval)';
+  }
 }

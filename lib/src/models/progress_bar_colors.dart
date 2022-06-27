@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 
+/// {@template progress_bar_colors}
 /// Colors for [ProgressBar].
+/// {@endtemplate}
 @immutable
 class ProgressBarColors {
-  /// Constructor for [ProgressBarColors].
+  /// {@macro progress_bar_colors}
   const ProgressBarColors({
     required this.backgroundColor,
     required this.playedColor,
@@ -49,4 +51,13 @@ class ProgressBarColors {
   @override
   int get hashCode => Object.hash(
       runtimeType, backgroundColor, playedColor, bufferedColor, handleColor);
+
+  @override
+  String toString() {
+    return 'ProgressBarColors('
+        'backgroundColor: $backgroundColor, '
+        'playedColor: $playedColor, '
+        'bufferedColor: $bufferedColor, '
+        'handleColor: $handleColor)';
+  }
 }
