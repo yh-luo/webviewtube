@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 
+/// {@template player_state}
 /// Current state of the player.
 ///
+/// IFrame API reference:
 /// [player.getPlayerState()](https://developers.google.com/youtube/iframe_api_reference#Playback_status).
+/// {@endtemplate}
 enum PlayerState {
   /// The player is loaded but not started yet.
   unstarted(-1),
@@ -28,6 +31,7 @@ enum PlayerState {
   /// The status code.
   final int? stateCode;
 
+  /// {@macro player_state}
   const PlayerState(this.stateCode);
 
   /// Returns the [PlayerState] for the given [stateCode].
@@ -61,10 +65,12 @@ enum PlayerState {
   }
 }
 
+/// {@template playback_quality}
 /// Current playback quality of the player.
 ///
 /// Noted that it's currently not possible to set the quality of the player via
 /// IFrame API.
+/// {@endtemplate}
 enum PlaybackQuality {
   /// Small, 320px by 240px.
   small('small'),
@@ -94,6 +100,8 @@ enum PlaybackQuality {
 
   /// The quality code.
   final String? quality;
+
+  /// {@macro playback_quality}
   const PlaybackQuality(this.quality);
 
   /// Returns the [PlaybackQuality] for the given [quality].
@@ -127,7 +135,9 @@ enum PlaybackQuality {
   }
 }
 
+/// {@template playback_rate}
 /// Current playback rate of the player.
+/// {@endtemplate}
 enum PlaybackRate {
   /// Playback rate is 0.25.
   quarter(0.25),
@@ -158,6 +168,8 @@ enum PlaybackRate {
 
   /// The playback rate.
   final double? rate;
+
+  /// {@macro playback_rate}
   const PlaybackRate(this.rate);
 
   /// Returns the [PlaybackRate] for the given [rate].
@@ -198,7 +210,12 @@ enum PlaybackRate {
   }
 }
 
+/// {@template player_error}
 /// Current error the player encountered.
+///
+/// IFrame API reference:
+/// [Events - onError](https://developers.google.com/youtube/iframe_api_reference?hl=en#Events)
+/// {@endtemplate}
 enum PlayerError {
   /// No error.
   empty(null),
@@ -225,6 +242,8 @@ enum PlayerError {
 
   /// The error code.
   final int? errorCode;
+
+  /// {@macro player_error}
   const PlayerError(this.errorCode);
 
   /// Returns the [PlayerError] for the given [errorCode].
@@ -258,10 +277,12 @@ enum PlayerError {
   bool get isEmpty => this == empty;
 }
 
+/// {@template webviewtube_value}
 /// Current value [WebviewtubeController] holds.
+/// {@endtemplate}
 @immutable
 class WebviewTubeValue {
-  /// Constructor for [WebviewTubeValue].
+  /// {@macro webviewtube_value}
   const WebviewTubeValue({
     this.isReady = false,
     this.isMuted = false,
@@ -353,10 +374,14 @@ class WebviewTubeValue {
       videoMetadata);
 }
 
+/// {@template video_metadata}
 /// The metadata of the video.
+///
+/// The metadata is available only after the video starts playing.
+/// {@endtemplate}
 @immutable
 class VideoMetadata {
-  /// Constructor for [VideoMetadata].
+  /// {@macro video_metadata}
   const VideoMetadata({
     required this.videoId,
     required this.title,

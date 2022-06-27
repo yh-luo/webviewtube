@@ -9,13 +9,18 @@ typedef PlayerReadyCallback = void Function();
 /// Optional callback invoked when the player returns an error.
 typedef PlayerErrorCallback = void Function(PlayerError error);
 
+/// {@template webviewtube_controller}
 /// Controls the player and provides information about the player state.
 ///
-/// When making a new player widget for fine-grained controls, the controller
-/// must be provided a [WebViewController] using [onWebviewCreated] before any
-/// method call, e.g., play, load, etc, or an error will be thrown.
+/// To fully customize a new player widget, it's easier to make a new one based
+/// on [WebviewtubePlayer], which handles the webview controller under the hood. If
+/// that's not enough and you plan to make a new player with
+/// [WebviewtubeController], make sure to provide a [WebViewController] using
+/// [onWebviewCreated] before any method call, e.g., play, load, etc, or an
+/// error will be thrown.
+/// {@endtemplate}
 class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
-  /// Constructor for [WebviewtubeController].
+  /// {@macro webviewtube_controller}
   WebviewtubeController({
     this.onPlayerReady,
     this.onPlayerError,
@@ -34,7 +39,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   final WebResourceErrorCallback? onPlayerWebResourceError;
 
   /// Current loaded `WebViewController`
-  WebViewController? get webViewController => _webViewController;
+  WebViewController get webViewController => _webViewController;
 
   /// Provides `WebViewController` to the controller.
   void onWebviewCreated(WebViewController webViewController) {

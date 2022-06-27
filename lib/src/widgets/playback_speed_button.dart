@@ -3,9 +3,11 @@ import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
 
+/// {@template play_back_speed_button}
 /// A widget to display a menu to change the current playback speed.
+/// {@endtemplate}
 class PlaybackSpeedButton extends StatelessWidget {
-  /// Constructor for [PlaybackSpeedButton].
+  /// {@macro play_back_speed_button}
   const PlaybackSpeedButton({Key? key}) : super(key: key);
 
   @override

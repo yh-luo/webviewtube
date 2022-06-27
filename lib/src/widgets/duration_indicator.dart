@@ -10,10 +10,12 @@ const _textStyle = TextStyle(
   ],
 );
 
+/// {@template duration_indicator}
 /// A widget to display the current position and the remaining duration of the
 /// video.
+/// {@endtemplate}
 class DurationIndicator extends StatelessWidget {
-  /// Constructor for [DurationIndicator].
+  /// {@macro duration_indicator}
   const DurationIndicator({Key? key}) : super(key: key);
 
   @override

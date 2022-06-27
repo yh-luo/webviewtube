@@ -40,7 +40,7 @@ import '../webviewtube.dart';
 /// ```
 /// {@endtemplate}
 class WebviewtubeVideoPlayer extends StatelessWidget {
-  /// Constructor for [WebviewtubeVideoPlayer].
+  /// {@macro webviewtube_video_player}
   WebviewtubeVideoPlayer(
       {Key? key,
       required this.videoId,
