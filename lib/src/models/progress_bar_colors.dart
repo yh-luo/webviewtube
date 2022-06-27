@@ -51,4 +51,13 @@ class ProgressBarColors {
   @override
   int get hashCode => Object.hash(
       runtimeType, backgroundColor, playedColor, bufferedColor, handleColor);
+
+  @override
+  String toString() {
+    return 'ProgressBarColors('
+        'backgroundColor: $backgroundColor, '
+        'playedColor: $playedColor, '
+        'bufferedColor: $bufferedColor, '
+        'handleColor: $handleColor)';
+  }
 }

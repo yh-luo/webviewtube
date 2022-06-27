@@ -372,6 +372,20 @@ class WebviewTubeValue {
       buffered,
       playerError,
       videoMetadata);
+
+  @override
+  String toString() {
+    return 'WebviewTubeValue('
+        'isReady: $isReady, '
+        'isMuted: $isMuted, '
+        'playerState: $playerState, '
+        'playbackQuality: $playbackQuality, '
+        'playbackRate: $playbackRate, '
+        'position: $position, '
+        'buffered: $buffered, '
+        'playerError: $playerError, '
+        'videoMetadata: $videoMetadata)';
+  }
 }
 
 /// {@template video_metadata}
@@ -444,4 +458,12 @@ class VideoMetadata {
   @override
   int get hashCode =>
       Object.hash(runtimeType, videoId, title, author, duration);
+
+  @override
+  String toString() {
+    return 'VideoMetadata(videoId: $videoId, '
+        'title: $title, '
+        'author: $author, '
+        'duration: $duration)';
+  }
 }

@@ -149,4 +149,20 @@ class WebviewtubeOptions {
         endAt,
         currentTimeUpdateInterval,
       );
+
+  @override
+  String toString() {
+    return 'WebviewtubeOptions('
+        'showControls: $showControls, '
+        'autoPlay: $autoPlay, '
+        'mute: $mute, '
+        'loop: $loop, '
+        'forceHd: $forceHd, '
+        'interfaceLanguage: $interfaceLanguage, '
+        'enableCaption: $enableCaption, '
+        'captionLanguage: $captionLanguage, '
+        'startAt: $startAt, '
+        'endAt: $endAt, '
+        'currentTimeUpdateInterval: $currentTimeUpdateInterval)';
+  }
 }
