@@ -29,6 +29,8 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
   late final WebViewController _webViewController;
 
+  bool _isPlaylist = false;
+
   /// Invoked when the player is ready
   final PlayerReadyCallback? onPlayerReady;
 
@@ -40,6 +42,9 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
   /// Current loaded `WebViewController`
   WebViewController get webViewController => _webViewController;
+
+  /// Whether the controller is playing a playlist.
+  bool get isPlaylist => _isPlaylist;
 
   /// Provides `WebViewController` to the controller.
   void onWebviewCreated(WebViewController webViewController) {
@@ -160,7 +165,9 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     if (endAt != null) {
       params += ', endSeconds: $endAt';
     }
+
     _callMethod('loadById({$params})');
+    _isPlaylist = false;
   }
 
   /// Loads the specified video's thumbnail and prepares the player
@@ -176,6 +183,62 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     if (endAt != null) {
       params += ', endSeconds: $endAt';
     }
+
     _callMethod('cueById({$params})');
+    _isPlaylist = false;
+  }
+
+  /// Loads the specified playlist and plays it.
+  void loadPlaylist({
+    String? playlistId,
+    List<String>? videoIds,
+    int index = 0,
+    int startAt = 0,
+  }) {
+    assert(playlistId != null || (videoIds != null && videoIds.isNotEmpty));
+    var playlist = playlistId ?? '[${videoIds!.map((e) => '"$e"').join(', ')}]';
+
+    _callMethod('loadPlaylist($playlist, $index, $startAt)');
+    _isPlaylist = true;
+  }
+
+  /// Queues the specified playlist.
+  /// When the playlist is cued and ready to play, `playerState` will be
+  /// [PlayerState.cued].
+  void cuePlaylist({
+    String? playlistId,
+    List<String>? videoIds,
+    int index = 0,
+    int startAt = 0,
+  }) {
+    assert(playlistId != null || (videoIds != null && videoIds.isNotEmpty));
+    var playlist = playlistId ?? '[${videoIds!.map((e) => '"$e"').join(', ')}]';
+
+    _callMethod('cuePlaylist($playlist, $index, $startAt)');
+    _isPlaylist = true;
+  }
+
+  /// Loads and plays the next video in the playlist.
+  /// Does nothing when the controller is not playing a playlist.
+  void nextVideo() {
+    if (!_isPlaylist) return;
+
+    _callMethod('nextVideo()');
+  }
+
+  /// Loads and plays the previous video in the playlist.
+  /// Does nothing when the controller is not playing a playlist.
+  void previousVideo() {
+    if (!_isPlaylist) return;
+
+    _callMethod('previousVideo()');
+  }
+
+  /// Loads and plays the specified video in the playlist.
+  /// Does nothing when the controller is not playing a playlist.
+  void playVideoAt(int index) {
+    if (!_isPlaylist) return;
+
+    _callMethod('playVideoAt($index)');
   }
 }

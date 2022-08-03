@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:webviewtube/webviewtube.dart';
 
 import 'customized_player.dart';
+import 'playlist_player.dart';
 import 'webviewtube_decorated_player.dart';
 
 void main() {
@@ -94,6 +95,17 @@ class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
             },
             child: const Text(
               'Customized Player',
+              style: TextStyle(fontSize: 16),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              controller.pause();
+              Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const PlaylistPlayer()));
+            },
+            child: const Text(
+              'Playlist Player',
               style: TextStyle(fontSize: 16),
             ),
           ),

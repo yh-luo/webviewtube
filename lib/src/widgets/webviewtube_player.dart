@@ -325,11 +325,23 @@ class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
         }
 
         function loadPlaylist(playlist, index, startAt) {
-            player.loadPlaylist(playlist, 'playlist', index, startAt);
+            player.loadPlaylist(playlist, index, startAt);
         }
 
         function cuePlaylist(playlist, index, startAt) {
-            player.cuePlaylist(playlist, 'playlist', index, startAt);
+            player.cuePlaylist(playlist, index, startAt);
+        }
+
+        function nextVideo() {
+          player.nextVideo();
+        }
+
+        function previousVideo() {
+          player.previousVideo();
+        }
+
+        function playVideoAt(index) {
+          player.playVideoAt(index);
         }
 
         function mute() {

@@ -17,6 +17,7 @@ void main() {
       final actual = WebviewtubeController();
 
       expect(actual, isNotNull);
+      expect(actual.isPlaylist, false);
       expect(actual.value, WebviewTubeValue());
     });
 
@@ -286,7 +287,7 @@ void main() {
 
     group('load', () {
       test('calls loadById', () {
-        var videoId = 'test123';
+        final videoId = 'test123';
         final controller = WebviewtubeController();
         controller.onWebviewCreated(webViewController);
         controller.onReady();
@@ -298,8 +299,8 @@ void main() {
       });
 
       test('calls with startAt', () {
-        var videoId = 'test123';
-        var startAt = 5;
+        final videoId = 'test123';
+        final startAt = 5;
         final controller = WebviewtubeController();
         controller.onWebviewCreated(webViewController);
         controller.onReady();
@@ -311,9 +312,9 @@ void main() {
       });
 
       test('calls with endAt', () {
-        var videoId = 'test123';
-        var startAt = 1;
-        var endAt = 5;
+        final videoId = 'test123';
+        final startAt = 1;
+        final endAt = 5;
         final controller = WebviewtubeController();
         controller.onWebviewCreated(webViewController);
         controller.onReady();
@@ -324,11 +325,58 @@ void main() {
             'loadById({videoId: "$videoId", startSeconds: $startAt, '
             'endSeconds: $endAt})'));
       });
+
+      test('isPlaylist = false', () {
+        final videoId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.load(videoId);
+
+        expect(controller.isPlaylist, false);
+      });
+
+      test('nextVideo is doing nothing', () {
+        final videoId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.load(videoId);
+        controller.nextVideo();
+
+        verifyNever(webViewController.runJavascript('nextVideo()'));
+      });
+
+      test('previousVideo is doing nothing', () {
+        final videoId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.load(videoId);
+        controller.previousVideo();
+
+        verifyNever(webViewController.runJavascript('previousVideo()'));
+      });
+
+      test('playVideoAt is doing nothing', () {
+        final videoId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.load(videoId);
+        controller.playVideoAt(2);
+
+        verifyNever(webViewController.runJavascript('playVideoAt(2)'));
+      });
     });
 
     group('cue', () {
       test('calls cueById', () {
-        var videoId = 'test123';
+        final videoId = 'test123';
         final controller = WebviewtubeController();
         controller.onWebviewCreated(webViewController);
         controller.onReady();
@@ -340,8 +388,8 @@ void main() {
       });
 
       test('calls with startAt', () {
-        var videoId = 'test123';
-        var startAt = 5;
+        final videoId = 'test123';
+        final startAt = 5;
         final controller = WebviewtubeController();
         controller.onWebviewCreated(webViewController);
         controller.onReady();
@@ -353,9 +401,9 @@ void main() {
       });
 
       test('calls with endAt', () {
-        var videoId = 'test123';
-        var startAt = 1;
-        var endAt = 5;
+        final videoId = 'test123';
+        final startAt = 1;
+        final endAt = 5;
         final controller = WebviewtubeController();
         controller.onWebviewCreated(webViewController);
         controller.onReady();
@@ -365,6 +413,223 @@ void main() {
         verify(webViewController.runJavascript(
             'cueById({videoId: "$videoId", startSeconds: $startAt, '
             'endSeconds: $endAt})'));
+      });
+
+      test('isPlaylist = false', () {
+        final videoId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.cue(videoId);
+
+        expect(controller.isPlaylist, false);
+      });
+
+      test('nextVideo is doing nothing', () {
+        final videoId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.cue(videoId);
+        controller.nextVideo();
+
+        verifyNever(webViewController.runJavascript('nextVideo()'));
+      });
+
+      test('previousVideo is doing nothing', () {
+        final videoId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.cue(videoId);
+        controller.previousVideo();
+
+        verifyNever(webViewController.runJavascript('previousVideo()'));
+      });
+
+      test('playVideoAt is doing nothing', () {
+        final videoId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.cue(videoId);
+        controller.playVideoAt(2);
+
+        verifyNever(webViewController.runJavascript('playVideoAt(2)'));
+      });
+    });
+
+    group('loadPlaylist', () {
+      test('calls loadPlaylist with a string', () {
+        final playlistId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.loadPlaylist(playlistId: playlistId);
+
+        verify(
+            webViewController.runJavascript('loadPlaylist($playlistId, 0, 0)'));
+      });
+
+      test('calls loadPlaylist with an array', () {
+        final videoIds = ['1', '2', '3', '4', '5'];
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.loadPlaylist(videoIds: videoIds);
+
+        verify(webViewController
+            .runJavascript('loadPlaylist(["1", "2", "3", "4", "5"], 0, 0)'));
+      });
+
+      test('calls loadPlaylist with index', () {
+        final playlistId = 'test123';
+        final index = 1;
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.loadPlaylist(playlistId: playlistId, index: index);
+
+        verify(webViewController
+            .runJavascript('loadPlaylist($playlistId, $index, 0)'));
+      });
+
+      test('calls loadPlaylist with startAt', () {
+        final playlistId = 'test123';
+        final startAt = 5;
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.loadPlaylist(playlistId: playlistId, startAt: startAt);
+
+        verify(webViewController
+            .runJavascript('loadPlaylist($playlistId, 0, $startAt)'));
+      });
+
+      test('can call nextVideo', () {
+        final playlistId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.loadPlaylist(playlistId: playlistId);
+        controller.nextVideo();
+
+        verify(webViewController.runJavascript('nextVideo()'));
+      });
+
+      test('can call previousVideo', () {
+        final playlistId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.loadPlaylist(playlistId: playlistId);
+        controller.previousVideo();
+
+        verify(webViewController.runJavascript('previousVideo()'));
+      });
+
+      test('can call playVideoAt', () {
+        final playlistId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.loadPlaylist(playlistId: playlistId);
+        controller.playVideoAt(2);
+
+        verify(webViewController.runJavascript('playVideoAt(2)'));
+      });
+
+      test('isPlaylist is true', () {
+        final playlistId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.loadPlaylist(playlistId: playlistId);
+        expect(controller.isPlaylist, true);
+      });
+    });
+
+    group('cuePlaylist', () {
+      test('calls cuePlaylist with a string', () {
+        final playlistId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.cuePlaylist(playlistId: playlistId);
+
+        verify(
+            webViewController.runJavascript('cuePlaylist($playlistId, 0, 0)'));
+      });
+
+      test('calls cuePlaylist with an array', () {
+        final videoIds = ['1', '2', '3', '4', '5'];
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.cuePlaylist(videoIds: videoIds);
+
+        verify(webViewController
+            .runJavascript('cuePlaylist(["1", "2", "3", "4", "5"], 0, 0)'));
+      });
+
+      test('can call nextVideo', () {
+        final playlistId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.cuePlaylist(playlistId: playlistId);
+        controller.nextVideo();
+
+        verify(webViewController.runJavascript('nextVideo()'));
+      });
+
+      test('can call previousVideo', () {
+        final playlistId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.cuePlaylist(playlistId: playlistId);
+        controller.previousVideo();
+
+        verify(webViewController.runJavascript('previousVideo()'));
+      });
+
+      test('can call playVideoAt', () {
+        final playlistId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.cuePlaylist(playlistId: playlistId);
+        controller.playVideoAt(2);
+
+        verify(webViewController.runJavascript('playVideoAt(2)'));
+      });
+
+      test('isPlaylist is true', () {
+        final playlistId = 'test123';
+        final controller = WebviewtubeController();
+        controller.onWebviewCreated(webViewController);
+        controller.onReady();
+
+        controller.cuePlaylist(playlistId: playlistId);
+        expect(controller.isPlaylist, true);
       });
     });
   });
