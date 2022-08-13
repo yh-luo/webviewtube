@@ -25,7 +25,7 @@ class _PlaylistPlayerState extends State<PlaylistPlayer> {
   @override
   void initState() {
     super.initState();
-    // or to load by playlist id
+    // load by playlist id
     // webviewtubeController = WebviewtubeController(
     //   onPlayerReady: () => webviewtubeController.loadPlaylist(
     //       playlistId: 'PLjxrf2q8roU23XGwz3Km7sQZFTdB996iG'),
@@ -91,7 +91,10 @@ class _PlaylistPlayerState extends State<PlaylistPlayer> {
                       (i) {
                     return DropdownMenuItem<int>(
                       value: i,
-                      child: Text(i.toString()),
+                      child: Text(
+                        i.toString(),
+                        style: Theme.of(context).textTheme.bodyLarge,
+                      ),
                     );
                   }),
                   onChanged: (index) {

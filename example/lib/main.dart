@@ -77,7 +77,7 @@ class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
                   '${controller.value.videoMetadata.title} paused at ${controller.value.position}');
               await Navigator.of(context).push<void>(MaterialPageRoute(
                   builder: (_) => const WebviewtubeDecoratedPlayer()));
-              // when popping back, the player continues to play
+              // when popping back, make the player continues to play
               controller.play();
               debugPrint(
                   'Continue to play ${controller.value.videoMetadata.title}');

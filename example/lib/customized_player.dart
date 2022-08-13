@@ -34,6 +34,7 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
   void dispose() {
     // If a controller is passed to the player, remember to dispose it when
     // it's not in need.
+    webviewtubeController.removeListener(_valueHandler);
     webviewtubeController.dispose();
     super.dispose();
   }
@@ -110,27 +111,16 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
                           webviewtubeController.load(videoIds[_currentIdx - 1]);
                           setState(() {
                             _currentIdx -= 1;
-                            _isPlaying = true;
                           });
                         }
                       : null,
                   icon: const Icon(Icons.skip_previous)),
               _isPlaying
                   ? IconButton(
-                      onPressed: () {
-                        webviewtubeController.pause();
-                        setState(() {
-                          _isPlaying = false;
-                        });
-                      },
+                      onPressed: () => webviewtubeController.pause(),
                       icon: const Icon(Icons.pause))
                   : IconButton(
-                      onPressed: () {
-                        webviewtubeController.play();
-                        setState(() {
-                          _isPlaying = true;
-                        });
-                      },
+                      onPressed: () => webviewtubeController.play(),
                       icon: const Icon(Icons.play_arrow)),
               IconButton(
                   onPressed: _currentIdx < videoIds.length - 1
@@ -138,7 +128,6 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
                           webviewtubeController.load(videoIds[_currentIdx + 1]);
                           setState(() {
                             _currentIdx += 1;
-                            _isPlaying = true;
                           });
                         }
                       : null,
