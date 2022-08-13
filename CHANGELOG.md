@@ -1,3 +1,10 @@
+# 1.4.0
+
+- feat: implement `loadPlaylist` and `cuePlaylist`
+- feat: add demo for playing a playlist
+- refactor: update the demo for customized player
+- doc: fix typos
+
 # 1.3.1
 
 - refactor: implement `toString` for models
