@@ -31,16 +31,16 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
   bool _isPlaylist = false;
 
-  /// Invoked when the player is ready
+  /// Invoked when the player is ready.
   final PlayerReadyCallback? onPlayerReady;
 
-  /// Invoked when the player returns an error
+  /// Invoked when the player returns an error.
   final PlayerErrorCallback? onPlayerError;
 
   /// Invoked when a web resource has failed to load.
   final WebResourceErrorCallback? onPlayerWebResourceError;
 
-  /// Current loaded `WebViewController`
+  /// Current loaded [WebViewController].
   WebViewController get webViewController => _webViewController;
 
   /// Whether the controller is playing a playlist.
@@ -82,15 +82,15 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     value = value.copyWith(playerState: playerState);
   }
 
-  /// Invoked handler when the playback quality changes
+  /// Invoked handler when the playback quality changes.
   void onPlaybackQualityChange(String data) =>
       value = value.copyWith(playbackQuality: PlaybackQuality.fromData(data));
 
-  /// Invoked handler when the playback rate changes
+  /// Invoked handler when the playback rate changes.
   void onPlaybackRateChange(num data) =>
       value = value.copyWith(playbackRate: PlaybackRate.fromData(data));
 
-  /// Invoked handler when the video data changes
+  /// Invoked handler when the video data changes.
   void onVideoDataChange(Map<String, dynamic> data) =>
       value = value.copyWith(videoMetadata: VideoMetadata.fromData(data));
 
@@ -103,7 +103,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
         buffered: buffered.toDouble());
   }
 
-  /// Interacts with IFrame API via javascript channels
+  /// Interacts with IFrame API via javascript channels.
   void _callMethod(String method) {
     if (value.isReady) {
       _webViewController.runJavascript(method);
@@ -130,7 +130,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     value = value.copyWith(isMuted: false);
   }
 
-  /// Sets the playback rate
+  /// Sets the playback rate.
   void setPlaybackRate(PlaybackRate playbackRate) =>
       _callMethod('setPlaybackRate(${playbackRate.rate})');
 
@@ -152,7 +152,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// Reloads the player.
   void reload() => _webViewController.reload();
 
-  /// Loads and plays the specified video
+  /// Loads and plays the specified video.
   void load(String videoId, {int startAt = 0, int? endAt}) {
     if (endAt != null) {
       assert(startAt < endAt);
@@ -170,7 +170,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     _isPlaylist = false;
   }
 
-  /// Loads the specified video's thumbnail and prepares the player
+  /// Loads the specified video's thumbnail and prepares the player.
   void cue(String videoId, {int startAt = 0, int? endAt}) {
     if (endAt != null) {
       assert(startAt < endAt);

@@ -20,7 +20,7 @@ class WebviewtubeOptions {
     this.currentTimeUpdateInterval = 130,
   });
 
-  /// Display the YouTube video player controls
+  /// Display the YouTube video player controls.
   ///
   /// Set to false if you want to use customized controls.
   /// Defaults to true.
@@ -47,7 +47,7 @@ class WebviewtubeOptions {
   /// Defaults to false.
   final bool loop;
 
-  /// Forces High Definition video quality when possible
+  /// Forces High Definition video quality when possible.
   ///
   /// Defaults to false.
   final bool forceHd;
@@ -84,7 +84,7 @@ class WebviewtubeOptions {
   /// Defaults to null.
   final int? endAt;
 
-  /// Interval in milliseconds to get buffered ratio and elapsed seconds
+  /// Interval in milliseconds to get buffered ratio and elapsed seconds.
   ///
   /// Smaller values result in more frequent updates but reduce the performance.
   /// Defaults to 130.
