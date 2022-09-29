@@ -58,7 +58,7 @@ class _PlaylistPlayerState extends State<PlaylistPlayer> {
       });
     }
 
-    if (index > 0) {
+    if (index >= 0 && _currentIdx != index) {
       setState(() {
         _currentIdx = index;
       });
