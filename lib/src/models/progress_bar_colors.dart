@@ -43,6 +43,7 @@ class ProgressBarColors {
   @override
   bool operator ==(Object other) =>
       other is ProgressBarColors &&
+      other.runtimeType == runtimeType &&
       other.backgroundColor == backgroundColor &&
       other.playedColor == playedColor &&
       other.bufferedColor == bufferedColor &&

@@ -47,6 +47,7 @@ void main() {
     late MockWebViewPlatform mockWebViewPlatform;
     late MockWebViewPlatformController mockWebViewPlatformController;
     late MockWebviewtubeController controller;
+    final value = WebviewTubeValue(isReady: true);
 
     setUp(() {
       mockWebViewPlatformController = MockWebViewPlatformController();
@@ -71,12 +72,16 @@ void main() {
 
       WebView.platform = mockWebViewPlatform;
       controller = MockWebviewtubeController();
+      when(controller.value).thenReturn(value);
     });
 
     testWidgets('initiate widgets properly', (WidgetTester tester) async {
       provideMockedNetworkImages(() async {
         await tester.pumpWidget(TestApp(
-          child: WebviewtubePlayer(videoId: videoId),
+          child: WebviewtubePlayer(
+            videoId: videoId,
+            controller: controller,
+          ),
         ));
 
         expect(find.byType(WebviewtubePlayer), findsOneWidget);
@@ -131,7 +136,10 @@ void main() {
         (WidgetTester tester) async {
       provideMockedNetworkImages(() async {
         await tester.pumpWidget(TestApp(
-          child: WebviewtubePlayer(videoId: videoId),
+          child: WebviewtubePlayer(
+            videoId: videoId,
+            controller: controller,
+          ),
         ));
 
         final JavascriptChannelRegistry channelRegistry = captureBuildArgs(
@@ -374,10 +382,13 @@ void main() {
 
   group('WebviewtubeVideoPlayer', () {
     testWidgets('initiate widgets properly', (WidgetTester tester) async {
+      final controller = MockWebviewtubeController();
+      when(controller.value).thenReturn(WebviewTubeValue());
       provideMockedNetworkImages(() async {
         await tester.pumpWidget(TestApp(
           child: WebviewtubeVideoPlayer(
             videoId: videoId,
+            controller: controller,
           ),
         ));
 

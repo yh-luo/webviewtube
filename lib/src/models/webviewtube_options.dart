@@ -122,6 +122,7 @@ class WebviewtubeOptions {
   @override
   bool operator ==(Object other) =>
       other is WebviewtubeOptions &&
+      other.runtimeType == runtimeType &&
       other.showControls == showControls &&
       other.autoPlay == autoPlay &&
       other.mute == mute &&

@@ -350,6 +350,7 @@ class WebviewTubeValue {
   @override
   bool operator ==(Object other) =>
       other is WebviewTubeValue &&
+      other.runtimeType == runtimeType &&
       other.isReady == isReady &&
       other.isMuted == isMuted &&
       other.playerState == playerState &&
@@ -450,6 +451,7 @@ class VideoMetadata {
   @override
   bool operator ==(Object other) =>
       other is VideoMetadata &&
+      other.runtimeType == runtimeType &&
       other.videoId == videoId &&
       other.title == title &&
       other.author == author &&
