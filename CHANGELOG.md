@@ -1,3 +1,8 @@
+# 1.4.1
+
+- fix: playlist_player demo is unable to go back to the first video
+- fix: `==` should include runtimeType
+
 # 1.4.0
 
 - feat: implement `loadPlaylist` and `cuePlaylist`

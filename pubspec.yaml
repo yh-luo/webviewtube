@@ -1,6 +1,6 @@
 name: webviewtube
 description: Play YouTube videos on mobile platforms, with WebView and IFrame Player API.
-version: 1.4.0
+version: 1.4.1
 repository: https://github.com/yh-luo/webviewtube
 
 environment:
