@@ -101,7 +101,7 @@ class WebviewtubeOptions {
     String? captionLanguage,
     int? startAt,
     int? endAt,
-    int? currentTimeUpdateInterval = 130,
+    int? currentTimeUpdateInterval,
   }) {
     return WebviewtubeOptions(
       showControls: showControls ?? this.showControls,
