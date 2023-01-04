@@ -106,6 +106,7 @@ void main() {
       when(options.startAt).thenReturn(1);
       when(options.endAt).thenReturn(5);
       when(options.currentTimeUpdateInterval).thenReturn(200);
+      when(options.aspectRatio).thenReturn(16 / 9);
       when(controller.value).thenReturn(value);
       when(controller.onWebviewCreated(any)).thenAnswer((_) {});
 
@@ -129,6 +130,7 @@ void main() {
         verify(options.startAt);
         verify(options.endAt);
         verify(options.currentTimeUpdateInterval);
+        verify(options.aspectRatio);
       });
     });
 
@@ -420,6 +422,7 @@ void main() {
       when(options.startAt).thenReturn(1);
       when(options.endAt).thenReturn(5);
       when(options.currentTimeUpdateInterval).thenReturn(200);
+      when(options.aspectRatio).thenReturn(16 / 9);
       when(controller.value).thenReturn(value);
       when(controller.onWebviewCreated(any)).thenAnswer((_) {});
 
@@ -443,6 +446,7 @@ void main() {
         verify(options.startAt);
         verify(options.endAt);
         verify(options.currentTimeUpdateInterval);
+        verify(options.aspectRatio);
       });
     });
 

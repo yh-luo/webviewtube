@@ -88,6 +88,13 @@ void main() {
         expect(options != actual, true);
         expect(actual, WebviewtubeOptions(currentTimeUpdateInterval: 1));
       });
+
+      test('aspectRatio', () {
+        final actual = options.copyWith(aspectRatio: 1 / 1);
+
+        expect(options != actual, true);
+        expect(actual, WebviewtubeOptions(aspectRatio: 1 / 1));
+      });
     });
   });
 }

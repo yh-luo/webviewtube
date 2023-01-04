@@ -177,7 +177,7 @@ class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
       elevation: 0,
       color: Colors.black,
       child: AspectRatio(
-        aspectRatio: 16 / 9,
+        aspectRatio: widget.options.aspectRatio,
         child: WebView(
           onWebViewCreated: _onWebViewCreated,
           onWebResourceError: _onWebResourceError,

@@ -18,6 +18,7 @@ class WebviewtubeOptions {
     this.startAt = 0,
     this.endAt,
     this.currentTimeUpdateInterval = 130,
+    this.aspectRatio = 16 / 9,
   });
 
   /// Display the YouTube video player controls.
@@ -90,6 +91,11 @@ class WebviewtubeOptions {
   /// Defaults to 130.
   final int currentTimeUpdateInterval;
 
+  /// The aspect ratio to attempt to use.
+  ///
+  /// Defaults to 16 / 9.
+  final double aspectRatio;
+
   WebviewtubeOptions copyWith({
     bool? showControls,
     bool? autoPlay,
@@ -102,6 +108,7 @@ class WebviewtubeOptions {
     int? startAt,
     int? endAt,
     int? currentTimeUpdateInterval,
+    double? aspectRatio,
   }) {
     return WebviewtubeOptions(
       showControls: showControls ?? this.showControls,
@@ -116,6 +123,7 @@ class WebviewtubeOptions {
       endAt: endAt ?? this.endAt,
       currentTimeUpdateInterval:
           currentTimeUpdateInterval ?? this.currentTimeUpdateInterval,
+      aspectRatio: aspectRatio ?? this.aspectRatio,
     );
   }
 
@@ -133,7 +141,8 @@ class WebviewtubeOptions {
       other.captionLanguage == captionLanguage &&
       other.startAt == startAt &&
       other.endAt == endAt &&
-      other.currentTimeUpdateInterval == currentTimeUpdateInterval;
+      other.currentTimeUpdateInterval == currentTimeUpdateInterval &&
+      other.aspectRatio == aspectRatio;
 
   @override
   int get hashCode => Object.hash(
@@ -149,6 +158,7 @@ class WebviewtubeOptions {
         startAt,
         endAt,
         currentTimeUpdateInterval,
+        aspectRatio,
       );
 
   @override
@@ -164,6 +174,7 @@ class WebviewtubeOptions {
         'captionLanguage: $captionLanguage, '
         'startAt: $startAt, '
         'endAt: $endAt, '
-        'currentTimeUpdateInterval: $currentTimeUpdateInterval)';
+        'currentTimeUpdateInterval: $currentTimeUpdateInterval, '
+        'aspectRatio: $aspectRatio)';
   }
 }
