@@ -106,7 +106,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// Interacts with IFrame API via javascript channels.
   void _callMethod(String method) {
     if (value.isReady) {
-      _webViewController.runJavascript(method);
+      _webViewController.runJavaScript(method);
     } else {
       debugPrint('The controller is not ready for method calls.');
     }

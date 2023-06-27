@@ -1,9 +1,9 @@
-import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:webview_flutter/webview_flutter.dart';
 import 'package:provider/provider.dart';
+import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import '../webviewtube.dart';
 
@@ -97,8 +97,35 @@ class _WebviewtubePlayerView extends StatefulWidget {
 }
 
 class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
-  final Completer<WebViewController> _webviewController =
-      Completer<WebViewController>();
+  late final WebViewController _webviewController;
+  late final PlatformWebViewControllerCreationParams params;
+
+  @override
+  void initState() {
+    super.initState();
+    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+      params = WebKitWebViewControllerCreationParams(
+        allowsInlineMediaPlayback: true,
+        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+      );
+    } else {
+      params = const PlatformWebViewControllerCreationParams();
+    }
+    _webviewController = WebViewController.fromPlatformCreationParams(params)
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..addJavaScriptChannel('Webviewtube',
+          onMessageReceived: _onMessageReceived)
+      ..setNavigationDelegate(
+          NavigationDelegate(onWebResourceError: _onWebResourceError))
+      ..loadRequest(Uri.dataFromString(_generateIframePage(widget.videoId),
+          mimeType: 'text/html', encoding: Encoding.getByName('utf-8')));
+
+    if (widget.options.forceHd) {
+      _webviewController.setUserAgent(hdUserAgent);
+    }
+
+    context.read<WebviewtubeController>().onWebviewCreated(_webviewController);
+  }
 
   @override
   void deactivate() {
@@ -107,68 +134,10 @@ class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
     super.deactivate();
   }
 
-  Set<JavascriptChannel> _buildJavascriptChannel() {
-    return {
-      JavascriptChannel(
-          name: 'Webviewtube',
-          onMessageReceived: (JavascriptMessage message) {
-            Map<String, dynamic> json = jsonDecode(message.message);
-            switch (json['method']) {
-              case 'Ready':
-                {
-                  context.read<WebviewtubeController>().onReady();
-                  if (widget.options.mute) {
-                    context.read<WebviewtubeController>().mute();
-                  }
-                  break;
-                }
-              case 'StateChange':
-                {
-                  final data = json['args']['state'] as int;
-                  context
-                      .read<WebviewtubeController>()
-                      .onPlayerStateChange(data);
-                  break;
-                }
-              case 'PlaybackQualityChange':
-                {
-                  final data = json['args']['playbackQuality'] as String;
-                  context
-                      .read<WebviewtubeController>()
-                      .onPlaybackQualityChange(data);
-                  break;
-                }
-              case 'PlaybackRateChange':
-                {
-                  final data = json['args']['playbackRate'] as num;
-                  context
-                      .read<WebviewtubeController>()
-                      .onPlaybackRateChange(data);
-                  break;
-                }
-              case 'Errors':
-                {
-                  final data = json['args']['errorCode'] as int;
-                  context.read<WebviewtubeController>().onError(data);
-                  break;
-                }
-              case 'VideoData':
-                {
-                  final data = json['args'] as Map<String, dynamic>;
-                  context.read<WebviewtubeController>().onVideoDataChange(data);
-                  break;
-                }
-              case 'CurrentTime':
-                {
-                  final data = json['args'] as Map<String, dynamic>;
-                  context
-                      .read<WebviewtubeController>()
-                      .onCurrentTimeChange(data);
-                  break;
-                }
-            }
-          }),
-    };
+  @override
+  void dispose() {
+    _webviewController.removeJavaScriptChannel('Webviewtube');
+    super.dispose();
   }
 
   @override
@@ -178,30 +147,61 @@ class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
       color: Colors.black,
       child: AspectRatio(
         aspectRatio: widget.options.aspectRatio,
-        child: WebView(
-          onWebViewCreated: _onWebViewCreated,
-          onWebResourceError: _onWebResourceError,
-          javascriptMode: JavascriptMode.unrestricted,
-          allowsInlineMediaPlayback: true,
-          initialMediaPlaybackPolicy: AutoMediaPlaybackPolicy.always_allow,
-          javascriptChannels: _buildJavascriptChannel(),
-          userAgent: widget.options.forceHd ? hdUserAgent : null,
+        child: WebViewWidget(
+          controller: _webviewController,
         ),
       ),
     );
   }
 
-  void _onWebViewCreated(WebViewController webViewController) {
-    webViewController.loadUrl(
-      Uri.dataFromString(
-        _generateIframePage(widget.videoId),
-        mimeType: 'text/html',
-        encoding: Encoding.getByName('utf-8'),
-      ).toString(),
-    );
-
-    _webviewController.complete(webViewController);
-    context.read<WebviewtubeController>().onWebviewCreated(webViewController);
+  void _onMessageReceived(JavaScriptMessage message) {
+    Map<String, dynamic> json = jsonDecode(message.message);
+    switch (json['method']) {
+      case 'Ready':
+        {
+          context.read<WebviewtubeController>().onReady();
+          if (widget.options.mute) {
+            context.read<WebviewtubeController>().mute();
+          }
+          break;
+        }
+      case 'StateChange':
+        {
+          final data = json['args']['state'] as int;
+          context.read<WebviewtubeController>().onPlayerStateChange(data);
+          break;
+        }
+      case 'PlaybackQualityChange':
+        {
+          final data = json['args']['playbackQuality'] as String;
+          context.read<WebviewtubeController>().onPlaybackQualityChange(data);
+          break;
+        }
+      case 'PlaybackRateChange':
+        {
+          final data = json['args']['playbackRate'] as num;
+          context.read<WebviewtubeController>().onPlaybackRateChange(data);
+          break;
+        }
+      case 'Errors':
+        {
+          final data = json['args']['errorCode'] as int;
+          context.read<WebviewtubeController>().onError(data);
+          break;
+        }
+      case 'VideoData':
+        {
+          final data = json['args'] as Map<String, dynamic>;
+          context.read<WebviewtubeController>().onVideoDataChange(data);
+          break;
+        }
+      case 'CurrentTime':
+        {
+          final data = json['args'] as Map<String, dynamic>;
+          context.read<WebviewtubeController>().onCurrentTimeChange(data);
+          break;
+        }
+    }
   }
 
   void _onWebResourceError(WebResourceError error) =>
