@@ -136,7 +136,9 @@ class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
 
   @override
   void dispose() {
-    _webviewController.removeJavaScriptChannel('Webviewtube');
+    // recommended in
+    // https://github.com/flutter/flutter/issues/119616#issuecomment-1419991144
+    _webviewController.loadRequest(Uri.parse('about:blank'));
     super.dispose();
   }
 
@@ -155,6 +157,8 @@ class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
   }
 
   void _onMessageReceived(JavaScriptMessage message) {
+    if (!mounted) return;
+
     Map<String, dynamic> json = jsonDecode(message.message);
     switch (json['method']) {
       case 'Ready':
