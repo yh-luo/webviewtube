@@ -71,7 +71,6 @@ void main() {
       final value =
           WebviewTubeValue(isReady: true, playerState: PlayerState.paused);
       when(options.showControls).thenReturn(false);
-      when(options.autoPlay).thenReturn(false);
       when(options.mute).thenReturn(true);
       when(options.loop).thenReturn(true);
       when(options.forceHd).thenReturn(true);
@@ -96,7 +95,6 @@ void main() {
 
         verify(controller.onWebviewCreated(any));
         verify(options.showControls);
-        verify(options.autoPlay);
         verify(options.loop);
         verify(options.forceHd);
         verify(options.interfaceLanguage);
@@ -370,7 +368,6 @@ void main() {
           WebviewTubeValue(isReady: true, playerState: PlayerState.paused);
       when(options.copyWith(showControls: false)).thenReturn(options);
       when(options.showControls).thenReturn(false);
-      when(options.autoPlay).thenReturn(false);
       when(options.mute).thenReturn(true);
       when(options.loop).thenReturn(true);
       when(options.forceHd).thenReturn(true);
@@ -395,7 +392,6 @@ void main() {
 
         verify(controller.onWebviewCreated(any));
         verify(options.showControls);
-        verify(options.autoPlay);
         verify(options.loop);
         verify(options.forceHd);
         verify(options.interfaceLanguage);

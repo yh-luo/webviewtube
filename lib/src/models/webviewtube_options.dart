@@ -8,7 +8,6 @@ class WebviewtubeOptions {
   /// {@macro webviewtube_options}
   const WebviewtubeOptions({
     this.showControls = true,
-    this.autoPlay = true,
     this.mute = false,
     this.loop = false,
     this.forceHd = false,
@@ -26,17 +25,6 @@ class WebviewtubeOptions {
   /// Set to false if you want to use customized controls.
   /// Defaults to true.
   final bool showControls;
-
-  /// Automatically starts the video after initialization.
-  ///
-  /// Note that certain mobile browsers (such as Chrome and Safari) only allows
-  /// playback to take place if it's initiated by a user interaction (such as
-  /// tapping on the player). Due to this restriction, [autoPlay] won't work in
-  /// all mobile environments.
-  /// Resource: [IFrame Player API: Autoplay and Scripted Playback](https://developers.google.com/youtube/iframe_api_reference#Autoplay_and_scripted_playback)
-  ///
-  /// Defaults to true.
-  final bool autoPlay;
 
   /// Mutes the player after initialization.
   ///
@@ -98,7 +86,6 @@ class WebviewtubeOptions {
 
   WebviewtubeOptions copyWith({
     bool? showControls,
-    bool? autoPlay,
     bool? mute,
     bool? loop,
     bool? forceHd,
@@ -112,7 +99,6 @@ class WebviewtubeOptions {
   }) {
     return WebviewtubeOptions(
       showControls: showControls ?? this.showControls,
-      autoPlay: autoPlay ?? this.autoPlay,
       mute: mute ?? this.mute,
       loop: loop ?? this.loop,
       forceHd: forceHd ?? this.forceHd,
@@ -132,7 +118,6 @@ class WebviewtubeOptions {
       other is WebviewtubeOptions &&
       other.runtimeType == runtimeType &&
       other.showControls == showControls &&
-      other.autoPlay == autoPlay &&
       other.mute == mute &&
       other.loop == loop &&
       other.forceHd == forceHd &&
@@ -148,7 +133,6 @@ class WebviewtubeOptions {
   int get hashCode => Object.hash(
         runtimeType,
         showControls,
-        autoPlay,
         mute,
         loop,
         forceHd,
@@ -165,7 +149,6 @@ class WebviewtubeOptions {
   String toString() {
     return 'WebviewtubeOptions('
         'showControls: $showControls, '
-        'autoPlay: $autoPlay, '
         'mute: $mute, '
         'loop: $loop, '
         'forceHd: $forceHd, '
