@@ -162,7 +162,7 @@ void main() {
         controller.onReady();
 
         controller.play();
-        verify(webViewController.runJavascript('play()'));
+        verify(webViewController.runJavaScript('play()'));
       });
     });
 
@@ -173,7 +173,7 @@ void main() {
         controller.onReady();
 
         controller.pause();
-        verify(webViewController.runJavascript('pause()'));
+        verify(webViewController.runJavaScript('pause()'));
       });
     });
 
@@ -184,7 +184,7 @@ void main() {
         controller.onReady();
 
         controller.mute();
-        verify(webViewController.runJavascript('mute()'));
+        verify(webViewController.runJavaScript('mute()'));
       });
 
       test('updates value', () {
@@ -204,7 +204,7 @@ void main() {
         controller.onReady();
 
         controller.unMute();
-        verify(webViewController.runJavascript('unMute()'));
+        verify(webViewController.runJavaScript('unMute()'));
       });
 
       test('updates value', () {
@@ -224,7 +224,7 @@ void main() {
         controller.onReady();
 
         controller.setPlaybackRate(PlaybackRate.half);
-        verify(webViewController.runJavascript('setPlaybackRate(0.5)'));
+        verify(webViewController.runJavaScript('setPlaybackRate(0.5)'));
       });
     });
 
@@ -235,7 +235,7 @@ void main() {
         controller.onReady();
 
         controller.seekTo(Duration(seconds: 1));
-        verify(webViewController.runJavascript('seekTo(1, false)'));
+        verify(webViewController.runJavaScript('seekTo(1, false)'));
       });
 
       test('updates value', () {
@@ -254,8 +254,8 @@ void main() {
 
         controller.seekTo(Duration(seconds: 1));
         verifyInOrder([
-          webViewController.runJavascript('seekTo(1, false)'),
-          webViewController.runJavascript('play()')
+          webViewController.runJavaScript('seekTo(1, false)'),
+          webViewController.runJavaScript('play()')
         ]);
       });
     });
@@ -268,8 +268,8 @@ void main() {
 
         controller.replay();
         verifyInOrder([
-          webViewController.runJavascript('seekTo(0, false)'),
-          webViewController.runJavascript('play()')
+          webViewController.runJavaScript('seekTo(0, false)'),
+          webViewController.runJavaScript('play()')
         ]);
       });
     });
@@ -295,7 +295,7 @@ void main() {
         controller.load(videoId);
 
         verify(
-            webViewController.runJavascript('loadById({videoId: "$videoId"})'));
+            webViewController.runJavaScript('loadById({videoId: "$videoId"})'));
       });
 
       test('calls with startAt', () {
@@ -307,7 +307,7 @@ void main() {
 
         controller.load(videoId, startAt: startAt);
 
-        verify(webViewController.runJavascript(
+        verify(webViewController.runJavaScript(
             'loadById({videoId: "$videoId", startSeconds: $startAt})'));
       });
 
@@ -321,7 +321,7 @@ void main() {
 
         controller.load(videoId, startAt: startAt, endAt: endAt);
 
-        verify(webViewController.runJavascript(
+        verify(webViewController.runJavaScript(
             'loadById({videoId: "$videoId", startSeconds: $startAt, '
             'endSeconds: $endAt})'));
       });
@@ -346,7 +346,7 @@ void main() {
         controller.load(videoId);
         controller.nextVideo();
 
-        verifyNever(webViewController.runJavascript('nextVideo()'));
+        verifyNever(webViewController.runJavaScript('nextVideo()'));
       });
 
       test('previousVideo is doing nothing', () {
@@ -358,7 +358,7 @@ void main() {
         controller.load(videoId);
         controller.previousVideo();
 
-        verifyNever(webViewController.runJavascript('previousVideo()'));
+        verifyNever(webViewController.runJavaScript('previousVideo()'));
       });
 
       test('playVideoAt is doing nothing', () {
@@ -370,7 +370,7 @@ void main() {
         controller.load(videoId);
         controller.playVideoAt(2);
 
-        verifyNever(webViewController.runJavascript('playVideoAt(2)'));
+        verifyNever(webViewController.runJavaScript('playVideoAt(2)'));
       });
     });
 
@@ -384,7 +384,7 @@ void main() {
         controller.cue(videoId);
 
         verify(
-            webViewController.runJavascript('cueById({videoId: "$videoId"})'));
+            webViewController.runJavaScript('cueById({videoId: "$videoId"})'));
       });
 
       test('calls with startAt', () {
@@ -396,7 +396,7 @@ void main() {
 
         controller.cue(videoId, startAt: startAt);
 
-        verify(webViewController.runJavascript(
+        verify(webViewController.runJavaScript(
             'cueById({videoId: "$videoId", startSeconds: $startAt})'));
       });
 
@@ -410,7 +410,7 @@ void main() {
 
         controller.cue(videoId, startAt: startAt, endAt: endAt);
 
-        verify(webViewController.runJavascript(
+        verify(webViewController.runJavaScript(
             'cueById({videoId: "$videoId", startSeconds: $startAt, '
             'endSeconds: $endAt})'));
       });
@@ -435,7 +435,7 @@ void main() {
         controller.cue(videoId);
         controller.nextVideo();
 
-        verifyNever(webViewController.runJavascript('nextVideo()'));
+        verifyNever(webViewController.runJavaScript('nextVideo()'));
       });
 
       test('previousVideo is doing nothing', () {
@@ -447,7 +447,7 @@ void main() {
         controller.cue(videoId);
         controller.previousVideo();
 
-        verifyNever(webViewController.runJavascript('previousVideo()'));
+        verifyNever(webViewController.runJavaScript('previousVideo()'));
       });
 
       test('playVideoAt is doing nothing', () {
@@ -459,7 +459,7 @@ void main() {
         controller.cue(videoId);
         controller.playVideoAt(2);
 
-        verifyNever(webViewController.runJavascript('playVideoAt(2)'));
+        verifyNever(webViewController.runJavaScript('playVideoAt(2)'));
       });
     });
 
@@ -473,7 +473,7 @@ void main() {
         controller.loadPlaylist(playlistId: playlistId);
 
         verify(
-            webViewController.runJavascript('loadPlaylist($playlistId, 0, 0)'));
+            webViewController.runJavaScript('loadPlaylist($playlistId, 0, 0)'));
       });
 
       test('calls loadPlaylist with an array', () {
@@ -485,7 +485,7 @@ void main() {
         controller.loadPlaylist(videoIds: videoIds);
 
         verify(webViewController
-            .runJavascript('loadPlaylist(["1", "2", "3", "4", "5"], 0, 0)'));
+            .runJavaScript('loadPlaylist(["1", "2", "3", "4", "5"], 0, 0)'));
       });
 
       test('calls loadPlaylist with index', () {
@@ -498,7 +498,7 @@ void main() {
         controller.loadPlaylist(playlistId: playlistId, index: index);
 
         verify(webViewController
-            .runJavascript('loadPlaylist($playlistId, $index, 0)'));
+            .runJavaScript('loadPlaylist($playlistId, $index, 0)'));
       });
 
       test('calls loadPlaylist with startAt', () {
@@ -511,7 +511,7 @@ void main() {
         controller.loadPlaylist(playlistId: playlistId, startAt: startAt);
 
         verify(webViewController
-            .runJavascript('loadPlaylist($playlistId, 0, $startAt)'));
+            .runJavaScript('loadPlaylist($playlistId, 0, $startAt)'));
       });
 
       test('can call nextVideo', () {
@@ -523,7 +523,7 @@ void main() {
         controller.loadPlaylist(playlistId: playlistId);
         controller.nextVideo();
 
-        verify(webViewController.runJavascript('nextVideo()'));
+        verify(webViewController.runJavaScript('nextVideo()'));
       });
 
       test('can call previousVideo', () {
@@ -535,7 +535,7 @@ void main() {
         controller.loadPlaylist(playlistId: playlistId);
         controller.previousVideo();
 
-        verify(webViewController.runJavascript('previousVideo()'));
+        verify(webViewController.runJavaScript('previousVideo()'));
       });
 
       test('can call playVideoAt', () {
@@ -547,7 +547,7 @@ void main() {
         controller.loadPlaylist(playlistId: playlistId);
         controller.playVideoAt(2);
 
-        verify(webViewController.runJavascript('playVideoAt(2)'));
+        verify(webViewController.runJavaScript('playVideoAt(2)'));
       });
 
       test('isPlaylist is true', () {
@@ -571,7 +571,7 @@ void main() {
         controller.cuePlaylist(playlistId: playlistId);
 
         verify(
-            webViewController.runJavascript('cuePlaylist($playlistId, 0, 0)'));
+            webViewController.runJavaScript('cuePlaylist($playlistId, 0, 0)'));
       });
 
       test('calls cuePlaylist with an array', () {
@@ -583,7 +583,7 @@ void main() {
         controller.cuePlaylist(videoIds: videoIds);
 
         verify(webViewController
-            .runJavascript('cuePlaylist(["1", "2", "3", "4", "5"], 0, 0)'));
+            .runJavaScript('cuePlaylist(["1", "2", "3", "4", "5"], 0, 0)'));
       });
 
       test('can call nextVideo', () {
@@ -595,7 +595,7 @@ void main() {
         controller.cuePlaylist(playlistId: playlistId);
         controller.nextVideo();
 
-        verify(webViewController.runJavascript('nextVideo()'));
+        verify(webViewController.runJavaScript('nextVideo()'));
       });
 
       test('can call previousVideo', () {
@@ -607,7 +607,7 @@ void main() {
         controller.cuePlaylist(playlistId: playlistId);
         controller.previousVideo();
 
-        verify(webViewController.runJavascript('previousVideo()'));
+        verify(webViewController.runJavaScript('previousVideo()'));
       });
 
       test('can call playVideoAt', () {
@@ -619,7 +619,7 @@ void main() {
         controller.cuePlaylist(playlistId: playlistId);
         controller.playVideoAt(2);
 
-        verify(webViewController.runJavascript('playVideoAt(2)'));
+        verify(webViewController.runJavaScript('playVideoAt(2)'));
       });
 
       test('isPlaylist is true', () {
