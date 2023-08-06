@@ -1,3 +1,9 @@
+# 2.0.0
+
+- refactor!: remove `autoplay` from options
+  - Since it's not working on mobile platforms, it's removed to avoid confusion.
+    - [source](https://stackoverflow.com/a/15093243/9717762)
+
 # 1.4.1
 
 - fix: playlist_player demo is unable to go back to the first video

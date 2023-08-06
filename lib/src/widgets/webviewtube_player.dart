@@ -249,7 +249,6 @@ class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
                 width: '100%',
                 videoId: '$videoId',
                 playerVars: {
-                    'autoplay': ${_boolean(options.autoPlay)},
                     'cc_load_policy': ${_boolean(options.enableCaption)},
                     'cc_lang_pref': '${options.captionLanguage}',
                     'controls': ${_boolean(options.showControls)},

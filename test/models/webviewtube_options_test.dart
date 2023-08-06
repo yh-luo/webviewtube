@@ -12,18 +12,17 @@ void main() {
         options = WebviewtubeOptions();
       });
 
+      test('equal', () {
+        final actual = options.copyWith();
+
+        expect(actual, options);
+      });
+
       test('showControls', () {
         final actual = options.copyWith(showControls: false);
 
         expect(options != actual, true);
         expect(actual, WebviewtubeOptions(showControls: false));
-      });
-
-      test('autoPlay', () {
-        final actual = options.copyWith(autoPlay: false);
-
-        expect(options != actual, true);
-        expect(actual, WebviewtubeOptions(autoPlay: false));
       });
 
       test('mute', () {
