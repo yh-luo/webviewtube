@@ -1,8 +1,12 @@
 # 2.0.0
 
-- refactor!: remove `autoplay` from options
+- fix: `WebviewtubeOptions.loop` was not working
+- refactor!: `autoplay` was removed from options
   - Since it's not working on mobile platforms, it's removed to avoid confusion.
     - [source](https://stackoverflow.com/a/15093243/9717762)
+- refactor!: [webview_flutter](https://pub.dev/packages/webview_flutter) 4.0 migration
+- feat: the ability to change aspect ratio in `WebviewtubeOptions.aspectRatio`
+- fix: `WebviewtubeOptions.copyWith` incorrectly overrode `currentTimeUpdateInterval`
 
 # 1.4.1
 
