@@ -27,7 +27,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     this.onPlayerWebResourceError,
   }) : super(const WebviewTubeValue());
 
-  late final WebViewController _webViewController;
+  late WebViewController _webViewController;
 
   bool _isPlaylist = false;
 
