@@ -271,7 +271,6 @@ class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
                     'iv_load_policy': 3,
                     'loop': ${_boolean(options.loop)},
                     ${options.loop ? "'playlist': '$videoId'," : ''}
-                    'modestbranding': 1,
                     'playsinline': 1,
                     'rel': 0,
                     'start': ${options.startAt},
