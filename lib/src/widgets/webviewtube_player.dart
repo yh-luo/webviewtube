@@ -1,3 +1,5 @@
+// ignore_for_file: depend_on_referenced_packages
+
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -120,6 +122,11 @@ class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
           NavigationDelegate(onWebResourceError: _onWebResourceError))
       ..loadRequest(Uri.dataFromString(_generateIframePage(widget.videoId),
           mimeType: 'text/html', encoding: Encoding.getByName('utf-8')));
+
+    if (_webviewController.platform is AndroidWebViewController) {
+      (_webviewController.platform as AndroidWebViewController)
+          .setMediaPlaybackRequiresUserGesture(false);
+    }
 
     if (widget.options.forceHd) {
       _webviewController.setUserAgent(hdUserAgent);
