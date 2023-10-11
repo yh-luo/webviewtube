@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import '../webviewtube.dart';
@@ -171,26 +172,31 @@ class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
         }
       case 'StateChange':
         {
-          final data = json['args']['state'] as int;
-          context.read<WebviewtubeController>().onPlayerStateChange(data);
+          final data = int.tryParse(json['args']['state'].toString());
+          if (data != null) {
+            context.read<WebviewtubeController>().onPlayerStateChange(data);
+          }
           break;
         }
       case 'PlaybackQualityChange':
         {
-          final data = json['args']['playbackQuality'] as String;
+          final data = json['args']['playbackQuality'].toString();
           context.read<WebviewtubeController>().onPlaybackQualityChange(data);
           break;
         }
       case 'PlaybackRateChange':
         {
-          final data = json['args']['playbackRate'] as num;
-          context.read<WebviewtubeController>().onPlaybackRateChange(data);
+          final data = num.tryParse(json['args']['playbackRate'].toString());
+          if (data != null) {
+            context.read<WebviewtubeController>().onPlaybackRateChange(data);
+          }
           break;
         }
       case 'Errors':
         {
-          final data = json['args']['errorCode'] as int;
-          context.read<WebviewtubeController>().onError(data);
+          final data = int.tryParse(json['args']['errorCode'].toString());
+          // unknown error
+          context.read<WebviewtubeController>().onError(data ?? 999);
           break;
         }
       case 'VideoData':
