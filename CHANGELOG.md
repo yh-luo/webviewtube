@@ -1,3 +1,12 @@
+# 2.1.0
+
+- doc: updates iOS minimum version in README
+- feat: supports Dart 3.0
+- refactor: remove `modestbranding` from player configuration after the [deprecation announcement](https://developers.google.com/youtube/player_parameters#august-15,-2023)
+- refactor: do not finalize internal `WebViewController` (to make hot reloading work)
+- refactor: disable the restrictions on automatic media playback for android platform
+- fix: safer casting of messages
+
 # 2.0.0
 
 - fix: `WebviewtubeOptions.loop` was not working
