@@ -45,7 +45,7 @@ This package aims to solve the problems by:
 The same as [webview_flutter](https://pub.dev/packages/webview_flutter). On Android, hybrid composition mode is used.
 
 - Android: SDK 19+
-- iOS: 9.0+
+- iOS: 11.0+
 
 ## Setup
 
