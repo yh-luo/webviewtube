@@ -141,9 +141,10 @@ class _WebviewtubeVideoPlayerView extends StatelessWidget {
               ),
             );
           },
+          // ignore: prefer_const_constructors
           child: Row(
             mainAxisSize: MainAxisSize.min,
-            children: const [
+            children: const <Widget>[
               DurationIndicator(),
               VolumeButton(),
               PlaybackSpeedButton(),

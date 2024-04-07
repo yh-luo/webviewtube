@@ -20,6 +20,7 @@ class DurationIndicator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ignore: prefer_const_constructors
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: const <Widget>[
