@@ -1,3 +1,8 @@
+# 2.1.1
+
+- refactor: fix linting problems to supports both versions above/below 3.10
+- chore: upgrade dependencies
+
 # 2.1.0
 
 - doc: updates iOS minimum version in README
