@@ -1,51 +1,32 @@
-# Webviewtube
+# Play YouTube videos on mobile devices with WebView
 
-Play YouTube videos on mobile devices with [webview_flutter](https://pub.dev/packages/webview_flutter) and [IFrame Player API](https://developers.google.com/youtube/iframe_api_reference). 
+Use [IFrame Player API](https://developers.google.com/youtube/iframe_api_reference) and WebView to play YouTube videos on mobile devices.
 
-This package is largely inspired by the popular [youtube_player_flutter](https://pub.dev/packages/youtube_player_flutter), but with the official Flutter support of WebView and simpler state management via [provider](https://pub.dev/packages/provider).
+This package leverages [webview_flutter](https://pub.dev/packages/webview_flutter) to embed a YouTube video player through the [IFrame Player API](https://developers.google.com/youtube/iframe_api_reference). For state management, it utilizes the [provider](https://pub.dev/packages/provider) package.
 
 ## Demo
 
 ### IFrame player
 
-![default iframe player view](https://github.com/yh-luo/webviewtube/blob/main/resources/default_1.png)
+![default iframe player view](https://raw.githubusercontent.com/yh-luo/webviewtube/main/resources/default_1.png)
 
 ### Decorated player
 
-![decorated player view](https://github.com/yh-luo/webviewtube/blob/main/resources/decorated_1.png)
+![decorated player view](https://raw.githubusercontent.com/yh-luo/webviewtube/main/resources/decorated_1.png)
 
-- [Webviewtube](#webviewtube)
-  - [Why another package?](#why-another-package)
-  - [Supported Platforms](#supported-platforms)
-  - [Setup](#setup)
-    - [Android](#android)
-    - [iOS](#ios)
-  - [Usage](#usage)
-    - [Default IFrame player](#default-iframe-player)
-    - [Widgets decorated player](#widgets-decorated-player)
-    - [Configure the player](#configure-the-player)
-      - [WebviewtubeOptions](#webviewtubeoptions)
-      - [WebviewtubeController](#webviewtubecontroller)
-  - [Customize the player](#customize-the-player)
-  - [Acknowledgments](#acknowledgments)
+## Features
 
-
-## Why another package?
-
-`youtube_player_flutter` and its dependency `flutter_inappwebview` have been in hiatus for a while. It's more reassuring to use the official [webview_flutter](https://pub.dev/packages/webview_flutter). Also, the performance issues of `youtube_player_flutter` are not resolved and make it problematic to use in some situations.
-
-This package aims to solve the problems by:
-- Depends on the official [webview_flutter](https://pub.dev/packages/webview_flutter) to provide a default IFrame player.
-  - `WebviewtubePlayer` is a WebView and does not bundle with any other widgets.
-- Proper state management with [provider](https://pub.dev/packages/provider).
-  - `WebviewtubeVideoPlayer` combines the default player with customized widgets. The state management is carefully handled, which makes the player more maintainable, testable, and easily customizable.
+- Customizable player
+  - `WebviewtubePlayer` provides a WebView that integrates with the YouTube IFrame Player API, allowing for extensive customization without additional widgets.
+- Decorated player with basic controls.
+  - `WebviewtubeVideoPlayer` combines the default player with custom widgets, offering a more integrated player with basic controls.
 
 ## Supported Platforms
 
 The same as [webview_flutter](https://pub.dev/packages/webview_flutter). On Android, hybrid composition mode is used.
 
 - Android: SDK 19+
-- iOS: 11.0+
+- iOS: 12.0+
 
 ## Setup
 
@@ -53,7 +34,7 @@ The same as [webview_flutter](https://pub.dev/packages/webview_flutter). On Andr
 
 Set the correct `minSdkVersion` in `android/app/build.gradle`
 
-```
+```groovy
 android {
     defaultConfig {
         minSdkVersion 19
@@ -83,7 +64,8 @@ WebviewtubeVideoPlayer(videoId: '4AoFA19gbLo')
 
 ### Configure the player
 
-To configure the player, pass a `WebviewtubeOptions` to the player.
+Pass a `WebviewtubeOptions` to configure the player.
+
 ```dart
 final options = const WebviewtubeOptions(
     forceHd: true,
@@ -94,7 +76,8 @@ final options = const WebviewtubeOptions(
 WebviewtubeVideoPlayer(videoId: '4AoFA19gbLo', options: options);
 ```
 
-To listen to the player value (e.g., video metadata) and control the player (e.g., pause or load other videos), pass a `WebviewtubeController` and remember to dispose the controller when it's not in need.
+To interact with the player (e.g., retrieve video metadata, control playback) and manage its state (e.g., pause, load new videos), use a `WebviewtubeController`. Make sure to pass this controller to the player instance and remember to dispose of it when it's no longer needed to free up resources.
+
 ```dart
 // ...
 // inside a state of a stateful widget
@@ -111,19 +94,17 @@ Widget build(BuildContext context) {
     return WebviewtubeVideoPlayer(
       videoId: '4AoFA19gbLo',
       controller: controller,
-      );
+    );
 }
 ```
 
-
 ## Customize the player
 
-Using a proper state management is highly recommended. This package uses [provider](https://pub.dev/packages/provider), but you can fork and use your choice of tools.
-Check out the source code of `WebviewtubeVideoPlayer` and make your own player!
+This package uses [provider](https://pub.dev/packages/provider) for state management, but you're free to fork and use your preferred tools. To create a customized player, explore the source code of `WebviewtubeVideoPlayer` and modify it according to your needs.
 
-### With StatefulWidget and setState
+### Using `StatefulWidget` and `setState`
 
-Refers to `example/lib/customized_player.dart` for a use case with stateful widgets.
+For an example of integrating the player with a `StatefulWidget`, refer to `example/lib/customized_player.dart`. This example demonstrates how to control the player and update the UI based on player events and state changes.
 
 ## Acknowledgments
 
