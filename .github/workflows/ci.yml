@@ -8,12 +8,17 @@ jobs:
   webviewtube:
     runs-on: ubuntu-latest
 
+    strategy:
+      matrix:
+        flutter-version:
+          ["3.10.6", "3.13.9", "3.16.9", "3.19.6", "3.22.3", "3.24.0"]
+
     steps:
       - uses: actions/checkout@v3
       - uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.10.6'
-          channel: 'stable'
+          flutter-version: ${{ matrix.flutter-version }}
+          channel: "stable"
 
       - name: Flutter version
         run: flutter --version
