@@ -20,9 +20,11 @@
 /// WebviewtubeVideoPlayer('4AoFA19gbLo', options: options)
 /// ```
 ///
-/// To listen to the player value (e.g., video metadata) or control the player
-/// (e.g., pause or load other videos), pass a [WebviewtubeController] and
-/// remember to dispose the controller when it's not in need.
+/// To interact with the player (e.g., retrieve video metadata, control
+/// playback) and manage its state (e.g., pause, load new videos), use a
+/// [WebviewtubeController]. Make sure to pass this controller to the player
+/// instance and remember to dispose of it when it's no longer needed to free
+/// up resources.
 /// ```dart
 /// // ...
 /// // inside a state of a stateful widget
@@ -39,7 +41,7 @@
 ///     return WebviewtubeVideoPlayer(
 ///       videoId: '4AoFA19gbLo',
 ///       controller: controller,
-///       );
+///     );
 /// }
 /// ```
 ///
