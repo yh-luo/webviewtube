@@ -1,3 +1,9 @@
+# 2.1.2
+
+- doc: update library doc
+- ci: test 3.13.9, 3.16.9, 3.19.6, 3.22.3 and 3.24.0
+- doc: update readme
+
 # 2.1.1
 
 - refactor: fix linting problems to supports both versions above/below 3.10
