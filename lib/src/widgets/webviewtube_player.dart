@@ -146,7 +146,9 @@ class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
   void dispose() {
     // recommended in
     // https://github.com/flutter/flutter/issues/119616#issuecomment-1419991144
-    _webviewController.loadRequest(Uri.parse('about:blank'));
+    _webviewController
+      ..removeJavaScriptChannel('Webviewtube')
+      ..loadRequest(Uri.parse('about:blank'));
     super.dispose();
   }
 
