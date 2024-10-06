@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
+import 'widgets.dart';
 
 /// {@template webviewtube_video_player}
 /// A widgets-decorated [WebviewtubePlayer].

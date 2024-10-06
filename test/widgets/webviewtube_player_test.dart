@@ -9,6 +9,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_platform_interface/webview_flutter_platform_interface.dart';
+import 'package:webviewtube/src/widgets/widgets.dart';
 import 'package:webviewtube/webviewtube.dart';
 
 import 'webviewtube_player_test.mocks.dart';
