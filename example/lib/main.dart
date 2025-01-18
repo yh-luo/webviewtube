@@ -34,7 +34,7 @@ class WebviewtubeDemo extends StatefulWidget {
 class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
   final controller = WebviewtubeController();
   final options = const WebviewtubeOptions(
-      forceHd: true, loop: true, interfaceLanguage: 'zh-Hant');
+      forceHd: true, loop: true, interfaceLanguage: 'en');
 
   @override
   void dispose() {
