@@ -1,3 +1,10 @@
+# 2.1.3
+
+- chore: update example
+- refactor!: prevent exporting internal widgets
+- chore: update supported platforms and description
+- refactor: remove webviewtube javascript channel when not used
+
 # 2.1.2
 
 - doc: update library doc
