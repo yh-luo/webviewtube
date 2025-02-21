@@ -65,8 +65,11 @@ class WebviewtubePlayer extends StatelessWidget {
   /// The controller to control the player.
   final WebviewtubeController? _controller;
 
-  late final _child =
-      _WebviewtubePlayerView(videoId: videoId, options: _options);
+  late final _child = _WebviewtubePlayerView(
+    videoId: videoId,
+    options: _options,
+    onPlayerNavigationRequest: _controller?.onPlayerNavigationRequest,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -89,11 +92,13 @@ class _WebviewtubePlayerView extends StatefulWidget {
     Key? key,
     required this.videoId,
     required this.options,
+    required this.onPlayerNavigationRequest,
   }) : super(key: key);
 
   final String videoId;
 
   final WebviewtubeOptions options;
+  final PlayerNavigationRequestCallback? onPlayerNavigationRequest;
 
   @override
   State<_WebviewtubePlayerView> createState() => _WebviewtubePlayerViewState();
@@ -116,12 +121,30 @@ class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
     }
     _webviewController = WebViewController.fromPlatformCreationParams(params)
       ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..addJavaScriptChannel('Webviewtube',
-          onMessageReceived: _onMessageReceived)
+      ..addJavaScriptChannel(
+        'Webviewtube',
+        onMessageReceived: _onMessageReceived,
+      )
       ..setNavigationDelegate(
-          NavigationDelegate(onWebResourceError: _onWebResourceError))
-      ..loadRequest(Uri.dataFromString(_generateIframePage(widget.videoId),
-          mimeType: 'text/html', encoding: Encoding.getByName('utf-8')));
+        NavigationDelegate(
+          onNavigationRequest: (request) {
+            final verdict = widget.onPlayerNavigationRequest
+                    ?.call(Uri.parse(request.url)) ??
+                true;
+            return verdict
+                ? NavigationDecision.navigate
+                : NavigationDecision.prevent;
+          },
+          onWebResourceError: _onWebResourceError,
+        ),
+      )
+      ..loadRequest(
+        Uri.dataFromString(
+          _generateIframePage(widget.videoId),
+          mimeType: 'text/html',
+          encoding: Encoding.getByName('utf-8'),
+        ),
+      );
 
     if (_webviewController.platform is AndroidWebViewController) {
       (_webviewController.platform as AndroidWebViewController)
@@ -159,9 +182,7 @@ class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
       color: Colors.black,
       child: AspectRatio(
         aspectRatio: widget.options.aspectRatio,
-        child: WebViewWidget(
-          controller: _webviewController,
-        ),
+        child: WebViewWidget(controller: _webviewController),
       ),
     );
   }
