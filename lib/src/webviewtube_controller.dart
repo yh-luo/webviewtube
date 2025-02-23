@@ -6,6 +6,9 @@ import 'models/models.dart';
 /// Optional callback invoked when the player is ready.
 typedef PlayerReadyCallback = void Function();
 
+/// Optional callback invoked when the player wants to navigate to a new page.
+typedef PlayerNavigationRequestCallback = bool Function(Uri uri);
+
 /// Optional callback invoked when the player returns an error.
 typedef PlayerErrorCallback = void Function(PlayerError error);
 
@@ -25,6 +28,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     this.onPlayerReady,
     this.onPlayerError,
     this.onPlayerWebResourceError,
+    this.onPlayerNavigationRequest,
   }) : super(const WebviewTubeValue());
 
   late WebViewController _webViewController;
@@ -39,6 +43,11 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
   /// Invoked when a web resource has failed to load.
   final WebResourceErrorCallback? onPlayerWebResourceError;
+
+  /// Invoked when the player wants to navigate to a new page.
+  /// Return true to allow the navigation, false to cancel it which allows you
+  /// to handle the navigation yourself.
+  final PlayerNavigationRequestCallback? onPlayerNavigationRequest;
 
   /// Current loaded [WebViewController].
   WebViewController get webViewController => _webViewController;
