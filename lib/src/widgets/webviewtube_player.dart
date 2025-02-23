@@ -127,10 +127,11 @@ class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
       )
       ..setNavigationDelegate(
         NavigationDelegate(
-          onNavigationRequest: (request) {
-            final verdict = widget.onPlayerNavigationRequest
+          onNavigationRequest: (request) async {
+            final verdict = await widget.onPlayerNavigationRequest
                     ?.call(Uri.parse(request.url)) ??
-                true;
+                false;
+
             return verdict
                 ? NavigationDecision.navigate
                 : NavigationDecision.prevent;
