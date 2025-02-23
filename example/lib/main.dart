@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:webviewtube/webviewtube.dart';
 
 import 'customized_player.dart';
@@ -32,7 +33,18 @@ class WebviewtubeDemo extends StatefulWidget {
 }
 
 class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
-  final controller = WebviewtubeController();
+  // To allow the user to watch the video in the YouTube app or website when
+  // tapping on the YouTube logo, you can use the `onPlayerNavigationRequest`
+  // callback with `url_launcher`.
+  final controller = WebviewtubeController(
+    onPlayerNavigationRequest: (uri) async {
+      if (uri.host == 'www.youtube.com') {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
+        return false;
+      }
+      return false;
+    },
+  );
   final options = const WebviewtubeOptions(
       forceHd: true, loop: true, interfaceLanguage: 'en');
 
