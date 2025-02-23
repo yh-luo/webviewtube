@@ -35,9 +35,9 @@ class TestApp extends StatelessWidget {
   }
 }
 
-@GenerateMocks([
-  WebviewtubeController,
-  WebviewtubeOptions,
+@GenerateNiceMocks([
+  MockSpec<WebviewtubeController>(),
+  MockSpec<WebviewtubeOptions>(),
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -60,6 +60,7 @@ void main() {
           ),
         ));
 
+        verify(controller.onPlayerNavigationRequest).called(1);
         expect(find.byType(WebviewtubePlayer), findsOneWidget);
         expect(find.byType(DurationIndicator), findsNothing);
         // expect(find.byType(WebViewWidget), findsOneWidget);
@@ -340,6 +341,10 @@ void main() {
   });
 
   group('WebviewtubeVideoPlayer', () {
+    setUp(() {
+      WebViewPlatform.instance = FakeWebViewPlatform();
+    });
+
     testWidgets('initiate widgets properly', (WidgetTester tester) async {
       final controller = MockWebviewtubeController();
       when(controller.value).thenReturn(WebviewTubeValue());

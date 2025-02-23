@@ -1,3 +1,9 @@
+
+
+# 2.2.0
+
+- feat: added `onPlayerNavigationRequest` to controller which allow webview navigation events to be handled by the app.
+
 # 2.1.3
 
 - chore: update example

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
@@ -5,6 +7,9 @@ import 'models/models.dart';
 
 /// Optional callback invoked when the player is ready.
 typedef PlayerReadyCallback = void Function();
+
+/// Optional callback invoked when the player wants to navigate to a new page.
+typedef PlayerNavigationRequestCallback = FutureOr<bool> Function(Uri uri);
 
 /// Optional callback invoked when the player returns an error.
 typedef PlayerErrorCallback = void Function(PlayerError error);
@@ -25,6 +30,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     this.onPlayerReady,
     this.onPlayerError,
     this.onPlayerWebResourceError,
+    this.onPlayerNavigationRequest,
   }) : super(const WebviewTubeValue());
 
   late WebViewController _webViewController;
@@ -39,6 +45,31 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
   /// Invoked when a web resource has failed to load.
   final WebResourceErrorCallback? onPlayerWebResourceError;
+
+  /// Invoked when the player wants to navigate to a new page.
+  /// Return true to allow the navigation, false to prevent navigation.
+  ///
+  /// Defaults to null, which prevents any navigation.
+  ///
+  /// For example, to allow the user to watch the video in the YouTube app or
+  /// website when tapping on the YouTube logo, define the callback as follows
+  /// and pass the controller to the player widget:
+  /// ```dart
+  /// import 'package:url_launcher/url_launcher.dart';
+  ///
+  /// ...
+  ///
+  /// final controller = WebviewtubeController(
+  ///   onPlayerNavigationRequest: (uri) async {
+  ///     if (uri.host == 'www.youtube.com') {
+  ///       await launchUrl(uri, mode: LaunchMode.externalApplication);
+  ///       return false;
+  ///     }
+  ///     return false;
+  ///   },
+  /// );
+  /// ```
+  final PlayerNavigationRequestCallback? onPlayerNavigationRequest;
 
   /// Current loaded [WebViewController].
   WebViewController get webViewController => _webViewController;
