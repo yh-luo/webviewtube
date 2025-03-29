@@ -3,6 +3,7 @@
 # 2.2.0
 
 - feat: added `onPlayerNavigationRequest` to controller which allow webview navigation events to be handled by the app.
+- fix: set `origin` to prevent video loading errors
 
 # 2.1.3
 

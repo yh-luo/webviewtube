@@ -755,12 +755,10 @@ class FakeWebViewController extends PlatformWebViewController {
   Future<void> loadRequest(LoadRequestParams params) async {}
 
   @override
-  Future<String?> currentUrl() async {
-    return 'https://www.google.com';
-  }
+  Future<void> setUserAgent(String? userAgent) async {}
 
   @override
-  Future<void> setUserAgent(String? userAgent) async {}
+  Future<void> loadHtmlString(String html, {String? baseUrl}) async {}
 }
 
 class FakeCookieManager extends PlatformWebViewCookieManager {

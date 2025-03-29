@@ -139,12 +139,9 @@ class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
           onWebResourceError: _onWebResourceError,
         ),
       )
-      ..loadRequest(
-        Uri.dataFromString(
-          _generateIframePage(widget.videoId),
-          mimeType: 'text/html',
-          encoding: Encoding.getByName('utf-8'),
-        ),
+      ..loadHtmlString(
+        _generateIframePage(widget.videoId),
+        baseUrl: 'https://www.youtube.com',
       );
 
     if (_webviewController.platform is AndroidWebViewController) {
@@ -298,7 +295,8 @@ class _WebviewtubePlayerViewState extends State<_WebviewtubePlayerView> {
                     'playsinline': 1,
                     'rel': 0,
                     'start': ${options.startAt},
-                    'end': ${options.endAt}
+                    'end': ${options.endAt},
+                    'origin': 'https://www.youtube.com'
                 },
                 events: {
                     onReady: function (event) { sendMessageToDart('Ready'); },
