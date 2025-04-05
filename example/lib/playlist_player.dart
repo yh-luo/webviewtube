@@ -10,10 +10,7 @@ class PlaylistPlayer extends StatefulWidget {
 }
 
 class _PlaylistPlayerState extends State<PlaylistPlayer> {
-  final options = const WebviewtubeOptions(
-    enableCaption: false,
-  );
-  late final WebviewtubeController webviewtubeController;
+  late final WebviewtubeController controller;
   bool _isPlaying = false;
   int _currentIdx = 0;
   final List<String> videoIds = <String>[
@@ -26,27 +23,28 @@ class _PlaylistPlayerState extends State<PlaylistPlayer> {
   void initState() {
     super.initState();
     // load by playlist id
-    // webviewtubeController = WebviewtubeController(
-    //   onPlayerReady: () => webviewtubeController.loadPlaylist(
+    // controller = WebviewtubeController(
+    //   options: const WebviewtubeOptions(enableCaption: false),
+    //   onPlayerReady: () => controller.loadPlaylist(
     //       playlistId: 'PLjxrf2q8roU23XGwz3Km7sQZFTdB996iG'),
     // );
-    webviewtubeController = WebviewtubeController(
-      onPlayerReady: () =>
-          webviewtubeController.loadPlaylist(videoIds: videoIds),
+    controller = WebviewtubeController(
+      options: const WebviewtubeOptions(enableCaption: false),
+      onPlayerReady: () async => controller.loadPlaylist(videoIds: videoIds),
     );
-    webviewtubeController.addListener(_valueHandler);
+    controller.addListener(_valueHandler);
   }
 
   @override
   void dispose() {
-    webviewtubeController.removeListener(_valueHandler);
-    webviewtubeController.dispose();
+    controller.removeListener(_valueHandler);
+    controller.dispose();
     super.dispose();
   }
 
   void _valueHandler() {
-    final playerState = webviewtubeController.value.playerState;
-    final metadata = webviewtubeController.value.videoMetadata;
+    final playerState = controller.value.playerState;
+    final metadata = controller.value.videoMetadata;
     final index = videoIds.indexWhere((e) => e == metadata.videoId);
     if (_isPlaying && playerState != PlayerState.playing) {
       setState(() {
@@ -75,8 +73,7 @@ class _PlaylistPlayerState extends State<PlaylistPlayer> {
         children: <Widget>[
           WebviewtubePlayer(
             videoId: '',
-            options: options,
-            controller: webviewtubeController,
+            controller: controller,
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -97,9 +94,9 @@ class _PlaylistPlayerState extends State<PlaylistPlayer> {
                       ),
                     );
                   }),
-                  onChanged: (index) {
+                  onChanged: (index) async {
                     if (index == null) return;
-                    webviewtubeController.playVideoAt(index);
+                    await controller.playVideoAt(index);
                   }),
             ],
           ),
@@ -108,19 +105,19 @@ class _PlaylistPlayerState extends State<PlaylistPlayer> {
             children: <Widget>[
               IconButton(
                   onPressed: _currentIdx > 0
-                      ? () => webviewtubeController.previousVideo()
+                      ? () async => controller.previousVideo()
                       : null,
                   icon: const Icon(Icons.skip_previous)),
               _isPlaying
                   ? IconButton(
-                      onPressed: () => webviewtubeController.pause(),
+                      onPressed: () async => controller.pause(),
                       icon: const Icon(Icons.pause))
                   : IconButton(
-                      onPressed: () => webviewtubeController.play(),
+                      onPressed: () async => controller.play(),
                       icon: const Icon(Icons.play_arrow)),
               IconButton(
                   onPressed: _currentIdx < videoIds.length - 1
-                      ? () => webviewtubeController.nextVideo()
+                      ? () async => controller.nextVideo()
                       : null,
                   icon: const Icon(Icons.skip_next))
             ],
