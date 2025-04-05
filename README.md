@@ -64,24 +64,28 @@ WebviewtubeVideoPlayer(videoId: '4AoFA19gbLo')
 
 ### Configure the player
 
-Pass a `WebviewtubeOptions` to configure the player.
+To customize or interact with the player, you can use a `WebviewtubeController` along with `WebviewtubeOptions`. The controller allows you to configure player options and interact with the player. Follow these steps to set up and use the controller:
 
-```dart
-final options = const WebviewtubeOptions(
-    forceHd: true,
-    enableCaption: false,
-);
+1. **Initialize the Controller**: Create an instance of `WebviewtubeController` and pass the desired options using `WebviewtubeOptions`.
 
-/// `showControls` will always be false for [WebviewtubeVideoPlayer]
-WebviewtubeVideoPlayer(videoId: '4AoFA19gbLo', options: options);
-```
+2. **Pass the Controller to the Player**: Provide the controller to the player widget.
 
-To interact with the player (e.g., retrieve video metadata, control playback) and manage its state (e.g., pause, load new videos), use a `WebviewtubeController`. Make sure to pass this controller to the player instance and remember to dispose of it when it's no longer needed to free up resources.
+3. **Dispose of the Controller**: To avoid memory leaks, always dispose of the controller when it's no longer needed to free up resources.
 
 ```dart
 // ...
 // inside a state of a stateful widget
-final controller = WebviewtubeController();
+late final WebviewtubeController controller;
+
+@override
+void initState() {
+  super.initState();
+  controller = WebviewtubeController(
+    options: const WebviewtubeOptions(
+      enableCaption: false,
+    ),
+  );
+}
 
 @override
 void dispose() {
@@ -91,7 +95,7 @@ void dispose() {
 
 @override
 Widget build(BuildContext context) {
-    return WebviewtubeVideoPlayer(
+    return WebviewtubePlayer(
       videoId: '4AoFA19gbLo',
       controller: controller,
     );
@@ -108,7 +112,7 @@ For an example of integrating the player with a `StatefulWidget`, refer to `exam
 
 ## Acknowledgments
 
-This package is built upon/inspired by the following packages, for which credit goes out to the respective authors.
+This package is inspired by the following packages, for which credit goes out to the respective authors.
 
 - [youtube_player_flutter](https://pub.dev/packages/youtube_player_flutter) by [Sarbagya Dhaubanjar](https://github.com/sarbagyastha/youtube_player_flutter)
 - [youtube_player_webview](https://pub.dev/packages/youtube_player_webview) by [Ravindra barthwal](https://github.com/ravindrabarthwal/youtube_player_webview)

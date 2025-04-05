@@ -8,7 +8,9 @@ import 'package:webviewtube/webviewtube.dart';
 
 import 'webviewtube_controller_test.mocks.dart';
 
-@GenerateMocks([WebViewController])
+@GenerateNiceMocks([
+  MockSpec<WebViewController>(),
+])
 void main() {
   final webViewController = MockWebViewController();
 
@@ -19,13 +21,6 @@ void main() {
       expect(actual, isNotNull);
       expect(actual.isPlaylist, false);
       expect(actual.value, WebviewTubeValue());
-    });
-
-    test('onWebviewCreated', () {
-      final controller = WebviewtubeController();
-
-      controller.onWebviewCreated(webViewController);
-      expect(controller.webViewController, webViewController);
     });
 
     group('onReady', () {
@@ -156,103 +151,103 @@ void main() {
     });
 
     group('play', () {
-      test('calls play()', () {
+      test('calls play()', () async {
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.play();
+        await controller.play();
         verify(webViewController.runJavaScript('play()'));
       });
     });
 
     group('pause', () {
-      test('calls pause()', () {
+      test('calls pause()', () async {
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.pause();
+        await controller.pause();
         verify(webViewController.runJavaScript('pause()'));
       });
     });
 
     group('mute', () {
-      test('calls mute()', () {
+      test('calls mute()', () async {
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.mute();
+        await controller.mute();
         verify(webViewController.runJavaScript('mute()'));
       });
 
-      test('updates value', () {
+      test('updates value', () async {
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.mute();
+        await controller.mute();
         expect(controller.value.isMuted, true);
       });
     });
 
     group('unMute', () {
-      test('calls unMute()', () {
+      test('calls unMute()', () async {
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.unMute();
+        await controller.unMute();
         verify(webViewController.runJavaScript('unMute()'));
       });
 
-      test('updates value', () {
+      test('updates value', () async {
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.unMute();
+        await controller.unMute();
         expect(controller.value.isMuted, false);
       });
     });
 
     group('setPlaybackRate', () {
-      test('calls setPlaybackRate()', () {
+      test('calls setPlaybackRate()', () async {
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.setPlaybackRate(PlaybackRate.half);
+        await controller.setPlaybackRate(PlaybackRate.half);
         verify(webViewController.runJavaScript('setPlaybackRate(0.5)'));
       });
     });
 
     group('seekTo', () {
-      test('calls seekTo()', () {
+      test('calls seekTo()', () async {
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.seekTo(Duration(seconds: 1));
+        await controller.seekTo(Duration(seconds: 1));
         verify(webViewController.runJavaScript('seekTo(1, false)'));
       });
 
-      test('updates value', () {
+      test('updates value', () async {
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.seekTo(Duration(seconds: 1));
+        await controller.seekTo(Duration(seconds: 1));
         expect(controller.value.position, Duration(seconds: 1));
       });
 
-      test('calls play() afterwards', () {
+      test('calls play() afterwards', () async {
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.seekTo(Duration(seconds: 1));
+        await controller.seekTo(Duration(seconds: 1));
         verifyInOrder([
           webViewController.runJavaScript('seekTo(1, false)'),
           webViewController.runJavaScript('play()')
@@ -261,12 +256,12 @@ void main() {
     });
 
     group('replay', () {
-      test('calls seekTo() and play()', () {
+      test('calls seekTo() and play()', () async {
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.replay();
+        await controller.replay();
         verifyInOrder([
           webViewController.runJavaScript('seekTo(0, false)'),
           webViewController.runJavaScript('play()')
@@ -275,51 +270,51 @@ void main() {
     });
 
     group('reload', () {
-      test('calls reload', () {
+      test('calls reload', () async {
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
 
-        controller.reload();
+        await controller.reload();
 
         verify(webViewController.reload());
       });
     });
 
     group('load', () {
-      test('calls loadById', () {
+      test('calls loadById', () async {
         final videoId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.load(videoId);
+        await controller.load(videoId);
 
         verify(
             webViewController.runJavaScript('loadById({videoId: "$videoId"})'));
       });
 
-      test('calls with startAt', () {
+      test('calls with startAt', () async {
         final videoId = 'test123';
         final startAt = 5;
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.load(videoId, startAt: startAt);
+        await controller.load(videoId, startAt: startAt);
 
         verify(webViewController.runJavaScript(
             'loadById({videoId: "$videoId", startSeconds: $startAt})'));
       });
 
-      test('calls with endAt', () {
+      test('calls with endAt', () async {
         final videoId = 'test123';
         final startAt = 1;
         final endAt = 5;
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.load(videoId, startAt: startAt, endAt: endAt);
+        await controller.load(videoId, startAt: startAt, endAt: endAt);
 
         verify(webViewController.runJavaScript(
             'loadById({videoId: "$videoId", startSeconds: $startAt, '
@@ -329,7 +324,7 @@ void main() {
       test('isPlaylist = false', () {
         final videoId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
         controller.load(videoId);
@@ -340,7 +335,7 @@ void main() {
       test('nextVideo is doing nothing', () {
         final videoId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
         controller.load(videoId);
@@ -352,7 +347,7 @@ void main() {
       test('previousVideo is doing nothing', () {
         final videoId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
         controller.load(videoId);
@@ -364,7 +359,7 @@ void main() {
       test('playVideoAt is doing nothing', () {
         final videoId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
         controller.load(videoId);
@@ -375,53 +370,53 @@ void main() {
     });
 
     group('cue', () {
-      test('calls cueById', () {
+      test('calls cueById', () async {
         final videoId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.cue(videoId);
+        await controller.cue(videoId);
 
         verify(
             webViewController.runJavaScript('cueById({videoId: "$videoId"})'));
       });
 
-      test('calls with startAt', () {
+      test('calls with startAt', () async {
         final videoId = 'test123';
         final startAt = 5;
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.cue(videoId, startAt: startAt);
+        await controller.cue(videoId, startAt: startAt);
 
         verify(webViewController.runJavaScript(
             'cueById({videoId: "$videoId", startSeconds: $startAt})'));
       });
 
-      test('calls with endAt', () {
+      test('calls with endAt', () async {
         final videoId = 'test123';
         final startAt = 1;
         final endAt = 5;
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.cue(videoId, startAt: startAt, endAt: endAt);
+        await controller.cue(videoId, startAt: startAt, endAt: endAt);
 
         verify(webViewController.runJavaScript(
             'cueById({videoId: "$videoId", startSeconds: $startAt, '
             'endSeconds: $endAt})'));
       });
 
-      test('isPlaylist = false', () {
+      test('isPlaylist = false', () async {
         final videoId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.cue(videoId);
+        await controller.cue(videoId);
 
         expect(controller.isPlaylist, false);
       });
@@ -429,7 +424,7 @@ void main() {
       test('nextVideo is doing nothing', () {
         final videoId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
         controller.cue(videoId);
@@ -441,7 +436,7 @@ void main() {
       test('previousVideo is doing nothing', () {
         final videoId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
         controller.cue(videoId);
@@ -453,7 +448,7 @@ void main() {
       test('playVideoAt is doing nothing', () {
         final videoId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
         controller.cue(videoId);
@@ -464,171 +459,171 @@ void main() {
     });
 
     group('loadPlaylist', () {
-      test('calls loadPlaylist with a string', () {
+      test('calls loadPlaylist with a string', () async {
         final playlistId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.loadPlaylist(playlistId: playlistId);
+        await controller.loadPlaylist(playlistId: playlistId);
 
         verify(
             webViewController.runJavaScript('loadPlaylist($playlistId, 0, 0)'));
       });
 
-      test('calls loadPlaylist with an array', () {
+      test('calls loadPlaylist with an array', () async {
         final videoIds = ['1', '2', '3', '4', '5'];
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.loadPlaylist(videoIds: videoIds);
+        await controller.loadPlaylist(videoIds: videoIds);
 
         verify(webViewController
             .runJavaScript('loadPlaylist(["1", "2", "3", "4", "5"], 0, 0)'));
       });
 
-      test('calls loadPlaylist with index', () {
+      test('calls loadPlaylist with index', () async {
         final playlistId = 'test123';
         final index = 1;
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.loadPlaylist(playlistId: playlistId, index: index);
+        await controller.loadPlaylist(playlistId: playlistId, index: index);
 
         verify(webViewController
             .runJavaScript('loadPlaylist($playlistId, $index, 0)'));
       });
 
-      test('calls loadPlaylist with startAt', () {
+      test('calls loadPlaylist with startAt', () async {
         final playlistId = 'test123';
         final startAt = 5;
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.loadPlaylist(playlistId: playlistId, startAt: startAt);
+        await controller.loadPlaylist(playlistId: playlistId, startAt: startAt);
 
         verify(webViewController
             .runJavaScript('loadPlaylist($playlistId, 0, $startAt)'));
       });
 
-      test('can call nextVideo', () {
+      test('can call nextVideo', () async {
         final playlistId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.loadPlaylist(playlistId: playlistId);
-        controller.nextVideo();
+        await controller.loadPlaylist(playlistId: playlistId);
+        await controller.nextVideo();
 
         verify(webViewController.runJavaScript('nextVideo()'));
       });
 
-      test('can call previousVideo', () {
+      test('can call previousVideo', () async {
         final playlistId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.loadPlaylist(playlistId: playlistId);
-        controller.previousVideo();
+        await controller.loadPlaylist(playlistId: playlistId);
+        await controller.previousVideo();
 
         verify(webViewController.runJavaScript('previousVideo()'));
       });
 
-      test('can call playVideoAt', () {
+      test('can call playVideoAt', () async {
         final playlistId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.loadPlaylist(playlistId: playlistId);
-        controller.playVideoAt(2);
+        await controller.loadPlaylist(playlistId: playlistId);
+        await controller.playVideoAt(2);
 
         verify(webViewController.runJavaScript('playVideoAt(2)'));
       });
 
-      test('isPlaylist is true', () {
+      test('isPlaylist is true', () async {
         final playlistId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.loadPlaylist(playlistId: playlistId);
+        await controller.loadPlaylist(playlistId: playlistId);
         expect(controller.isPlaylist, true);
       });
     });
 
     group('cuePlaylist', () {
-      test('calls cuePlaylist with a string', () {
+      test('calls cuePlaylist with a string', () async {
         final playlistId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.cuePlaylist(playlistId: playlistId);
+        await controller.cuePlaylist(playlistId: playlistId);
 
         verify(
             webViewController.runJavaScript('cuePlaylist($playlistId, 0, 0)'));
       });
 
-      test('calls cuePlaylist with an array', () {
+      test('calls cuePlaylist with an array', () async {
         final videoIds = ['1', '2', '3', '4', '5'];
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.cuePlaylist(videoIds: videoIds);
+        await controller.cuePlaylist(videoIds: videoIds);
 
         verify(webViewController
             .runJavaScript('cuePlaylist(["1", "2", "3", "4", "5"], 0, 0)'));
       });
 
-      test('can call nextVideo', () {
+      test('can call nextVideo', () async {
         final playlistId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.cuePlaylist(playlistId: playlistId);
-        controller.nextVideo();
+        await controller.cuePlaylist(playlistId: playlistId);
+        await controller.nextVideo();
 
         verify(webViewController.runJavaScript('nextVideo()'));
       });
 
-      test('can call previousVideo', () {
+      test('can call previousVideo', () async {
         final playlistId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.cuePlaylist(playlistId: playlistId);
-        controller.previousVideo();
+        await controller.cuePlaylist(playlistId: playlistId);
+        await controller.previousVideo();
 
         verify(webViewController.runJavaScript('previousVideo()'));
       });
 
-      test('can call playVideoAt', () {
+      test('can call playVideoAt', () async {
         final playlistId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.cuePlaylist(playlistId: playlistId);
-        controller.playVideoAt(2);
+        await controller.cuePlaylist(playlistId: playlistId);
+        await controller.playVideoAt(2);
 
         verify(webViewController.runJavaScript('playVideoAt(2)'));
       });
 
-      test('isPlaylist is true', () {
+      test('isPlaylist is true', () async {
         final playlistId = 'test123';
         final controller = WebviewtubeController();
-        controller.onWebviewCreated(webViewController);
+        controller.setMockWebViewController(webViewController);
         controller.onReady();
 
-        controller.cuePlaylist(playlistId: playlistId);
+        await controller.cuePlaylist(playlistId: playlistId);
         expect(controller.isPlaylist, true);
       });
     });

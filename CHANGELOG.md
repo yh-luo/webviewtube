@@ -1,8 +1,19 @@
+# 3.0.0
 
+This release introduces breaking changes, new features and important fixes. Please refer to the `Configure the player` section in the README for updated usage instructions.
 
-# 2.2.0
+## Breaking Changes
 
-- feat: added `onPlayerNavigationRequest` to controller which allow webview navigation events to be handled by the app.
+- The `options` parameter has been moved from `WebviewtubeVideoPlayer` to `WebviewtubeController`.
+
+## Features
+
+- Added `onPlayerNavigationRequest` to controller which allow webview navigation events to be handled by the app.
+
+## Fixes
+
+- Fixed cast errors in the `onCurrentTimeChange` callback.
+- Prevented video loading errors by setting the `origin` parameter in the player configuration.
 
 # 2.1.3
 

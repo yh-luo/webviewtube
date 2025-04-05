@@ -1,7 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
 import 'package:webview_flutter/webview_flutter.dart';
+import 'package:webview_flutter_android/webview_flutter_android.dart';
+import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
 
 import 'models/models.dart';
 
@@ -15,27 +18,43 @@ typedef PlayerNavigationRequestCallback = FutureOr<bool> Function(Uri uri);
 typedef PlayerErrorCallback = void Function(PlayerError error);
 
 /// {@template webviewtube_controller}
-/// Controls the player and provides information about the player state.
+/// A controller for managing and interacting with a YouTube player embedded in a WebView.
 ///
-/// To fully customize a new player widget, it's easier to make a new one based
-/// on [WebviewtubePlayer], which handles the webview controller under the hood. If
-/// that's not enough and you plan to make a new player with
-/// [WebviewtubeController], make sure to provide a [WebViewController] using
-/// [onWebviewCreated] before any method call, e.g., play, load, etc, or an
-/// error will be thrown.
+/// For a simpler integration, consider using [WebviewtubePlayer], which wraps the
+/// controller and handles the WebView setup.
+///
+/// For more control over the player, create an instance of [WebviewtubeController]
+/// and use the provided methods to interact with the player:
+/// 1. Create an instance of [WebviewtubeController].
+/// 2. Call [init] with the video ID to initialize the controller.
+/// 3. Use the provided methods to interact with your player widget.
+/// 4. Call [dispose] when it is no longer needed.
+///
+/// To fully customize a new player widget, it's easier to build a new widget
+/// on top of [WebviewtubePlayer], which handles the webview controller under
+/// the hood. If that's not enough and you plan to build a fully customized
+/// player with [WebviewtubeController], remember to call [init] method to
+/// initialize the controller before any method call (e.g., play, load, etc) and
+/// dispose the controller when it's not in need.
 /// {@endtemplate}
 class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// {@macro webviewtube_controller}
   WebviewtubeController({
+    this.options = const WebviewtubeOptions(),
     this.onPlayerReady,
     this.onPlayerError,
     this.onPlayerWebResourceError,
     this.onPlayerNavigationRequest,
   }) : super(const WebviewTubeValue());
 
-  late WebViewController _webViewController;
+  late final WebViewController _webViewController;
+
+  final Completer _initCompleter = Completer();
 
   bool _isPlaylist = false;
+
+  /// Additional options to control the player.
+  final WebviewtubeOptions options;
 
   /// Invoked when the player is ready.
   final PlayerReadyCallback? onPlayerReady;
@@ -77,9 +96,141 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// Whether the controller is playing a playlist.
   bool get isPlaylist => _isPlaylist;
 
-  /// Provides `WebViewController` to the controller.
-  void onWebviewCreated(WebViewController webViewController) {
+  /// This method is used for testing purposes only.
+  @visibleForTesting
+  void setMockWebViewController(WebViewController webViewController) {
     _webViewController = webViewController;
+    if (!_initCompleter.isCompleted) {
+      _initCompleter.complete();
+    }
+  }
+
+  /// Initializes the controller with the specified video id.
+  Future<void> init(String videoId) async {
+    late final PlatformWebViewControllerCreationParams params;
+
+    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+      params = WebKitWebViewControllerCreationParams(
+        allowsInlineMediaPlayback: true,
+        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+      );
+    } else {
+      params = const PlatformWebViewControllerCreationParams();
+    }
+    _webViewController = WebViewController.fromPlatformCreationParams(params)
+      ..setJavaScriptMode(JavaScriptMode.unrestricted)
+      ..addJavaScriptChannel(
+        'Webviewtube',
+        onMessageReceived: _onMessageReceived,
+      )
+      ..setNavigationDelegate(
+        NavigationDelegate(
+          onNavigationRequest: (request) async {
+            // first navigation is allowed on iOS to load the video correctly
+            if (defaultTargetPlatform == TargetPlatform.iOS && !value.isReady) {
+              return NavigationDecision.navigate;
+            }
+
+            final url = Uri.tryParse(request.url);
+            if (url == null) return NavigationDecision.prevent;
+            final verdict = await onPlayerNavigationRequest?.call(url) ?? false;
+
+            return verdict
+                ? NavigationDecision.navigate
+                : NavigationDecision.prevent;
+          },
+          onWebResourceError: onWebResourceError,
+        ),
+      );
+
+    if (_webViewController.platform is AndroidWebViewController) {
+      (_webViewController.platform as AndroidWebViewController)
+          .setMediaPlaybackRequiresUserGesture(false);
+    } else if (_webViewController.platform is WebKitWebViewController) {
+      (_webViewController.platform as WebKitWebViewController)
+          .setAllowsBackForwardNavigationGestures(false);
+    }
+
+    if (options.forceHd) {
+      _webViewController.setUserAgent(hdUserAgent);
+    }
+
+    await _webViewController.loadHtmlString(
+      _generateIframePage(videoId, options),
+      baseUrl: 'https://www.youtube.com',
+    );
+
+    if (!_initCompleter.isCompleted) {
+      _initCompleter.complete();
+    }
+  }
+
+  void _onMessageReceived(JavaScriptMessage message) {
+    Map<String, dynamic> json = jsonDecode(message.message);
+    switch (json['method']) {
+      case 'Ready':
+        {
+          onReady();
+          if (options.mute) {
+            mute();
+          }
+          break;
+        }
+      case 'StateChange':
+        {
+          final data = int.tryParse(json['args']['state'].toString());
+          if (data != null) {
+            onPlayerStateChange(data);
+          }
+          break;
+        }
+      case 'PlaybackQualityChange':
+        {
+          final data = json['args']['playbackQuality'].toString();
+          onPlaybackQualityChange(data);
+          break;
+        }
+      case 'PlaybackRateChange':
+        {
+          final data = num.tryParse(json['args']['playbackRate'].toString());
+          if (data != null) {
+            onPlaybackRateChange(data);
+          }
+          break;
+        }
+      case 'Errors':
+        {
+          final data = int.tryParse(json['args']['errorCode'].toString());
+          // unknown error
+          onError(data ?? 999);
+          break;
+        }
+      case 'VideoData':
+        {
+          final data = json['args'] as Map<String, dynamic>;
+          onVideoDataChange(data);
+          break;
+        }
+      case 'CurrentTime':
+        {
+          final data = json['args'] as Map<String, dynamic>;
+          onCurrentTimeChange(data);
+          break;
+        }
+    }
+  }
+
+  /// Disposes of the controller and cleans up resources.
+  ///
+  /// This method should be called when the controller is no longer needed.
+  @override
+  void dispose() {
+    // recommended in
+    // https://github.com/flutter/flutter/issues/119616#issuecomment-1419991144
+    _webViewController
+      ..removeJavaScriptChannel('Webviewtube')
+      ..loadRequest(Uri.parse('about:blank'));
+    super.dispose();
   }
 
   /// Invoked handler when the player is ready.
@@ -127,6 +278,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
   /// Invoked handler for updates on buffered ratio and elapsed time.
   void onCurrentTimeChange(Map<String, dynamic> data) {
+    if (data['position'] == null || data['buffered'] == null) return;
     final position = data['position'] as num;
     final buffered = data['buffered'] as num;
     value = value.copyWith(
@@ -135,7 +287,8 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   }
 
   /// Interacts with IFrame API via javascript channels.
-  void _callMethod(String method) {
+  Future<void> _callMethod(String method) async {
+    await _initCompleter.future;
     if (value.isReady) {
       _webViewController.runJavaScript(method);
     } else {
@@ -144,25 +297,25 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   }
 
   /// Plays the video.
-  void play() => _callMethod('play()');
+  Future<void> play() => _callMethod('play()');
 
   /// Pauses the video.
-  void pause() => _callMethod('pause()');
+  Future<void> pause() => _callMethod('pause()');
 
   /// Mutes the player.
-  void mute() {
-    _callMethod('mute()');
+  Future<void> mute() async {
+    await _callMethod('mute()');
     value = value.copyWith(isMuted: true);
   }
 
   /// Unmutes the player.
-  void unMute() {
-    _callMethod('unMute()');
+  Future<void> unMute() async {
+    await _callMethod('unMute()');
     value = value.copyWith(isMuted: false);
   }
 
   /// Sets the playback rate.
-  void setPlaybackRate(PlaybackRate playbackRate) =>
+  Future<void> setPlaybackRate(PlaybackRate playbackRate) =>
       _callMethod('setPlaybackRate(${playbackRate.rate})');
 
   /// Seeks to a specified time in the video.
@@ -171,20 +324,21 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// determines whether the player will make a new request to the server if the
   /// position is outside of the currently buffered video data.
   /// [allowSeekAhead] defaults to false.
-  void seekTo(Duration position, {bool allowSeekAhead = false}) {
-    _callMethod('seekTo(${position.inSeconds}, $allowSeekAhead)');
+  Future<void> seekTo(Duration position, {bool allowSeekAhead = false}) async {
+    await _callMethod('seekTo(${position.inSeconds}, $allowSeekAhead)');
     value = value.copyWith(position: position);
-    play();
+
+    await play();
   }
 
   /// Replays the video.
-  void replay() => seekTo(Duration.zero);
+  Future<void> replay() => seekTo(Duration.zero);
 
   /// Reloads the player.
-  void reload() => _webViewController.reload();
+  Future<void> reload() => _webViewController.reload();
 
   /// Loads and plays the specified video.
-  void load(String videoId, {int startAt = 0, int? endAt}) {
+  Future<void> load(String videoId, {int startAt = 0, int? endAt}) async {
     if (endAt != null) {
       assert(startAt < endAt);
     }
@@ -197,12 +351,12 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
       params += ', endSeconds: $endAt';
     }
 
-    _callMethod('loadById({$params})');
+    await _callMethod('loadById({$params})');
     _isPlaylist = false;
   }
 
   /// Loads the specified video's thumbnail and prepares the player.
-  void cue(String videoId, {int startAt = 0, int? endAt}) {
+  Future<void> cue(String videoId, {int startAt = 0, int? endAt}) async {
     if (endAt != null) {
       assert(startAt < endAt);
     }
@@ -215,61 +369,229 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
       params += ', endSeconds: $endAt';
     }
 
-    _callMethod('cueById({$params})');
+    await _callMethod('cueById({$params})');
     _isPlaylist = false;
   }
 
   /// Loads the specified playlist and plays it.
-  void loadPlaylist({
+  Future<void> loadPlaylist({
     String? playlistId,
     List<String>? videoIds,
     int index = 0,
     int startAt = 0,
-  }) {
+  }) async {
     assert(playlistId != null || (videoIds != null && videoIds.isNotEmpty));
     var playlist = playlistId ?? '[${videoIds!.map((e) => '"$e"').join(', ')}]';
 
-    _callMethod('loadPlaylist($playlist, $index, $startAt)');
+    await _callMethod('loadPlaylist($playlist, $index, $startAt)');
     _isPlaylist = true;
   }
 
   /// Queues the specified playlist.
   /// When the playlist is cued and ready to play, `playerState` will be
   /// [PlayerState.cued].
-  void cuePlaylist({
+  Future<void> cuePlaylist({
     String? playlistId,
     List<String>? videoIds,
     int index = 0,
     int startAt = 0,
-  }) {
+  }) async {
     assert(playlistId != null || (videoIds != null && videoIds.isNotEmpty));
     var playlist = playlistId ?? '[${videoIds!.map((e) => '"$e"').join(', ')}]';
 
-    _callMethod('cuePlaylist($playlist, $index, $startAt)');
+    await _callMethod('cuePlaylist($playlist, $index, $startAt)');
     _isPlaylist = true;
   }
 
   /// Loads and plays the next video in the playlist.
   /// Does nothing when the controller is not playing a playlist.
-  void nextVideo() {
+  Future<void> nextVideo() async {
     if (!_isPlaylist) return;
 
-    _callMethod('nextVideo()');
+    await _callMethod('nextVideo()');
   }
 
   /// Loads and plays the previous video in the playlist.
   /// Does nothing when the controller is not playing a playlist.
-  void previousVideo() {
+  Future<void> previousVideo() async {
     if (!_isPlaylist) return;
 
-    _callMethod('previousVideo()');
+    await _callMethod('previousVideo()');
   }
 
   /// Loads and plays the specified video in the playlist.
   /// Does nothing when the controller is not playing a playlist.
-  void playVideoAt(int index) {
+  Future<void> playVideoAt(int index) async {
     if (!_isPlaylist) return;
 
-    _callMethod('playVideoAt($index)');
+    await _callMethod('playVideoAt($index)');
   }
 }
+
+String _generateIframePage(String videoId, WebviewtubeOptions options) {
+  return '''
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            html,
+            body {
+                margin: 0;
+                padding: 0;
+                background-color: #000000;
+                overflow: hidden;
+                position: fixed;
+                height: 100%;
+                width: 100%;
+            }
+        </style>
+        <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+    </head>
+<body>
+    <div id="player"></div>
+
+    <script>
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        var timerId;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '100%',
+                width: '100%',
+                videoId: '$videoId',
+                host: 'https://www.youtube.com',
+                playerVars: {
+                    'cc_load_policy': ${_boolean(options.enableCaption)},
+                    'cc_lang_pref': '${options.captionLanguage}',
+                    'controls': ${_boolean(options.showControls)},
+                    'enablejsapi': 1,
+                    'fs': 0,
+                    'hl': '${options.interfaceLanguage}',
+                    'iv_load_policy': 3,
+                    'loop': ${_boolean(options.loop)},
+                    ${options.loop ? "'playlist': '$videoId'," : ''}
+                    'playsinline': 1,
+                    'rel': 0,
+                    'start': ${options.startAt},
+                    'end': ${options.endAt},
+                    'origin': 'https://www.youtube.com'
+                },
+                events: {
+                    onReady: function (event) { sendMessageToDart('Ready'); },
+                    onStateChange: function (event) { sendPlayerStateChange(event.data); },
+                    onPlaybackQualityChange: function (event) { sendMessageToDart('PlaybackQualityChange', { 'playbackQuality': event.data }); },
+                    onPlaybackRateChange: function (event) { sendMessageToDart('PlaybackRateChange', { 'playbackRate': event.data }); },
+                    onError: function (error) { sendMessageToDart('Errors', { 'errorCode': error.data }); }
+                }
+            });
+        }
+
+        function sendMessageToDart(methodName, argsObject = {}) {
+            var message = {
+                'method': methodName,
+                'args': argsObject
+            };
+            Webviewtube.postMessage(JSON.stringify(message));
+        }
+
+        function sendPlayerStateChange(playerState) {
+            clearTimeout(timerId);
+            sendMessageToDart('StateChange', { 'state': playerState });
+            if (playerState == 1) {
+                startSendCurrentTimeInterval();
+                sendVideoData(player);
+            }
+        }
+
+        function sendVideoData(player) {
+            var videoData = {
+                'duration': player.getDuration(),
+                'title': player.getVideoData().title,
+                'author': player.getVideoData().author,
+                'videoId': player.getVideoData().video_id
+            };
+            sendMessageToDart('VideoData', videoData);
+        }
+
+        function startSendCurrentTimeInterval() {
+            timerId = setInterval(function () {
+                sendMessageToDart('CurrentTime',
+                    {
+                        'position': player.getCurrentTime(),
+                        'buffered': player.getVideoLoadedFraction()
+                    });
+            }, ${options.currentTimeUpdateInterval});
+        }
+
+
+        function play() {
+            player.playVideo();
+        }
+
+        function pause() {
+            player.pauseVideo();
+        }
+
+        function loadById(loadSettings) {
+            player.loadVideoById(loadSettings);
+        }
+
+        function cueById(cueSettings) {
+            player.cueVideoById(cueSettings);
+        }
+
+        function loadPlaylist(playlist, index, startAt) {
+            player.loadPlaylist(playlist, index, startAt);
+        }
+
+        function cuePlaylist(playlist, index, startAt) {
+            player.cuePlaylist(playlist, index, startAt);
+        }
+
+        function nextVideo() {
+          player.nextVideo();
+        }
+
+        function previousVideo() {
+          player.previousVideo();
+        }
+
+        function playVideoAt(index) {
+          player.playVideoAt(index);
+        }
+
+        function mute() {
+            player.mute();
+        }
+
+        function unMute() {
+            player.unMute();
+        }
+
+        function seekTo(seconds, allowSeekAhead) {
+            player.seekTo(seconds, allowSeekAhead);
+        }
+
+        function setSize(width, height) {
+            player.setSize(width, height);
+        }
+
+        function setPlaybackRate(rate) {
+            player.setPlaybackRate(rate);
+        }
+    </script>
+</body>
+
+</html>
+''';
+}
+
+int _boolean(bool value) => value ? 1 : 0;
+
+/// The user agent to force the video plays in HD.
+String hdUserAgent =
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/101.0.4951.64 Safari/537.36';

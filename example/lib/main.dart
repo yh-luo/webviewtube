@@ -33,20 +33,27 @@ class WebviewtubeDemo extends StatefulWidget {
 }
 
 class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
-  // To allow the user to watch the video in the YouTube app or website when
-  // tapping on the YouTube logo, you can use the `onPlayerNavigationRequest`
-  // callback with `url_launcher`.
-  final controller = WebviewtubeController(
-    onPlayerNavigationRequest: (uri) async {
-      if (uri.host == 'www.youtube.com') {
-        await launchUrl(uri, mode: LaunchMode.externalApplication);
+  late final WebviewtubeController controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    // To allow the user to watch the video in the YouTube app or website when
+    // tapping on the YouTube logo, you can use the `onPlayerNavigationRequest`
+    // callback with `url_launcher`.
+    controller = WebviewtubeController(
+      options: const WebviewtubeOptions(
+          forceHd: true, loop: true, interfaceLanguage: 'en'),
+      onPlayerNavigationRequest: (uri) async {
+        if (uri.host == 'www.youtube.com') {
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
+          return false;
+        }
         return false;
-      }
-      return false;
-    },
-  );
-  final options = const WebviewtubeOptions(
-      forceHd: true, loop: true, interfaceLanguage: 'en');
+      },
+    );
+  }
 
   @override
   void dispose() {
@@ -76,7 +83,6 @@ class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
               ),
               WebviewtubePlayer(
                 videoId: '4AoFA19gbLo',
-                options: options,
                 controller: controller,
               ),
             ],
