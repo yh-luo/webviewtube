@@ -278,6 +278,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
   /// Invoked handler for updates on buffered ratio and elapsed time.
   void onCurrentTimeChange(Map<String, dynamic> data) {
+    if (data['position'] == null || data['buffered'] == null) return;
     final position = data['position'] as num;
     final buffered = data['buffered'] as num;
     value = value.copyWith(
