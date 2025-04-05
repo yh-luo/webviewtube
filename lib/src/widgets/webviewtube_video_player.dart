@@ -24,7 +24,8 @@ import 'widgets.dart';
 ///
 /// With controller:
 /// ```dart
-/// final webviewtubeController = WebviewtubeController();
+/// final webviewtubeController = WebviewtubeController(
+///   options: const WebviewtubeOptions(showControls: false));
 ///
 /// // Remember to dispose the controller to avoid memory leak
 /// @override
@@ -43,26 +44,17 @@ import 'widgets.dart';
 class WebviewtubeVideoPlayer extends StatelessWidget {
   /// {@macro webviewtube_video_player}
   WebviewtubeVideoPlayer(
-      {Key? key,
-      required this.videoId,
-      WebviewtubeOptions? options,
-      WebviewtubeController? controller})
+      {Key? key, required this.videoId, WebviewtubeController? controller})
       : _controller = controller,
-        _options = options?.copyWith(showControls: false) ??
-            const WebviewtubeOptions(showControls: false),
         super(key: key);
 
   /// The video id of the video to play.
   final String videoId;
 
-  /// Additional options to control the player.
-  final WebviewtubeOptions _options;
-
   /// The controller to control the player.
   final WebviewtubeController? _controller;
 
-  late final _child =
-      _WebviewtubeVideoPlayerView(videoId: videoId, options: _options);
+  late final _child = _WebviewtubeVideoPlayerView(videoId: videoId);
 
   @override
   Widget build(BuildContext context) {
@@ -74,7 +66,8 @@ class WebviewtubeVideoPlayer extends StatelessWidget {
             child: _child,
           )
         : ChangeNotifierProvider<WebviewtubeController>(
-            create: (_) => WebviewtubeController(),
+            create: (_) => WebviewtubeController(
+                options: const WebviewtubeOptions(showControls: false)),
             child: _child,
           );
   }
@@ -82,16 +75,11 @@ class WebviewtubeVideoPlayer extends StatelessWidget {
 
 /// The player view.
 class _WebviewtubeVideoPlayerView extends StatelessWidget {
-  const _WebviewtubeVideoPlayerView({
-    Key? key,
-    required this.videoId,
-    required this.options,
-  }) : super(key: key);
+  const _WebviewtubeVideoPlayerView({Key? key, required this.videoId})
+      : super(key: key);
 
   /// The video id of the video to play.
   final String videoId;
-
-  final WebviewtubeOptions options;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +89,6 @@ class _WebviewtubeVideoPlayerView extends StatelessWidget {
       children: [
         WebviewtubePlayer(
           videoId: videoId,
-          options: options,
           controller: context.read<WebviewtubeController>(),
         ),
         Selector<WebviewtubeController, bool>(

@@ -20,7 +20,7 @@ class PlaybackSpeedButton extends StatelessWidget {
           Shadow(offset: Offset(1, 1), blurRadius: 5, color: Colors.black87),
         ],
       ),
-      onSelected: (playbackRate) =>
+      onSelected: (playbackRate) async =>
           context.read<WebviewtubeController>().setPlaybackRate(playbackRate),
       initialValue: context.watch<WebviewtubeController>().value.playbackRate,
       itemBuilder: (context) => const [

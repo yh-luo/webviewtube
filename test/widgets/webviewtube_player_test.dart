@@ -38,17 +38,26 @@ class TestApp extends StatelessWidget {
 @GenerateNiceMocks([
   MockSpec<WebviewtubeController>(),
   MockSpec<WebviewtubeOptions>(),
+  MockSpec<WebViewController>(),
 ])
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+
   group('WebviewtubePlayer', () {
     late MockWebviewtubeController controller;
     final value = WebviewTubeValue(isReady: true);
+    final options = MockWebviewtubeOptions();
+    final webViewController = MockWebViewController();
 
     setUp(() {
       WebViewPlatform.instance = FakeWebViewPlatform();
       controller = MockWebviewtubeController();
+
+      when(controller.webViewController).thenReturn(webViewController);
       when(controller.value).thenReturn(value);
+      when(controller.options).thenReturn(options);
+      when(options.aspectRatio).thenReturn(16 / 9);
+      when(controller.init(any)).thenAnswer((_) async {});
     });
 
     testWidgets('initiate widgets properly', (WidgetTester tester) async {
@@ -60,293 +69,32 @@ void main() {
           ),
         ));
 
-        verify(controller.onPlayerNavigationRequest).called(1);
+        verify(controller.webViewController).called(1);
+        verify(controller.init(videoId)).called(1);
         expect(find.byType(WebviewtubePlayer), findsOneWidget);
         expect(find.byType(DurationIndicator), findsNothing);
-        // expect(find.byType(WebViewWidget), findsOneWidget);
       });
     });
-
-    testWidgets('initiate the player with configuration',
-        (WidgetTester tester) async {
-      final options = MockWebviewtubeOptions();
-      final value =
-          WebviewTubeValue(isReady: true, playerState: PlayerState.paused);
-      when(options.showControls).thenReturn(false);
-      when(options.mute).thenReturn(true);
-      when(options.loop).thenReturn(true);
-      when(options.forceHd).thenReturn(true);
-      when(options.interfaceLanguage).thenReturn('zh_tw');
-      when(options.enableCaption).thenReturn(false);
-      when(options.captionLanguage).thenReturn('zh_tw');
-      when(options.startAt).thenReturn(1);
-      when(options.endAt).thenReturn(5);
-      when(options.currentTimeUpdateInterval).thenReturn(200);
-      when(options.aspectRatio).thenReturn(16 / 9);
-      when(controller.value).thenReturn(value);
-      when(controller.onWebviewCreated(any)).thenAnswer((_) {});
-
-      provideMockedNetworkImages(() async {
-        await tester.pumpWidget(TestApp(
-          child: WebviewtubePlayer(
-            videoId: videoId,
-            options: options,
-            controller: controller,
-          ),
-        ));
-
-        verify(controller.onWebviewCreated(any));
-        verify(options.showControls);
-        verify(options.loop);
-        verify(options.forceHd);
-        verify(options.interfaceLanguage);
-        verify(options.enableCaption);
-        verify(options.captionLanguage);
-        verify(options.startAt);
-        verify(options.endAt);
-        verify(options.currentTimeUpdateInterval);
-        verify(options.aspectRatio);
-      });
-    });
-
-    // testWidgets('initiate javascriptChannels properly',
-    //     (WidgetTester tester) async {
-    //   provideMockedNetworkImages(() async {
-    //     await tester.pumpWidget(TestApp(
-    //       child: WebviewtubePlayer(
-    //         videoId: videoId,
-    //         controller: controller,
-    //       ),
-    //     ));
-
-    //     final JavaScriptChannelParams params = verify(
-    //             mockPlatformWebViewController.addJavaScriptChannel(captureAny))
-    //         .captured[0] as JavaScriptChannelParams;
-    //     expect(params.name, 'Webviewtube');
-    //   });
-    // });
-
-    // group('handle JavaScript channel messages properly', () {
-    //   testWidgets('Ready', (WidgetTester tester) async {
-    //     final options = WebviewtubeOptions(mute: true);
-    //     final controller = MockWebviewtubeController();
-
-    //     when(controller.onWebviewCreated(any)).thenAnswer((_) {});
-    //     when(controller.onReady()).thenAnswer((_) {});
-    //     when(controller.mute()).thenAnswer((_) {});
-
-    //     provideMockedNetworkImages(() async {
-    //       await tester.pumpWidget(TestApp(
-    //         child: WebviewtubePlayer(
-    //           videoId: videoId,
-    //           options: options,
-    //           controller: controller,
-    //         ),
-    //       ));
-
-    //       verify(controller.onReady()).called(1);
-    //       verify(controller.mute()).called(1);
-    //       verify(mockPlatformWebViewController.runJavaScript('mute()'))
-    //           .called(1);
-    //     });
-    //   });
-
-    //   testWidgets('StateChange', (WidgetTester tester) async {
-    //     final controller = MockWebviewtubeController();
-    //     when(controller.onWebviewCreated(any)).thenAnswer((_) {});
-    //     when(controller.onPlayerStateChange(any)).thenAnswer((_) {});
-
-    //     provideMockedNetworkImages(() async {
-    //       await tester.pumpWidget(TestApp(
-    //         child: WebviewtubePlayer(
-    //           videoId: videoId,
-    //           controller: controller,
-    //         ),
-    //       ));
-
-    //       verify(controller.onPlayerStateChange(any));
-    //     });
-    //   });
-
-    //   testWidgets('PlaybackQualityChange', (WidgetTester tester) async {
-    //     final controller = MockWebviewtubeController();
-    //     when(controller.onWebviewCreated(any)).thenAnswer((_) {});
-    //     when(controller.onPlaybackQualityChange(any)).thenAnswer((_) {});
-
-    //     provideMockedNetworkImages(() async {
-    //       await tester.pumpWidget(TestApp(
-    //         child: WebviewtubePlayer(
-    //           videoId: videoId,
-    //           controller: controller,
-    //         ),
-    //       ));
-
-    //       final JavascriptChannelRegistry channelRegistry = captureBuildArgs(
-    //         mockWebViewPlatform,
-    //         javascriptChannelRegistry: true,
-    //       ).single as JavascriptChannelRegistry;
-    //       final message = jsonEncode({
-    //         'method': 'PlaybackQualityChange',
-    //         'args': {'playbackQuality': 'small'}
-    //       });
-    //       channelRegistry.onJavascriptChannelMessage('Webviewtube', message);
-
-    //       verify(controller.onPlaybackQualityChange(any));
-    //     });
-    //   });
-
-    //   testWidgets('PlaybackQualityChange', (WidgetTester tester) async {
-    //     final controller = MockWebviewtubeController();
-    //     when(controller.onWebviewCreated(any)).thenAnswer((_) {});
-    //     when(controller.onPlaybackQualityChange(any)).thenAnswer((_) {});
-
-    //     provideMockedNetworkImages(() async {
-    //       await tester.pumpWidget(TestApp(
-    //         child: WebviewtubePlayer(
-    //           videoId: videoId,
-    //           controller: controller,
-    //         ),
-    //       ));
-
-    //       final JavascriptChannelRegistry channelRegistry = captureBuildArgs(
-    //         mockWebViewPlatform,
-    //         javascriptChannelRegistry: true,
-    //       ).single as JavascriptChannelRegistry;
-    //       final message = jsonEncode({
-    //         'method': 'PlaybackQualityChange',
-    //         'args': {'playbackQuality': 'small'}
-    //       });
-    //       channelRegistry.onJavascriptChannelMessage('Webviewtube', message);
-
-    //       verify(controller.onPlaybackQualityChange(any));
-    //     });
-    //   });
-
-    //   testWidgets('PlaybackRateChange', (WidgetTester tester) async {
-    //     final controller = MockWebviewtubeController();
-    //     when(controller.onWebviewCreated(any)).thenAnswer((_) {});
-    //     when(controller.onPlaybackRateChange(any)).thenAnswer((_) {});
-
-    //     provideMockedNetworkImages(() async {
-    //       await tester.pumpWidget(TestApp(
-    //         child: WebviewtubePlayer(
-    //           videoId: videoId,
-    //           controller: controller,
-    //         ),
-    //       ));
-
-    //       final JavascriptChannelRegistry channelRegistry = captureBuildArgs(
-    //         mockWebViewPlatform,
-    //         javascriptChannelRegistry: true,
-    //       ).single as JavascriptChannelRegistry;
-    //       final message = jsonEncode({
-    //         'method': 'PlaybackRateChange',
-    //         'args': {'playbackRate': 0.75}
-    //       });
-    //       channelRegistry.onJavascriptChannelMessage('Webviewtube', message);
-
-    //       verify(controller.onPlaybackRateChange(any));
-    //     });
-    //   });
-
-    //   testWidgets('Errors', (WidgetTester tester) async {
-    //     final controller = MockWebviewtubeController();
-
-    //     when(controller.onWebviewCreated(any)).thenAnswer((_) {});
-    //     when(controller.onError(any)).thenAnswer((_) {});
-
-    //     provideMockedNetworkImages(() async {
-    //       await tester.pumpWidget(TestApp(
-    //         child: WebviewtubePlayer(
-    //           videoId: videoId,
-    //           controller: controller,
-    //         ),
-    //       ));
-
-    //       final JavascriptChannelRegistry channelRegistry = captureBuildArgs(
-    //         mockWebViewPlatform,
-    //         javascriptChannelRegistry: true,
-    //       ).single as JavascriptChannelRegistry;
-    //       final message = jsonEncode({
-    //         'method': 'Errors',
-    //         'args': {'errorCode': 100}
-    //       });
-    //       channelRegistry.onJavascriptChannelMessage('Webviewtube', message);
-
-    //       verify(controller.onError(any));
-    //     });
-    //   });
-
-    //   testWidgets('VideoData', (WidgetTester tester) async {
-    //     final controller = MockWebviewtubeController();
-
-    //     when(controller.onWebviewCreated(any)).thenAnswer((_) {});
-    //     when(controller.onVideoDataChange(any)).thenAnswer((_) {});
-
-    //     provideMockedNetworkImages(() async {
-    //       await tester.pumpWidget(TestApp(
-    //         child: WebviewtubePlayer(
-    //           videoId: videoId,
-    //           controller: controller,
-    //         ),
-    //       ));
-
-    //       final JavascriptChannelRegistry channelRegistry = captureBuildArgs(
-    //         mockWebViewPlatform,
-    //         javascriptChannelRegistry: true,
-    //       ).single as JavascriptChannelRegistry;
-    //       final message = jsonEncode({
-    //         'method': 'VideoData',
-    //         'args': {
-    //           'duration': 10.0,
-    //           'title': 'test',
-    //           'author': 'test',
-    //           'videoId': 'test123'
-    //         }
-    //       });
-    //       channelRegistry.onJavascriptChannelMessage('Webviewtube', message);
-
-    //       verify(controller.onVideoDataChange(any));
-    //     });
-    //   });
-
-    //   testWidgets('CurrentTime', (WidgetTester tester) async {
-    //     final controller = MockWebviewtubeController();
-
-    //     when(controller.onWebviewCreated(any)).thenAnswer((_) {});
-    //     when(controller.onCurrentTimeChange(any)).thenAnswer((_) {});
-
-    //     provideMockedNetworkImages(() async {
-    //       await tester.pumpWidget(TestApp(
-    //         child: WebviewtubePlayer(
-    //           videoId: videoId,
-    //           controller: controller,
-    //         ),
-    //       ));
-
-    //       final JavascriptChannelRegistry channelRegistry = captureBuildArgs(
-    //         mockWebViewPlatform,
-    //         javascriptChannelRegistry: true,
-    //       ).single as JavascriptChannelRegistry;
-    //       final message = jsonEncode({
-    //         'method': 'CurrentTime',
-    //         'args': {'position': 0.0, 'buffered': 0.1}
-    //       });
-    //       channelRegistry.onJavascriptChannelMessage('Webviewtube', message);
-
-    //       verify(controller.onCurrentTimeChange(any));
-    //     });
-    //   });
-    // });
   });
 
   group('WebviewtubeVideoPlayer', () {
+    late MockWebviewtubeController controller;
+    final options = MockWebviewtubeOptions();
+    final webViewController = MockWebViewController();
+
     setUp(() {
       WebViewPlatform.instance = FakeWebViewPlatform();
+      controller = MockWebviewtubeController();
+
+      when(webViewController.platform).thenReturn(
+          FakeWebViewController(PlatformWebViewControllerCreationParams()));
+      when(controller.webViewController).thenReturn(webViewController);
+      when(controller.options).thenReturn(options);
+      when(options.aspectRatio).thenReturn(16 / 9);
+      when(controller.init(any)).thenAnswer((_) async {});
     });
 
     testWidgets('initiate widgets properly', (WidgetTester tester) async {
-      final controller = MockWebviewtubeController();
       when(controller.value).thenReturn(WebviewTubeValue());
       provideMockedNetworkImages(() async {
         await tester.pumpWidget(TestApp(
@@ -366,56 +114,10 @@ void main() {
       });
     });
 
-    testWidgets('initiate the player with configuration',
-        (WidgetTester tester) async {
-      final options = MockWebviewtubeOptions();
-      final controller = MockWebviewtubeController();
-      final value =
-          WebviewTubeValue(isReady: true, playerState: PlayerState.paused);
-      when(options.copyWith(showControls: false)).thenReturn(options);
-      when(options.showControls).thenReturn(false);
-      when(options.mute).thenReturn(true);
-      when(options.loop).thenReturn(true);
-      when(options.forceHd).thenReturn(true);
-      when(options.interfaceLanguage).thenReturn('zh_tw');
-      when(options.enableCaption).thenReturn(false);
-      when(options.captionLanguage).thenReturn('zh_tw');
-      when(options.startAt).thenReturn(1);
-      when(options.endAt).thenReturn(5);
-      when(options.currentTimeUpdateInterval).thenReturn(200);
-      when(options.aspectRatio).thenReturn(16 / 9);
-      when(controller.value).thenReturn(value);
-      when(controller.onWebviewCreated(any)).thenAnswer((_) {});
-
-      provideMockedNetworkImages(() async {
-        await tester.pumpWidget(TestApp(
-          child: WebviewtubeVideoPlayer(
-            videoId: videoId,
-            options: options,
-            controller: controller,
-          ),
-        ));
-
-        verify(controller.onWebviewCreated(any));
-        verify(options.showControls);
-        verify(options.loop);
-        verify(options.forceHd);
-        verify(options.interfaceLanguage);
-        verify(options.enableCaption);
-        verify(options.captionLanguage);
-        verify(options.startAt);
-        verify(options.endAt);
-        verify(options.currentTimeUpdateInterval);
-        verify(options.aspectRatio);
-      });
-    });
-
     group('VolumeButton', () {
       testWidgets('tap to mute', (WidgetTester tester) async {
-        final controller = MockWebviewtubeController();
         final value =
             WebviewTubeValue(isReady: true, playerState: PlayerState.paused);
-
         when(controller.value).thenReturn(value);
 
         provideMockedNetworkImages(() async {
@@ -437,10 +139,8 @@ void main() {
       });
 
       testWidgets('tap to unMute', (WidgetTester tester) async {
-        final controller = MockWebviewtubeController();
         final value = WebviewTubeValue(
             isReady: true, isMuted: true, playerState: PlayerState.paused);
-
         when(controller.value).thenReturn(value);
 
         provideMockedNetworkImages(() async {
@@ -464,7 +164,6 @@ void main() {
     group('PlaybackSpeedButton', () {
       testWidgets('tap to change the playback speed',
           (WidgetTester tester) async {
-        final controller = MockWebviewtubeController();
         final value =
             WebviewTubeValue(isReady: true, playerState: PlayerState.paused);
 
@@ -493,7 +192,6 @@ void main() {
     group('replay button', () {
       testWidgets('shows it when the video is finished',
           (WidgetTester tester) async {
-        final controller = MockWebviewtubeController();
         final value =
             WebviewTubeValue(isReady: true, playerState: PlayerState.ended);
 
@@ -513,7 +211,6 @@ void main() {
       });
 
       testWidgets('tap it to replay', (WidgetTester tester) async {
-        final controller = MockWebviewtubeController();
         final value =
             WebviewTubeValue(isReady: true, playerState: PlayerState.ended);
 
@@ -538,12 +235,12 @@ void main() {
 
     group('ProgressBar', () {
       testWidgets('onHorizontalDragDown', (WidgetTester tester) async {
-        final controller = MockWebviewtubeController();
         final value =
             WebviewTubeValue(isReady: true, playerState: PlayerState.paused);
 
         when(controller.value).thenReturn(value);
-        when(controller.seekTo(any, allowSeekAhead: true)).thenAnswer((_) {});
+        when(controller.seekTo(any, allowSeekAhead: true))
+            .thenAnswer((_) async {});
 
         provideMockedNetworkImages(() async {
           await tester.pumpWidget(TestApp(

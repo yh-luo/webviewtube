@@ -13,12 +13,12 @@ class VolumeButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return IconButton(
-      onPressed: () {
+      onPressed: () async {
         final controller = context.read<WebviewtubeController>();
         if (controller.value.isMuted) {
-          controller.unMute();
+          await controller.unMute();
         } else {
-          controller.mute();
+          await controller.mute();
         }
       },
       icon: Selector<WebviewtubeController, bool>(
