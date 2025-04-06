@@ -26,7 +26,7 @@ This package leverages [webview_flutter](https://pub.dev/packages/webview_flutte
 The same as [webview_flutter](https://pub.dev/packages/webview_flutter). On Android, hybrid composition mode is used.
 
 - Android: SDK 19+
-- iOS: 11.0+
+- iOS: 12.0+
 
 ## Setup
 
