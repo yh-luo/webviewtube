@@ -8,7 +8,7 @@ import '../webviewtube.dart';
 /// {@endtemplate}
 class VolumeButton extends StatelessWidget {
   /// {@macro volume_button}
-  const VolumeButton({Key? key}) : super(key: key);
+  const VolumeButton({super.key});
 
   @override
   Widget build(BuildContext context) {

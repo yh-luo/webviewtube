@@ -43,9 +43,8 @@ import '../webviewtube.dart';
 class WebviewtubePlayer extends StatelessWidget {
   /// {@macro webviewtube_player}
   WebviewtubePlayer(
-      {Key? key, required this.videoId, WebviewtubeController? controller})
-      : _controller = controller,
-        super(key: key);
+      {super.key, required this.videoId, WebviewtubeController? controller})
+      : _controller = controller;
 
   /// The video id of the video to play.
   final String videoId;
@@ -72,8 +71,7 @@ class WebviewtubePlayer extends StatelessWidget {
 }
 
 class _WebviewtubePlayerView extends StatefulWidget {
-  const _WebviewtubePlayerView({Key? key, required this.videoId})
-      : super(key: key);
+  const _WebviewtubePlayerView({required this.videoId});
 
   final String videoId;
 

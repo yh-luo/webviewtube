@@ -10,7 +10,7 @@ import '../webviewtube.dart';
 /// {@endtemplate}
 class ProgressBar extends StatefulWidget {
   /// {@macro progress_bar}
-  const ProgressBar({Key? key, this.colors}) : super(key: key);
+  const ProgressBar({super.key, this.colors});
 
   /// Defines colors for the [ProgressBar]. If null,
   /// `Theme.of(context).colorScheme.secondary` is used.
