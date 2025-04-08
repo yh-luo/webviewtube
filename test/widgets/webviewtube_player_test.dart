@@ -17,7 +17,7 @@ import 'webviewtube_player_test.mocks.dart';
 const String videoId = '4AoFA19gbLo';
 
 class TestApp extends StatelessWidget {
-  const TestApp({Key? key, required this.child}) : super(key: key);
+  const TestApp({super.key, required this.child});
 
   final Widget child;
 
@@ -265,7 +265,8 @@ R provideMockedNetworkImages<R>(R Function() body,
     {List<int> imageBytes = kTransparentImage}) {
   return HttpOverrides.runZoned(
     body,
-    createHttpClient: (_) => createMockImageHttpClient(_),
+    createHttpClient: (securityContext) =>
+        createMockImageHttpClient(securityContext),
   );
 }
 

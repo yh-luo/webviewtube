@@ -8,7 +8,7 @@ import '../webviewtube.dart';
 /// {@endtemplate}
 class PlaybackSpeedButton extends StatelessWidget {
   /// {@macro play_back_speed_button}
-  const PlaybackSpeedButton({Key? key}) : super(key: key);
+  const PlaybackSpeedButton({super.key});
 
   @override
   Widget build(BuildContext context) {

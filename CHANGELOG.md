@@ -1,3 +1,10 @@
+# Unreleased
+
+## Breaking Changes
+
+- Updated minimum supported SDK version to Flutter 3.16.6
+- Updated minimum supported iOS version to 12.0
+
 # 3.0.0
 
 This release introduces breaking changes, new features and important fixes. Please refer to the `Configure the player` section in the README for updated usage instructions.

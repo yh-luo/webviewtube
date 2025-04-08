@@ -19,6 +19,7 @@ version: 1.0.0+1
 
 environment:
   sdk: ">=2.17.0 <4.0.0"
+  flutter: ">=3.16.6"
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -36,7 +37,7 @@ dependencies:
   cupertino_icons: ^1.0.2
   webviewtube:
     path: ../
-  url_launcher: ^6.1.14
+  url_launcher: ^6.3.0
 
 dev_dependencies:
   flutter_test:

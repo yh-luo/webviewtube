@@ -16,7 +16,7 @@ const _textStyle = TextStyle(
 /// {@endtemplate}
 class DurationIndicator extends StatelessWidget {
   /// {@macro duration_indicator}
-  const DurationIndicator({Key? key}) : super(key: key);
+  const DurationIndicator({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -38,7 +38,7 @@ class DurationIndicator extends StatelessWidget {
 /// A widget to display the current position of the video.
 class CurrentTime extends StatelessWidget {
   /// Constructor for [CurrentTime].
-  const CurrentTime({Key? key}) : super(key: key);
+  const CurrentTime({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -58,7 +58,7 @@ class CurrentTime extends StatelessWidget {
 /// A widget to display the duration of the video.
 class VideoDuration extends StatelessWidget {
   /// Constructor for [VideoDuration].
-  const VideoDuration({Key? key}) : super(key: key);
+  const VideoDuration({super.key});
 
   @override
   Widget build(BuildContext context) {
