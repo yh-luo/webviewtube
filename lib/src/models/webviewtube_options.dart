@@ -18,6 +18,7 @@ class WebviewtubeOptions {
     this.endAt,
     this.currentTimeUpdateInterval = 130,
     this.aspectRatio = 16 / 9,
+    this.origin,
   });
 
   /// Display the YouTube video player controls.
@@ -84,6 +85,17 @@ class WebviewtubeOptions {
   /// Defaults to 16 / 9.
   final double aspectRatio;
 
+  /// The origin domain for the player.
+  ///
+  /// This value is used to set the `origin` parameter for the embedded YouTube player.
+  /// For some videos, the domain must be explicitly set to allow playback; for others, it must be omitted.
+  ///
+  /// - Set to a specific domain (e.g., 'https://www.youtube.com') to explicitly pass the origin.
+  /// - Set to null to omit the origin parameter entirely.
+  ///
+  /// Defaults to null.
+  final String? origin;
+
   WebviewtubeOptions copyWith({
     bool? showControls,
     bool? mute,
@@ -93,9 +105,10 @@ class WebviewtubeOptions {
     bool? enableCaption,
     String? captionLanguage,
     int? startAt,
-    int? endAt,
+    Object? endAt = _unset,
     int? currentTimeUpdateInterval,
     double? aspectRatio,
+    Object? origin = _unset,
   }) {
     return WebviewtubeOptions(
       showControls: showControls ?? this.showControls,
@@ -106,10 +119,11 @@ class WebviewtubeOptions {
       enableCaption: enableCaption ?? this.enableCaption,
       captionLanguage: captionLanguage ?? this.captionLanguage,
       startAt: startAt ?? this.startAt,
-      endAt: endAt ?? this.endAt,
+      endAt: identical(endAt, _unset) ? this.endAt : endAt as int?,
       currentTimeUpdateInterval:
           currentTimeUpdateInterval ?? this.currentTimeUpdateInterval,
       aspectRatio: aspectRatio ?? this.aspectRatio,
+      origin: identical(origin, _unset) ? this.origin : origin as String?,
     );
   }
 
@@ -127,7 +141,8 @@ class WebviewtubeOptions {
       other.startAt == startAt &&
       other.endAt == endAt &&
       other.currentTimeUpdateInterval == currentTimeUpdateInterval &&
-      other.aspectRatio == aspectRatio;
+      other.aspectRatio == aspectRatio &&
+      other.origin == origin;
 
   @override
   int get hashCode => Object.hash(
@@ -143,6 +158,7 @@ class WebviewtubeOptions {
         endAt,
         currentTimeUpdateInterval,
         aspectRatio,
+        origin,
       );
 
   @override
@@ -158,6 +174,9 @@ class WebviewtubeOptions {
         'startAt: $startAt, '
         'endAt: $endAt, '
         'currentTimeUpdateInterval: $currentTimeUpdateInterval, '
-        'aspectRatio: $aspectRatio)';
+        'aspectRatio: $aspectRatio, '
+        'origin: $origin)';
   }
+
+  static const _unset = Object();
 }

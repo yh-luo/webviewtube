@@ -157,7 +157,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
     await _webViewController.loadHtmlString(
       _generateIframePage(videoId, options),
-      baseUrl: 'https://www.youtube.com',
+      baseUrl: options.origin,
     );
 
     if (!_initCompleter.isCompleted) {
@@ -476,9 +476,9 @@ String _generateIframePage(String videoId, WebviewtubeOptions options) {
                     ${options.loop ? "'playlist': '$videoId'," : ''}
                     'playsinline': 1,
                     'rel': 0,
+                    ${options.origin != null ? "'origin': '${options.origin}'," : ''}
                     'start': ${options.startAt},
-                    'end': ${options.endAt},
-                    'origin': 'https://www.youtube.com'
+                    'end': ${options.endAt}
                 },
                 events: {
                     onReady: function (event) { sendMessageToDart('Ready'); },

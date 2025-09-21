@@ -75,10 +75,13 @@ void main() {
       });
 
       test('endAt', () {
-        final actual = options.copyWith(endAt: 1);
+        final actual1 = options.copyWith(endAt: 1);
+        final actual2 = actual1.copyWith(endAt: null);
 
-        expect(options != actual, true);
-        expect(actual, WebviewtubeOptions(endAt: 1));
+        expect(options != actual1, true);
+        expect(actual1 != actual2, true);
+        expect(actual1, WebviewtubeOptions(endAt: 1));
+        expect(actual2, WebviewtubeOptions(endAt: null));
       });
 
       test('currentTimeUpdateInterval', () {
@@ -93,6 +96,16 @@ void main() {
 
         expect(options != actual, true);
         expect(actual, WebviewtubeOptions(aspectRatio: 1 / 1));
+      });
+
+      test('origin', () {
+        final actual1 = options.copyWith(origin: 'https://other.domain');
+        final actual2 = actual1.copyWith(origin: null);
+
+        expect(options != actual1, true);
+        expect(actual1 != actual2, true);
+        expect(actual1, WebviewtubeOptions(origin: 'https://other.domain'));
+        expect(actual2, WebviewtubeOptions(origin: null));
       });
     });
   });
