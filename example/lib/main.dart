@@ -19,6 +19,7 @@ class MyApp extends StatelessWidget {
       title: 'Webviewtube',
       theme: ThemeData(
         primarySwatch: Colors.blue,
+        useMaterial3: false,
       ),
       home: const WebviewtubeDemo(),
     );
