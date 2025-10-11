@@ -1,9 +1,13 @@
-# Unreleased
+# 3.1.0
 
 ## Breaking Changes
 
 - Updated minimum supported SDK version to Flutter 3.16.6
 - Updated minimum supported iOS version to 12.0
+
+## Features
+
+- Added `origin` to `WebviewtubeOptions` to specify the domain origin for the embedded YouTube player iframe.
 
 # 3.0.0
 
