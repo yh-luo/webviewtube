@@ -8,6 +8,7 @@ class WebviewtubeOptions {
   /// {@macro webviewtube_options}
   const WebviewtubeOptions({
     this.showControls = true,
+    this.enableFullscreen = true,
     this.mute = false,
     this.loop = false,
     this.forceHd = false,
@@ -26,6 +27,15 @@ class WebviewtubeOptions {
   /// Set to false if you want to use customized controls.
   /// Defaults to true.
   final bool showControls;
+
+  /// Display the fullscreen button in the player controls.
+  ///
+  /// This parameter controls the YouTube IFrame Player API's 'fs' parameter.
+  /// When set to true (default), the fullscreen button will be displayed.
+  /// When set to false, the fullscreen button will be hidden.
+  ///
+  /// Defaults to true.
+  final bool enableFullscreen;
 
   /// Mutes the player after initialization.
   ///
@@ -98,6 +108,7 @@ class WebviewtubeOptions {
 
   WebviewtubeOptions copyWith({
     bool? showControls,
+    bool? enableFullscreen,
     bool? mute,
     bool? loop,
     bool? forceHd,
@@ -112,6 +123,7 @@ class WebviewtubeOptions {
   }) {
     return WebviewtubeOptions(
       showControls: showControls ?? this.showControls,
+      enableFullscreen: enableFullscreen ?? this.enableFullscreen,
       mute: mute ?? this.mute,
       loop: loop ?? this.loop,
       forceHd: forceHd ?? this.forceHd,
@@ -132,6 +144,7 @@ class WebviewtubeOptions {
       other is WebviewtubeOptions &&
       other.runtimeType == runtimeType &&
       other.showControls == showControls &&
+      other.enableFullscreen == enableFullscreen &&
       other.mute == mute &&
       other.loop == loop &&
       other.forceHd == forceHd &&
@@ -148,6 +161,7 @@ class WebviewtubeOptions {
   int get hashCode => Object.hash(
         runtimeType,
         showControls,
+        enableFullscreen,
         mute,
         loop,
         forceHd,
@@ -165,6 +179,7 @@ class WebviewtubeOptions {
   String toString() {
     return 'WebviewtubeOptions('
         'showControls: $showControls, '
+        'enableFullscreen: $enableFullscreen, '
         'mute: $mute, '
         'loop: $loop, '
         'forceHd: $forceHd, '

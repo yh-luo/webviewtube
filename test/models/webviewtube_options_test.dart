@@ -25,6 +25,13 @@ void main() {
         expect(actual, WebviewtubeOptions(showControls: false));
       });
 
+      test('enableFullscreen', () {
+        final actual = options.copyWith(enableFullscreen: false);
+
+        expect(options != actual, true);
+        expect(actual, WebviewtubeOptions(enableFullscreen: false));
+      });
+
       test('mute', () {
         final actual = options.copyWith(mute: true);
 

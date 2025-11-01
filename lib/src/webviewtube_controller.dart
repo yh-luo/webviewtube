@@ -469,7 +469,7 @@ String _generateIframePage(String videoId, WebviewtubeOptions options) {
                     'cc_lang_pref': '${options.captionLanguage}',
                     'controls': ${_boolean(options.showControls)},
                     'enablejsapi': 1,
-                    'fs': 0,
+                    'fs': ${_boolean(options.enableFullscreen)},
                     'hl': '${options.interfaceLanguage}',
                     'iv_load_policy': 3,
                     'loop': ${_boolean(options.loop)},
