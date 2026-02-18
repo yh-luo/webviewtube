@@ -19,7 +19,7 @@ class WebviewtubeOptions {
     this.endAt,
     this.currentTimeUpdateInterval = 130,
     this.aspectRatio = 16 / 9,
-    this.origin,
+    this.origin = 'https://www.youtube-nocookie.com/',
   });
 
   /// Display the YouTube video player controls.
@@ -100,10 +100,10 @@ class WebviewtubeOptions {
   /// This value is used to set the `origin` parameter for the embedded YouTube player.
   /// For some videos, the domain must be explicitly set to allow playback; for others, it must be omitted.
   ///
-  /// - Set to a specific domain (e.g., 'https://www.youtube.com') to explicitly pass the origin.
+  /// - Set to a specific domain to explicitly pass the origin.
   /// - Set to null to omit the origin parameter entirely.
   ///
-  /// Defaults to null.
+  /// Defaults to 'https://www.youtube-nocookie.com/'.
   final String? origin;
 
   WebviewtubeOptions copyWith({
