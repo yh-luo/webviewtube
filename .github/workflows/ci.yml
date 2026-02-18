@@ -14,7 +14,7 @@ jobs:
           ["3.16.6", "3.19.6", "3.22.3", "3.24.0"]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
       - uses: subosito/flutter-action@v2
         with:
           flutter-version: ${{ matrix.flutter-version }}
@@ -37,3 +37,8 @@ jobs:
 
       - name: Test
         run: flutter test --no-pub --coverage
+
+      - name: Build example APK
+        run: |
+          cd example
+          flutter build apk --release
