@@ -54,6 +54,8 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
   bool _isPlaylist = false;
 
+  bool _disposed = false;
+
   /// Additional options to control the player.
   final WebviewtubeOptions options;
 
@@ -199,6 +201,8 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   }
 
   void _onMessageReceived(JavaScriptMessage message) {
+    if (_disposed) return;
+
     Map<String, dynamic> json = jsonDecode(message.message);
     switch (json['method']) {
       case 'Ready':
@@ -260,8 +264,10 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   void dispose() {
     // recommended in
     // https://github.com/flutter/flutter/issues/119616#issuecomment-1419991144
+    _disposed = true;
     _webViewController
       ..removeJavaScriptChannel('Webviewtube')
+      ..setNavigationDelegate(NavigationDelegate())
       ..loadRequest(Uri.parse('about:blank'));
     super.dispose();
   }
@@ -285,6 +291,8 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
   /// Invoked handler when WebView returns an error.
   void onWebResourceError(WebResourceError error) {
+    if (_disposed) return;
+
     value = value.copyWith(playerError: PlayerError.unknown);
     if (onPlayerWebResourceError != null) {
       onPlayerWebResourceError!(error);
