@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <style>
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #000000;
+            overflow: hidden;
+            position: fixed;
+            height: 100%;
+            width: 100%;
+        }
+    </style>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
+</head>
+
+<body>
+    <div id="player"></div>
+
+    <script>
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        var timerId;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('player', {
+                height: '100%',
+                width: '100%',
+                videoId: '{{VIDEO_ID}}',
+                host: 'https://www.youtube.com',
+                playerVars: {
+                    'cc_load_policy': {{ENABLE_CAPTION}},
+                    'cc_lang_pref': '{{CAPTION_LANGUAGE}}',
+                    'controls': {{SHOW_CONTROLS}},
+                    'enablejsapi': 1,
+                    'fs': 0,
+                    'hl': '{{INTERFACE_LANGUAGE}}',
+                    'iv_load_policy': 3,
+                    'loop': {{LOOP}},
+                    {{PLAYLIST_PARAM}}
+                    'playsinline': 1,
+                    'rel': 0,
+                    {{ORIGIN_PARAM}}
+                    'start': {{START_AT}},
+                    'end': {{END_AT}}
+                },
+        events: {
+            onReady: function (event) { sendMessageToDart('Ready'); },
+            onStateChange: function (event) { sendPlayerStateChange(event.data); },
+            onPlaybackQualityChange: function (event) { sendMessageToDart('PlaybackQualityChange', { 'playbackQuality': event.data }); },
+            onPlaybackRateChange: function (event) { sendMessageToDart('PlaybackRateChange', { 'playbackRate': event.data }); },
+            onError: function (error) { sendMessageToDart('Errors', { 'errorCode': error.data }); }
+        }
+            });
+        }
+
+        function sendMessageToDart(methodName, argsObject = {}) {
+            var message = {
+                'method': methodName,
+                'args': argsObject
+            };
+            Webviewtube.postMessage(JSON.stringify(message));
+        }
+
+        function sendPlayerStateChange(playerState) {
+            clearTimeout(timerId);
+            sendMessageToDart('StateChange', { 'state': playerState });
+            if (playerState == 1) {
+                startSendCurrentTimeInterval();
+                sendVideoData(player);
+            }
+        }
+
+        function sendVideoData(player) {
+            var videoData = {
+                'duration': player.getDuration(),
+                'title': player.getVideoData().title,
+                'author': player.getVideoData().author,
+                'videoId': player.getVideoData().video_id
+            };
+            sendMessageToDart('VideoData', videoData);
+        }
+
+        function startSendCurrentTimeInterval() {
+            timerId = setInterval(function () {
+                sendMessageToDart('CurrentTime',
+                    {
+                        'position': player.getCurrentTime(),
+                        'buffered': player.getVideoLoadedFraction()
+                    });
+            }, {{UPDATE_INTERVAL}});
+        }
+
+
+        function play() {
+            player.playVideo();
+        }
+
+        function pause() {
+            player.pauseVideo();
+        }
+
+        function loadById(loadSettings) {
+            player.loadVideoById(loadSettings);
+        }
+
+        function cueById(cueSettings) {
+            player.cueVideoById(cueSettings);
+        }
+
+        function loadPlaylist(playlist, index, startAt) {
+            player.loadPlaylist(playlist, index, startAt);
+        }
+
+        function cuePlaylist(playlist, index, startAt) {
+            player.cuePlaylist(playlist, index, startAt);
+        }
+
+        function nextVideo() {
+            player.nextVideo();
+        }
+
+        function previousVideo() {
+            player.previousVideo();
+        }
+
+        function playVideoAt(index) {
+            player.playVideoAt(index);
+        }
+
+        function mute() {
+            player.mute();
+        }
+
+        function unMute() {
+            player.unMute();
+        }
+
+        function seekTo(seconds, allowSeekAhead) {
+            player.seekTo(seconds, allowSeekAhead);
+        }
+
+        function setSize(width, height) {
+            player.setSize(width, height);
+        }
+
+        function setPlaybackRate(rate) {
+            player.setPlaybackRate(rate);
+        }
+    </script>
+</body>
+
+</html>

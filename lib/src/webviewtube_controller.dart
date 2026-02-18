@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 import 'package:webview_flutter_android/webview_flutter_android.dart';
 import 'package:webview_flutter_wkwebview/webview_flutter_wkwebview.dart';
@@ -155,13 +156,44 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
       _webViewController.setUserAgent(hdUserAgent);
     }
 
+    final htmlContent = await _loadHtmlTemplate(videoId, options);
     await _webViewController.loadHtmlString(
-      _generateIframePage(videoId, options),
+      htmlContent,
       baseUrl: options.origin,
     );
 
     if (!_initCompleter.isCompleted) {
       _initCompleter.complete();
+    }
+  }
+
+  Future<String> _loadHtmlTemplate(
+      String videoId, WebviewtubeOptions options) async {
+    try {
+      // Load from package assets
+      String htmlTemplate = await rootBundle.loadString('assets/player.html');
+
+      // Replace placeholders with actual values
+      return htmlTemplate
+          .replaceAll('{{VIDEO_ID}}', videoId)
+          .replaceAll(
+              '{{ENABLE_CAPTION}}', _boolean(options.enableCaption).toString())
+          .replaceAll('{{CAPTION_LANGUAGE}}', options.captionLanguage)
+          .replaceAll(
+              '{{SHOW_CONTROLS}}', _boolean(options.showControls).toString())
+          .replaceAll('{{INTERFACE_LANGUAGE}}', options.interfaceLanguage)
+          .replaceAll('{{LOOP}}', _boolean(options.loop).toString())
+          .replaceAll('{{PLAYLIST_PARAM}}',
+              options.loop ? "'playlist': '$videoId'," : '')
+          .replaceAll('{{ORIGIN_PARAM}}',
+              options.origin != null ? "'origin': '${options.origin}'," : '')
+          .replaceAll('{{START_AT}}', options.startAt.toString())
+          .replaceAll('{{END_AT}}', options.endAt.toString())
+          .replaceAll('{{UPDATE_INTERVAL}}',
+              options.currentTimeUpdateInterval.toString());
+    } catch (e) {
+      debugPrint('Error loading HTML template: $e');
+      rethrow;
     }
   }
 
@@ -426,168 +458,6 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
     await _callMethod('playVideoAt($index)');
   }
-}
-
-String _generateIframePage(String videoId, WebviewtubeOptions options) {
-  return '''
-<!DOCTYPE html>
-<html>
-    <head>
-        <style>
-            html,
-            body {
-                margin: 0;
-                padding: 0;
-                background-color: #000000;
-                overflow: hidden;
-                position: fixed;
-                height: 100%;
-                width: 100%;
-            }
-        </style>
-        <meta name='viewport' content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no'>
-    </head>
-<body>
-    <div id="player"></div>
-
-    <script>
-        var tag = document.createElement('script');
-        tag.src = "https://www.youtube.com/iframe_api";
-        var firstScriptTag = document.getElementsByTagName('script')[0];
-        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-
-        var player;
-        var timerId;
-        function onYouTubeIframeAPIReady() {
-            player = new YT.Player('player', {
-                height: '100%',
-                width: '100%',
-                videoId: '$videoId',
-                host: 'https://www.youtube.com',
-                playerVars: {
-                    'cc_load_policy': ${_boolean(options.enableCaption)},
-                    'cc_lang_pref': '${options.captionLanguage}',
-                    'controls': ${_boolean(options.showControls)},
-                    'enablejsapi': 1,
-                    'fs': ${_boolean(options.enableFullscreen)},
-                    'hl': '${options.interfaceLanguage}',
-                    'iv_load_policy': 3,
-                    'loop': ${_boolean(options.loop)},
-                    ${options.loop ? "'playlist': '$videoId'," : ''}
-                    'playsinline': 1,
-                    'rel': 0,
-                    ${options.origin != null ? "'origin': '${options.origin}'," : ''}
-                    'start': ${options.startAt},
-                    'end': ${options.endAt}
-                },
-                events: {
-                    onReady: function (event) { sendMessageToDart('Ready'); },
-                    onStateChange: function (event) { sendPlayerStateChange(event.data); },
-                    onPlaybackQualityChange: function (event) { sendMessageToDart('PlaybackQualityChange', { 'playbackQuality': event.data }); },
-                    onPlaybackRateChange: function (event) { sendMessageToDart('PlaybackRateChange', { 'playbackRate': event.data }); },
-                    onError: function (error) { sendMessageToDart('Errors', { 'errorCode': error.data }); }
-                }
-            });
-        }
-
-        function sendMessageToDart(methodName, argsObject = {}) {
-            var message = {
-                'method': methodName,
-                'args': argsObject
-            };
-            Webviewtube.postMessage(JSON.stringify(message));
-        }
-
-        function sendPlayerStateChange(playerState) {
-            clearTimeout(timerId);
-            sendMessageToDart('StateChange', { 'state': playerState });
-            if (playerState == 1) {
-                startSendCurrentTimeInterval();
-                sendVideoData(player);
-            }
-        }
-
-        function sendVideoData(player) {
-            var videoData = {
-                'duration': player.getDuration(),
-                'title': player.getVideoData().title,
-                'author': player.getVideoData().author,
-                'videoId': player.getVideoData().video_id
-            };
-            sendMessageToDart('VideoData', videoData);
-        }
-
-        function startSendCurrentTimeInterval() {
-            timerId = setInterval(function () {
-                sendMessageToDart('CurrentTime',
-                    {
-                        'position': player.getCurrentTime(),
-                        'buffered': player.getVideoLoadedFraction()
-                    });
-            }, ${options.currentTimeUpdateInterval});
-        }
-
-
-        function play() {
-            player.playVideo();
-        }
-
-        function pause() {
-            player.pauseVideo();
-        }
-
-        function loadById(loadSettings) {
-            player.loadVideoById(loadSettings);
-        }
-
-        function cueById(cueSettings) {
-            player.cueVideoById(cueSettings);
-        }
-
-        function loadPlaylist(playlist, index, startAt) {
-            player.loadPlaylist(playlist, index, startAt);
-        }
-
-        function cuePlaylist(playlist, index, startAt) {
-            player.cuePlaylist(playlist, index, startAt);
-        }
-
-        function nextVideo() {
-          player.nextVideo();
-        }
-
-        function previousVideo() {
-          player.previousVideo();
-        }
-
-        function playVideoAt(index) {
-          player.playVideoAt(index);
-        }
-
-        function mute() {
-            player.mute();
-        }
-
-        function unMute() {
-            player.unMute();
-        }
-
-        function seekTo(seconds, allowSeekAhead) {
-            player.seekTo(seconds, allowSeekAhead);
-        }
-
-        function setSize(width, height) {
-            player.setSize(width, height);
-        }
-
-        function setPlaybackRate(rate) {
-            player.setPlaybackRate(rate);
-        }
-    </script>
-</body>
-
-</html>
-''';
 }
 
 int _boolean(bool value) => value ? 1 : 0;

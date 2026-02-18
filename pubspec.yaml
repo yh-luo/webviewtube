@@ -11,6 +11,10 @@ platforms:
   android:
   ios:
 
+flutter:
+  assets:
+    - assets/player.html
+
 dependencies:
   flutter:
     sdk: flutter
