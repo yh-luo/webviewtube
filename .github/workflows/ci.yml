@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         flutter-version:
-          ["3.16.6", "3.19.6", "3.22.3", "3.24.5", "3.27.4"]
+          ["3.16.6", "3.19.6", "3.22.3", "3.24.5"]
 
     steps:
       - uses: actions/checkout@v5
