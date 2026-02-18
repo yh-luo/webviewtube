@@ -171,7 +171,8 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
       String videoId, WebviewtubeOptions options) async {
     try {
       // Load from package assets
-      String htmlTemplate = await rootBundle.loadString('assets/player.html');
+      String htmlTemplate = await rootBundle
+          .loadString('packages/webviewtube/assets/player.html');
 
       // Replace placeholders with actual values
       return htmlTemplate
