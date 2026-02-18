@@ -41,4 +41,4 @@ jobs:
       - name: Build example APK
         run: |
           cd example
-          flutter build apk --release
+          flutter build apk --debug
