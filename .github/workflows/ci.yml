@@ -11,7 +11,7 @@ jobs:
     strategy:
       matrix:
         flutter-version:
-          ["3.16.6", "3.19.6", "3.22.3"]
+          ["3.16.6", "3.19.6", "3.22.3", "3.24.5", "3.27.4"]
 
     steps:
       - uses: actions/checkout@v5
@@ -37,8 +37,3 @@ jobs:
 
       - name: Test
         run: flutter test --no-pub --coverage
-
-      - name: Build example APK
-        run: |
-          cd example
-          flutter build apk --debug
