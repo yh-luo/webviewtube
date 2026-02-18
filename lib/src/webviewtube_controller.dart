@@ -184,6 +184,8 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
           .replaceAll('{{CAPTION_LANGUAGE}}', options.captionLanguage)
           .replaceAll(
               '{{SHOW_CONTROLS}}', _boolean(options.showControls).toString())
+          .replaceAll('{{ENABLE_FULLSCREEN}}',
+              _boolean(options.enableFullscreen).toString())
           .replaceAll('{{INTERFACE_LANGUAGE}}', options.interfaceLanguage)
           .replaceAll('{{LOOP}}', _boolean(options.loop).toString())
           .replaceAll('{{PLAYLIST_PARAM}}',
