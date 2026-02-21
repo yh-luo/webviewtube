@@ -1,3 +1,19 @@
+# 3.2.0
+
+## Breaking Changes
+
+- Changed default `origin` value in `WebviewtubeOptions` from `null` to `https://www.youtube-nocookie.com/` to ensure compliance with [YouTube's embedded player requirements](https://developers.google.com/youtube/terms/required-minimum-functionality#youtube-embedded-player-and-video-playback).
+  - **Migration Note**: Some videos might no longer play after this change. If you experience playback issues, you can restore the previous behavior by explicitly setting `origin: null` in `WebviewtubeOptions`.
+- Updated minimum supported SDK version to Flutter 3.24.5
+
+## Features
+
+- Added fullscreen button support (controlled by `enableFullscreen`)
+
+## Fixes
+
+- Fixed operations on disposed controller
+
 # 3.1.0
 
 ## Breaking Changes
