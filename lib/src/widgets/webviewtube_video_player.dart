@@ -2,7 +2,32 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
+import 'duration_indicator.dart';
 import 'widgets.dart';
+
+/// Signature for a builder that builds the loading overlay.
+///
+/// [isReady] is `true` once the player has finished initializing.
+typedef WebviewtubeLoadingBuilder = Widget Function(
+  BuildContext context,
+  bool isReady,
+);
+
+/// Signature for a builder that builds the controls overlay.
+///
+/// [playerState] reflects the current playback state.
+typedef WebviewtubeControlsBuilder = Widget Function(
+  BuildContext context,
+  PlayerState playerState,
+);
+
+/// Signature for a builder that builds the progress bar overlay.
+///
+/// [playerState] reflects the current playback state.
+typedef WebviewtubeProgressBarBuilder = Widget Function(
+  BuildContext context,
+  PlayerState playerState,
+);
 
 /// {@template webviewtube_video_player}
 /// A widgets-decorated [WebviewtubePlayer].
@@ -47,6 +72,9 @@ class WebviewtubeVideoPlayer extends StatelessWidget {
     super.key,
     required this.videoId,
     WebviewtubeController? controller,
+    this.loadingIndicatorColor,
+    this.controlsColor,
+    this.progressBarStyle,
     this.loadingBuilder,
     this.controlsBuilder,
     this.progressBarBuilder,
@@ -58,26 +86,44 @@ class WebviewtubeVideoPlayer extends StatelessWidget {
   /// The controller to control the player.
   final WebviewtubeController? _controller;
 
+  /// Color for the default loading indicator. Ignored if [loadingBuilder] is
+  /// provided.
+  final Color? loadingIndicatorColor;
+
+  /// Color for the default controls (icons and text). Ignored if
+  /// [controlsBuilder] is provided.
+  final Color? controlsColor;
+
+  /// Style for the default progress bar. Ignored if [progressBarBuilder] is
+  /// provided.
+  final ProgressBarStyle? progressBarStyle;
+
   /// Builder for the loading overlay. Receives [isReady] to indicate whether
-  /// the player is ready. Defaults to [LoadingIndicator].
-  final Widget Function(BuildContext context, bool isReady)? loadingBuilder;
+  /// the player is ready. Defaults to [LoadingIndicator]. When provided,
+  /// [loadingIndicatorColor] is ignored.
+  final WebviewtubeLoadingBuilder? loadingBuilder;
 
   /// Builder for the controls overlay. Receives [playerState] to reflect the
   /// current playback state. Defaults to replay, duration, volume, and speed
-  /// controls.
-  final Widget Function(BuildContext context, PlayerState playerState)?
-      controlsBuilder;
+  /// controls. When provided, [controlsColor] is ignored.
+  final WebviewtubeControlsBuilder? controlsBuilder;
 
   /// Builder for the progress bar overlay. Receives [playerState] to reflect
-  /// the current playback state. Defaults to [ProgressBar].
-  final Widget Function(BuildContext context, PlayerState playerState)?
-      progressBarBuilder;
+  /// the current playback state. Defaults to [ProgressBar]. When provided,
+  /// [progressBarStyle] is ignored.
+  final WebviewtubeProgressBarBuilder? progressBarBuilder;
 
   late final _child = _WebviewtubeVideoPlayerView(
     videoId: videoId,
-    loadingBuilder: loadingBuilder ?? _defaultLoadingBuilder,
-    controlsBuilder: controlsBuilder ?? _defaultControlsBuilder,
-    progressBarBuilder: progressBarBuilder ?? _defaultProgressBarBuilder,
+    loadingBuilder: loadingBuilder ??
+        (context, isReady) =>
+            _defaultLoadingBuilder(context, isReady, loadingIndicatorColor),
+    controlsBuilder: controlsBuilder ??
+        (context, playerState) =>
+            _defaultControlsBuilder(context, playerState, controlsColor),
+    progressBarBuilder: progressBarBuilder ??
+        (context, playerState) =>
+            _defaultProgressBarBuilder(context, playerState, progressBarStyle),
   );
 
   @override
@@ -109,11 +155,9 @@ class _WebviewtubeVideoPlayerView extends StatelessWidget {
   /// The video id of the video to play.
   final String videoId;
 
-  final Widget Function(BuildContext context, bool isReady) loadingBuilder;
-  final Widget Function(BuildContext context, PlayerState playerState)
-      controlsBuilder;
-  final Widget Function(BuildContext context, PlayerState playerState)
-      progressBarBuilder;
+  final WebviewtubeLoadingBuilder loadingBuilder;
+  final WebviewtubeControlsBuilder controlsBuilder;
+  final WebviewtubeProgressBarBuilder progressBarBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -144,19 +188,47 @@ class _WebviewtubeVideoPlayerView extends StatelessWidget {
   }
 }
 
-Widget _defaultLoadingBuilder(BuildContext context, bool isReady) {
+Widget _defaultLoadingBuilder(
+  BuildContext context,
+  bool isReady, [
+  Color? color,
+]) {
   if (isReady) return const SizedBox.shrink();
-  return const LoadingIndicator();
+  return LoadingIndicator(color: color ?? Colors.white);
 }
 
-Widget _defaultControlsBuilder(BuildContext context, PlayerState playerState) {
+/// Fades out and disables pointer events while [hide] is true.
+class _HideWhenPlaying extends StatelessWidget {
+  const _HideWhenPlaying({required this.hide, required this.child});
+
+  final bool hide;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedOpacity(
+      opacity: hide ? 0 : 1,
+      duration: const Duration(milliseconds: 300),
+      child: IgnorePointer(ignoring: hide, child: child),
+    );
+  }
+}
+
+Widget _defaultControlsBuilder(
+  BuildContext context,
+  PlayerState playerState, [
+  Color? color,
+]) {
+  final textStyle = kDefaultControlTextStyle.copyWith(color: color);
+  final iconColor = textStyle.color ?? Colors.white;
+
   if (playerState == PlayerState.ended) {
     return Positioned(
       left: 10,
       bottom: -5,
       child: IconButton(
         onPressed: () => context.read<WebviewtubeController>().replay(),
-        icon: const Icon(Icons.replay, color: Colors.white),
+        icon: Icon(Icons.replay, color: iconColor),
       ),
     );
   }
@@ -164,37 +236,32 @@ Widget _defaultControlsBuilder(BuildContext context, PlayerState playerState) {
   return Positioned(
     left: 10,
     bottom: -5,
-    child: AnimatedOpacity(
-      opacity: playerState == PlayerState.playing ? 0 : 1,
-      duration: const Duration(milliseconds: 300),
-      child: IgnorePointer(
-        ignoring: playerState == PlayerState.playing,
-        child: const Row(
-          mainAxisSize: MainAxisSize.min,
-          children: <Widget>[
-            DurationIndicator(),
-            VolumeButton(),
-            PlaybackSpeedButton(),
-          ],
-        ),
+    child: _HideWhenPlaying(
+      hide: playerState == PlayerState.playing,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: <Widget>[
+          DurationIndicator(textStyle: textStyle),
+          VolumeButton(color: iconColor),
+          PlaybackSpeedButton(color: iconColor),
+        ],
       ),
     ),
   );
 }
 
 Widget _defaultProgressBarBuilder(
-    BuildContext context, PlayerState playerState) {
+  BuildContext context,
+  PlayerState playerState, [
+  ProgressBarStyle? style,
+]) {
   return Positioned(
     left: 5,
     right: 5,
     bottom: 35,
-    child: AnimatedOpacity(
-      opacity: playerState == PlayerState.playing ? 0 : 1,
-      duration: const Duration(milliseconds: 300),
-      child: IgnorePointer(
-        ignoring: playerState == PlayerState.playing,
-        child: const ProgressBar(),
-      ),
+    child: _HideWhenPlaying(
+      hide: playerState == PlayerState.playing,
+      child: ProgressBar(style: style),
     ),
   );
 }

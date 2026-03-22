@@ -380,11 +380,15 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// Reloads the player.
   Future<void> reload() => _webViewController.reload();
 
+  void _validateTimeRange(int startAt, int? endAt) {
+    if (endAt != null && startAt >= endAt) {
+      throw ArgumentError('startAt must be less than endAt');
+    }
+  }
+
   /// Loads and plays the specified video.
   Future<void> load(String videoId, {int startAt = 0, int? endAt}) async {
-    if (endAt != null) {
-      assert(startAt < endAt);
-    }
+    _validateTimeRange(startAt, endAt);
 
     var params = 'videoId: "$videoId"';
     if (startAt > 0) {
@@ -400,9 +404,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
   /// Loads the specified video's thumbnail and prepares the player.
   Future<void> cue(String videoId, {int startAt = 0, int? endAt}) async {
-    if (endAt != null) {
-      assert(startAt < endAt);
-    }
+    _validateTimeRange(startAt, endAt);
 
     var params = 'videoId: "$videoId"';
     if (startAt > 0) {
@@ -423,7 +425,9 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     int index = 0,
     int startAt = 0,
   }) async {
-    assert(playlistId != null || (videoIds != null && videoIds.isNotEmpty));
+    if (playlistId == null && (videoIds == null || videoIds.isEmpty)) {
+      throw ArgumentError('Either playlistId or a non-empty videoIds must be provided');
+    }
     var playlist = playlistId ?? '[${videoIds!.map((e) => '"$e"').join(', ')}]';
 
     await _callMethod('loadPlaylist($playlist, $index, $startAt)');
@@ -439,7 +443,9 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     int index = 0,
     int startAt = 0,
   }) async {
-    assert(playlistId != null || (videoIds != null && videoIds.isNotEmpty));
+    if (playlistId == null && (videoIds == null || videoIds.isEmpty)) {
+      throw ArgumentError('Either playlistId or a non-empty videoIds must be provided');
+    }
     var playlist = playlistId ?? '[${videoIds!.map((e) => '"$e"').join(', ')}]';
 
     await _callMethod('cuePlaylist($playlist, $index, $startAt)');

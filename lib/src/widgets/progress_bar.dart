@@ -6,37 +6,25 @@ import '../webviewtube.dart';
 /// {@template progress_bar}
 /// A widget to display the progress bar of the video.
 ///
-/// Colors of the progress bar can be configured with [ProgressBarColors].
+/// Colors and dimensions can be configured with [ProgressBarStyle].
 /// {@endtemplate}
 class ProgressBar extends StatefulWidget {
   /// {@macro progress_bar}
-  const ProgressBar({super.key, this.colors});
+  const ProgressBar({super.key, this.style});
 
-  /// Defines colors for the [ProgressBar]. If null,
-  /// `Theme.of(context).colorScheme.secondary` is used.
-  final ProgressBarColors? colors;
+  /// Defines colors and dimensions for the [ProgressBar].
+  final ProgressBarStyle? style;
 
   @override
   State<ProgressBar> createState() => _ProgressBarState();
 }
 
 class _ProgressBarState extends State<ProgressBar> {
-  late ProgressBarColors colors;
   Duration _position = Duration.zero;
   bool _touchDown = false;
   bool _positionChanged = false;
 
-  @override
-  void didChangeDependencies() {
-    colors = widget.colors ??
-        ProgressBarColors(
-            backgroundColor:
-                Theme.of(context).colorScheme.secondary.withValues(alpha: 0.38),
-            playedColor: Theme.of(context).colorScheme.secondary,
-            bufferedColor: Colors.white70,
-            handleColor: Theme.of(context).colorScheme.secondary);
-    super.didChangeDependencies();
-  }
+  ProgressBarStyle get _style => widget.style ?? const ProgressBarStyle();
 
   Duration _getRelativePosition(Offset globalPosition) {
     final box = context.findRenderObject() as RenderBox;
@@ -93,7 +81,7 @@ class _ProgressBarState extends State<ProgressBar> {
         var playedRatio = 0.0;
         final durationMs =
             controller.value.videoMetadata.duration.inMilliseconds;
-        if (!durationMs.isNaN && durationMs != 0) {
+        if (durationMs != 0) {
           double val;
           if (_positionChanged) {
             val = _position.inMilliseconds / durationMs;
@@ -105,13 +93,16 @@ class _ProgressBarState extends State<ProgressBar> {
         }
 
         return CustomPaint(
-          size: Size(MediaQuery.of(context).size.width, 14),
+          size: Size(MediaQuery.of(context).size.width, _style.barHeight),
           painter: _ProgressBarPainter(
-            progressWidth: 4.0,
-            handleRadius: 7.0,
+            progressWidth: _style.progressWidth,
+            handleRadius: _style.handleRadius,
             playedRatio: playedRatio,
             bufferedRatio: controller.value.buffered,
-            colors: colors,
+            backgroundColor: _style.backgroundColor,
+            playedColor: _style.playedColor,
+            bufferedColor: _style.bufferedColor,
+            handleColor: _style.handleColor,
             touchDown: _touchDown,
           ),
         );
@@ -127,7 +118,10 @@ class _ProgressBarPainter extends CustomPainter {
     required this.playedRatio,
     required this.bufferedRatio,
     required this.touchDown,
-    required this.colors,
+    required this.backgroundColor,
+    required this.playedColor,
+    required this.bufferedColor,
+    required this.handleColor,
   });
 
   final double progressWidth;
@@ -135,13 +129,22 @@ class _ProgressBarPainter extends CustomPainter {
   final double playedRatio;
   final double bufferedRatio;
   final bool touchDown;
-  final ProgressBarColors colors;
+  final Color backgroundColor;
+  final Color playedColor;
+  final Color bufferedColor;
+  final Color handleColor;
 
   @override
   bool shouldRepaint(_ProgressBarPainter oldDelegate) {
     return playedRatio != oldDelegate.playedRatio ||
         bufferedRatio != oldDelegate.bufferedRatio ||
-        touchDown != oldDelegate.touchDown;
+        touchDown != oldDelegate.touchDown ||
+        backgroundColor != oldDelegate.backgroundColor ||
+        playedColor != oldDelegate.playedColor ||
+        bufferedColor != oldDelegate.bufferedColor ||
+        handleColor != oldDelegate.handleColor ||
+        progressWidth != oldDelegate.progressWidth ||
+        handleRadius != oldDelegate.handleRadius;
   }
 
   @override
@@ -166,24 +169,24 @@ class _ProgressBarPainter extends CustomPainter {
       centerY,
     );
 
-    paint.color = colors.backgroundColor;
+    paint.color = backgroundColor;
     canvas.drawLine(startPoint, endPoint, paint);
 
-    paint.color = colors.bufferedColor;
+    paint.color = bufferedColor;
     canvas.drawLine(startPoint, secondProgressPoint, paint);
 
-    paint.color = colors.playedColor;
+    paint.color = playedColor;
     canvas.drawLine(startPoint, progressPoint, paint);
 
     handlePaint.color = Colors.transparent;
     canvas.drawCircle(progressPoint, centerY, handlePaint);
 
     if (touchDown) {
-      handlePaint.color = colors.handleColor.withValues(alpha: 0.4);
+      handlePaint.color = handleColor.withValues(alpha: 0.4);
       canvas.drawCircle(progressPoint, handleRadius * 3, handlePaint);
     }
 
-    handlePaint.color = colors.handleColor;
+    handlePaint.color = handleColor;
     canvas.drawCircle(progressPoint, handleRadius, handlePaint);
   }
 }
