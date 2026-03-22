@@ -1,3 +1,9 @@
+# Unreleased
+
+## Breaking Changes
+
+- Updated minimum supported SDK version to Flutter 3.27.4
+
 # 3.2.0
 
 ## Breaking Changes
