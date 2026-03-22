@@ -31,7 +31,7 @@ class _ProgressBarState extends State<ProgressBar> {
     colors = widget.colors ??
         ProgressBarColors(
             backgroundColor:
-                Theme.of(context).colorScheme.secondary.withOpacity(0.38),
+                Theme.of(context).colorScheme.secondary.withValues(alpha: 0.38),
             playedColor: Theme.of(context).colorScheme.secondary,
             bufferedColor: Colors.white70,
             handleColor: Theme.of(context).colorScheme.secondary);
@@ -179,7 +179,7 @@ class _ProgressBarPainter extends CustomPainter {
     canvas.drawCircle(progressPoint, centerY, handlePaint);
 
     if (touchDown) {
-      handlePaint.color = colors.handleColor.withOpacity(0.4);
+      handlePaint.color = colors.handleColor.withValues(alpha: 0.4);
       canvas.drawCircle(progressPoint, handleRadius * 3, handlePaint);
     }
 
