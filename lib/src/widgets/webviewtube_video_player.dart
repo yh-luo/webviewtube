@@ -43,9 +43,14 @@ import 'widgets.dart';
 /// {@endtemplate}
 class WebviewtubeVideoPlayer extends StatelessWidget {
   /// {@macro webviewtube_video_player}
-  WebviewtubeVideoPlayer(
-      {super.key, required this.videoId, WebviewtubeController? controller})
-      : _controller = controller;
+  WebviewtubeVideoPlayer({
+    super.key,
+    required this.videoId,
+    WebviewtubeController? controller,
+    this.loadingBuilder,
+    this.controlsBuilder,
+    this.progressBarBuilder,
+  }) : _controller = controller;
 
   /// The video id of the video to play.
   final String videoId;
@@ -53,7 +58,27 @@ class WebviewtubeVideoPlayer extends StatelessWidget {
   /// The controller to control the player.
   final WebviewtubeController? _controller;
 
-  late final _child = _WebviewtubeVideoPlayerView(videoId: videoId);
+  /// Builder for the loading overlay. Receives [isReady] to indicate whether
+  /// the player is ready. Defaults to [LoadingIndicator].
+  final Widget Function(BuildContext context, bool isReady)? loadingBuilder;
+
+  /// Builder for the controls overlay. Receives [playerState] to reflect the
+  /// current playback state. Defaults to replay, duration, volume, and speed
+  /// controls.
+  final Widget Function(BuildContext context, PlayerState playerState)?
+      controlsBuilder;
+
+  /// Builder for the progress bar overlay. Receives [playerState] to reflect
+  /// the current playback state. Defaults to [ProgressBar].
+  final Widget Function(BuildContext context, PlayerState playerState)?
+      progressBarBuilder;
+
+  late final _child = _WebviewtubeVideoPlayerView(
+    videoId: videoId,
+    loadingBuilder: loadingBuilder ?? _defaultLoadingBuilder,
+    controlsBuilder: controlsBuilder ?? _defaultControlsBuilder,
+    progressBarBuilder: progressBarBuilder ?? _defaultProgressBarBuilder,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -74,10 +99,21 @@ class WebviewtubeVideoPlayer extends StatelessWidget {
 
 /// The player view.
 class _WebviewtubeVideoPlayerView extends StatelessWidget {
-  const _WebviewtubeVideoPlayerView({required this.videoId});
+  const _WebviewtubeVideoPlayerView({
+    required this.videoId,
+    required this.loadingBuilder,
+    required this.controlsBuilder,
+    required this.progressBarBuilder,
+  });
 
   /// The video id of the video to play.
   final String videoId;
+
+  final Widget Function(BuildContext context, bool isReady) loadingBuilder;
+  final Widget Function(BuildContext context, PlayerState playerState)
+      controlsBuilder;
+  final Widget Function(BuildContext context, PlayerState playerState)
+      progressBarBuilder;
 
   @override
   Widget build(BuildContext context) {
@@ -91,72 +127,74 @@ class _WebviewtubeVideoPlayerView extends StatelessWidget {
         ),
         Selector<WebviewtubeController, bool>(
           selector: (_, controller) => controller.value.isReady,
-          builder: (context, value, __) {
-            if (value) {
-              return const SizedBox.shrink();
-            }
-
-            return const LoadingIndicator();
-          },
+          builder: (context, isReady, __) => loadingBuilder(context, isReady),
         ),
         Selector<WebviewtubeController, PlayerState>(
           selector: (_, controller) => controller.value.playerState,
-          builder: (context, value, child) {
-            if (value == PlayerState.ended) {
-              return Positioned(
-                left: 10,
-                bottom: -5,
-                child: IconButton(
-                  onPressed: () =>
-                      context.read<WebviewtubeController>().replay(),
-                  icon: const Icon(Icons.replay, color: Colors.white),
-                ),
-              );
-            }
-
-            return Positioned(
-              left: 10,
-              bottom: -5,
-              child: AnimatedOpacity(
-                opacity: value == PlayerState.playing ? 0 : 1,
-                duration: const Duration(milliseconds: 300),
-                child: IgnorePointer(
-                  ignoring: value == PlayerState.playing,
-                  child: child,
-                ),
-              ),
-            );
-          },
-          // ignore: prefer_const_constructors
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: const <Widget>[
-              DurationIndicator(),
-              VolumeButton(),
-              PlaybackSpeedButton(),
-            ],
-          ),
+          builder: (context, playerState, __) =>
+              controlsBuilder(context, playerState),
         ),
         Selector<WebviewtubeController, PlayerState>(
           selector: (_, controller) => controller.value.playerState,
-          builder: (context, value, child) {
-            return Positioned(
-              left: 5,
-              right: 5,
-              bottom: 35,
-              child: AnimatedOpacity(
-                opacity: value == PlayerState.playing ? 0 : 1,
-                duration: const Duration(milliseconds: 300),
-                child: IgnorePointer(
-                  ignoring: value == PlayerState.playing,
-                  child: child,
-                ),
-              ),
-            );
-          },
-          child: const ProgressBar(),
+          builder: (context, playerState, __) =>
+              progressBarBuilder(context, playerState),
         ),
       ],
     );
   }
+}
+
+Widget _defaultLoadingBuilder(BuildContext context, bool isReady) {
+  if (isReady) return const SizedBox.shrink();
+  return const LoadingIndicator();
+}
+
+Widget _defaultControlsBuilder(BuildContext context, PlayerState playerState) {
+  if (playerState == PlayerState.ended) {
+    return Positioned(
+      left: 10,
+      bottom: -5,
+      child: IconButton(
+        onPressed: () => context.read<WebviewtubeController>().replay(),
+        icon: const Icon(Icons.replay, color: Colors.white),
+      ),
+    );
+  }
+
+  return Positioned(
+    left: 10,
+    bottom: -5,
+    child: AnimatedOpacity(
+      opacity: playerState == PlayerState.playing ? 0 : 1,
+      duration: const Duration(milliseconds: 300),
+      child: IgnorePointer(
+        ignoring: playerState == PlayerState.playing,
+        child: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            DurationIndicator(),
+            VolumeButton(),
+            PlaybackSpeedButton(),
+          ],
+        ),
+      ),
+    ),
+  );
+}
+
+Widget _defaultProgressBarBuilder(
+    BuildContext context, PlayerState playerState) {
+  return Positioned(
+    left: 5,
+    right: 5,
+    bottom: 35,
+    child: AnimatedOpacity(
+      opacity: playerState == PlayerState.playing ? 0 : 1,
+      duration: const Duration(milliseconds: 300),
+      child: IgnorePointer(
+        ignoring: playerState == PlayerState.playing,
+        child: const ProgressBar(),
+      ),
+    ),
+  );
 }
