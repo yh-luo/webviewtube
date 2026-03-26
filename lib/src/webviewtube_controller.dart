@@ -426,7 +426,8 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     int startAt = 0,
   }) async {
     if (playlistId == null && (videoIds == null || videoIds.isEmpty)) {
-      throw ArgumentError('Either playlistId or a non-empty videoIds must be provided');
+      throw ArgumentError(
+          'Either playlistId or a non-empty videoIds must be provided');
     }
     var playlist = playlistId ?? '[${videoIds!.map((e) => '"$e"').join(', ')}]';
 
@@ -444,7 +445,8 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     int startAt = 0,
   }) async {
     if (playlistId == null && (videoIds == null || videoIds.isEmpty)) {
-      throw ArgumentError('Either playlistId or a non-empty videoIds must be provided');
+      throw ArgumentError(
+          'Either playlistId or a non-empty videoIds must be provided');
     }
     var playlist = playlistId ?? '[${videoIds!.map((e) => '"$e"').join(', ')}]';
 
