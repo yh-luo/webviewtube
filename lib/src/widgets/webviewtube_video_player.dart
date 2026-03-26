@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../webviewtube.dart';
-import 'duration_indicator.dart';
 import 'widgets.dart';
 
 /// Signature for a builder that builds the loading overlay.
