@@ -5,10 +5,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:webviewtube/webviewtube.dart';
 
 void main() {
-  group('ProgressBarColors', () {
+  group('ProgressBarStyle', () {
     test('can be instantiated', () {
       expect(
-        ProgressBarColors(
+        ProgressBarStyle(
           backgroundColor: Colors.white,
           playedColor: Colors.black,
           bufferedColor: Colors.black,
@@ -19,20 +19,20 @@ void main() {
     });
 
     test('copyWith', () {
-      final colors = ProgressBarColors(
+      final style = ProgressBarStyle(
         backgroundColor: Colors.white,
         playedColor: Colors.black,
         bufferedColor: Colors.black,
         handleColor: Colors.black,
       );
-      final actual = colors.copyWith(playedColor: Colors.amber);
+      final actual = style.copyWith(playedColor: Colors.amber);
 
-      expect(colors != actual, true);
+      expect(style != actual, true);
       expect(actual.playedColor, Colors.amber);
-      expect(actual.backgroundColor, colors.backgroundColor);
+      expect(actual.backgroundColor, style.backgroundColor);
       expect(
           actual,
-          ProgressBarColors(
+          ProgressBarStyle(
             backgroundColor: Colors.white,
             playedColor: Colors.amber,
             bufferedColor: Colors.black,

@@ -428,9 +428,9 @@ class VideoMetadata {
   factory VideoMetadata.fromData(Map<String, dynamic> data) {
     final durationInMs = (((data['duration'] ?? 0) as num) * 1000.0).floor();
     return VideoMetadata(
-        videoId: data['videoId'],
-        title: data['title'],
-        author: data['author'],
+        videoId: (data['videoId'] as String?) ?? '',
+        title: (data['title'] as String?) ?? '',
+        author: (data['author'] as String?) ?? '',
         duration: Duration(milliseconds: durationInMs));
   }
 
