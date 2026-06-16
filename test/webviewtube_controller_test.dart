@@ -34,9 +34,11 @@ void main() {
 
       test('calls callback', () {
         var called = false;
-        final controller = WebviewtubeController(onPlayerReady: () {
-          called = true;
-        });
+        final controller = WebviewtubeController(
+          onPlayerReady: () {
+            called = true;
+          },
+        );
 
         controller.onReady();
         expect(called, true);
@@ -53,9 +55,11 @@ void main() {
 
       test('calls callback', () {
         var called = false;
-        final controller = WebviewtubeController(onPlayerError: (error) {
-          called = true;
-        });
+        final controller = WebviewtubeController(
+          onPlayerError: (error) {
+            called = true;
+          },
+        );
 
         controller.onError(100);
         expect(called, true);
@@ -73,13 +77,15 @@ void main() {
 
       test('calls callback', () {
         var called = false;
-        final controller =
-            WebviewtubeController(onPlayerWebResourceError: (error) {
-          called = true;
-        });
+        final controller = WebviewtubeController(
+          onPlayerWebResourceError: (error) {
+            called = true;
+          },
+        );
 
         controller.onWebResourceError(
-            WebResourceError(errorCode: 1, description: 'test'));
+          WebResourceError(errorCode: 1, description: 'test'),
+        );
         expect(called, true);
       });
     });
@@ -250,7 +256,7 @@ void main() {
         await controller.seekTo(Duration(seconds: 1));
         verifyInOrder([
           webViewController.runJavaScript('seekTo(1, false)'),
-          webViewController.runJavaScript('play()')
+          webViewController.runJavaScript('play()'),
         ]);
       });
     });
@@ -264,7 +270,7 @@ void main() {
         await controller.replay();
         verifyInOrder([
           webViewController.runJavaScript('seekTo(0, false)'),
-          webViewController.runJavaScript('play()')
+          webViewController.runJavaScript('play()'),
         ]);
       });
     });
@@ -290,7 +296,8 @@ void main() {
         await controller.load(videoId);
 
         verify(
-            webViewController.runJavaScript('loadById({videoId: "$videoId"})'));
+          webViewController.runJavaScript('loadById({videoId: "$videoId"})'),
+        );
       });
 
       test('calls with startAt', () async {
@@ -302,8 +309,11 @@ void main() {
 
         await controller.load(videoId, startAt: startAt);
 
-        verify(webViewController.runJavaScript(
-            'loadById({videoId: "$videoId", startSeconds: $startAt})'));
+        verify(
+          webViewController.runJavaScript(
+            'loadById({videoId: "$videoId", startSeconds: $startAt})',
+          ),
+        );
       });
 
       test('calls with endAt', () async {
@@ -316,9 +326,12 @@ void main() {
 
         await controller.load(videoId, startAt: startAt, endAt: endAt);
 
-        verify(webViewController.runJavaScript(
+        verify(
+          webViewController.runJavaScript(
             'loadById({videoId: "$videoId", startSeconds: $startAt, '
-            'endSeconds: $endAt})'));
+            'endSeconds: $endAt})',
+          ),
+        );
       });
 
       test('isPlaylist = false', () {
@@ -379,7 +392,8 @@ void main() {
         await controller.cue(videoId);
 
         verify(
-            webViewController.runJavaScript('cueById({videoId: "$videoId"})'));
+          webViewController.runJavaScript('cueById({videoId: "$videoId"})'),
+        );
       });
 
       test('calls with startAt', () async {
@@ -391,8 +405,11 @@ void main() {
 
         await controller.cue(videoId, startAt: startAt);
 
-        verify(webViewController.runJavaScript(
-            'cueById({videoId: "$videoId", startSeconds: $startAt})'));
+        verify(
+          webViewController.runJavaScript(
+            'cueById({videoId: "$videoId", startSeconds: $startAt})',
+          ),
+        );
       });
 
       test('calls with endAt', () async {
@@ -405,9 +422,12 @@ void main() {
 
         await controller.cue(videoId, startAt: startAt, endAt: endAt);
 
-        verify(webViewController.runJavaScript(
+        verify(
+          webViewController.runJavaScript(
             'cueById({videoId: "$videoId", startSeconds: $startAt, '
-            'endSeconds: $endAt})'));
+            'endSeconds: $endAt})',
+          ),
+        );
       });
 
       test('isPlaylist = false', () async {
@@ -468,7 +488,8 @@ void main() {
         await controller.loadPlaylist(playlistId: playlistId);
 
         verify(
-            webViewController.runJavaScript('loadPlaylist($playlistId, 0, 0)'));
+          webViewController.runJavaScript('loadPlaylist($playlistId, 0, 0)'),
+        );
       });
 
       test('calls loadPlaylist with an array', () async {
@@ -479,8 +500,11 @@ void main() {
 
         await controller.loadPlaylist(videoIds: videoIds);
 
-        verify(webViewController
-            .runJavaScript('loadPlaylist(["1", "2", "3", "4", "5"], 0, 0)'));
+        verify(
+          webViewController.runJavaScript(
+            'loadPlaylist(["1", "2", "3", "4", "5"], 0, 0)',
+          ),
+        );
       });
 
       test('calls loadPlaylist with index', () async {
@@ -492,8 +516,11 @@ void main() {
 
         await controller.loadPlaylist(playlistId: playlistId, index: index);
 
-        verify(webViewController
-            .runJavaScript('loadPlaylist($playlistId, $index, 0)'));
+        verify(
+          webViewController.runJavaScript(
+            'loadPlaylist($playlistId, $index, 0)',
+          ),
+        );
       });
 
       test('calls loadPlaylist with startAt', () async {
@@ -505,8 +532,11 @@ void main() {
 
         await controller.loadPlaylist(playlistId: playlistId, startAt: startAt);
 
-        verify(webViewController
-            .runJavaScript('loadPlaylist($playlistId, 0, $startAt)'));
+        verify(
+          webViewController.runJavaScript(
+            'loadPlaylist($playlistId, 0, $startAt)',
+          ),
+        );
       });
 
       test('can call nextVideo', () async {
@@ -566,7 +596,8 @@ void main() {
         await controller.cuePlaylist(playlistId: playlistId);
 
         verify(
-            webViewController.runJavaScript('cuePlaylist($playlistId, 0, 0)'));
+          webViewController.runJavaScript('cuePlaylist($playlistId, 0, 0)'),
+        );
       });
 
       test('calls cuePlaylist with an array', () async {
@@ -577,8 +608,11 @@ void main() {
 
         await controller.cuePlaylist(videoIds: videoIds);
 
-        verify(webViewController
-            .runJavaScript('cuePlaylist(["1", "2", "3", "4", "5"], 0, 0)'));
+        verify(
+          webViewController.runJavaScript(
+            'cuePlaylist(["1", "2", "3", "4", "5"], 0, 0)',
+          ),
+        );
       });
 
       test('can call nextVideo', () async {

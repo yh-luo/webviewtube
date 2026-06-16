@@ -8,9 +8,7 @@ class WebviewtubeDecoratedPlayer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Webviewtube Decorated Player'),
-      ),
+      appBar: AppBar(title: const Text('Webviewtube Decorated Player')),
       body: WebviewtubeVideoPlayer(videoId: 'rIaaH87z1-g'),
     );
   }

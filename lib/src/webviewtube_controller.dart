@@ -170,32 +170,47 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   }
 
   Future<String> _loadHtmlTemplate(
-      String videoId, WebviewtubeOptions options) async {
+    String videoId,
+    WebviewtubeOptions options,
+  ) async {
     try {
       // Load from package assets
-      String htmlTemplate = await rootBundle
-          .loadString('packages/webviewtube/assets/player.html');
+      String htmlTemplate = await rootBundle.loadString(
+        'packages/webviewtube/assets/player.html',
+      );
 
       // Replace placeholders with actual values
       return htmlTemplate
           .replaceAll('{{VIDEO_ID}}', videoId)
           .replaceAll(
-              '{{ENABLE_CAPTION}}', _boolean(options.enableCaption).toString())
+            '{{ENABLE_CAPTION}}',
+            _boolean(options.enableCaption).toString(),
+          )
           .replaceAll('{{CAPTION_LANGUAGE}}', options.captionLanguage)
           .replaceAll(
-              '{{SHOW_CONTROLS}}', _boolean(options.showControls).toString())
-          .replaceAll('{{ENABLE_FULLSCREEN}}',
-              _boolean(options.enableFullscreen).toString())
+            '{{SHOW_CONTROLS}}',
+            _boolean(options.showControls).toString(),
+          )
+          .replaceAll(
+            '{{ENABLE_FULLSCREEN}}',
+            _boolean(options.enableFullscreen).toString(),
+          )
           .replaceAll('{{INTERFACE_LANGUAGE}}', options.interfaceLanguage)
           .replaceAll('{{LOOP}}', _boolean(options.loop).toString())
-          .replaceAll('{{PLAYLIST_PARAM}}',
-              options.loop ? "'playlist': '$videoId'," : '')
-          .replaceAll('{{ORIGIN_PARAM}}',
-              options.origin != null ? "'origin': '${options.origin}'," : '')
+          .replaceAll(
+            '{{PLAYLIST_PARAM}}',
+            options.loop ? "'playlist': '$videoId'," : '',
+          )
+          .replaceAll(
+            '{{ORIGIN_PARAM}}',
+            options.origin != null ? "'origin': '${options.origin}'," : '',
+          )
           .replaceAll('{{START_AT}}', options.startAt.toString())
           .replaceAll('{{END_AT}}', options.endAt.toString())
-          .replaceAll('{{UPDATE_INTERVAL}}',
-              options.currentTimeUpdateInterval.toString());
+          .replaceAll(
+            '{{UPDATE_INTERVAL}}',
+            options.currentTimeUpdateInterval.toString(),
+          );
     } catch (e) {
       debugPrint('Error loading HTML template: $e');
       rethrow;
@@ -325,8 +340,9 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     final position = data['position'] as num;
     final buffered = data['buffered'] as num;
     value = value.copyWith(
-        position: Duration(milliseconds: (position * 1000).floor()),
-        buffered: buffered.toDouble());
+      position: Duration(milliseconds: (position * 1000).floor()),
+      buffered: buffered.toDouble(),
+    );
   }
 
   /// Interacts with IFrame API via javascript channels.
@@ -427,7 +443,8 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   }) async {
     if (playlistId == null && (videoIds == null || videoIds.isEmpty)) {
       throw ArgumentError(
-          'Either playlistId or a non-empty videoIds must be provided');
+        'Either playlistId or a non-empty videoIds must be provided',
+      );
     }
     var playlist = playlistId ?? '[${videoIds!.map((e) => '"$e"').join(', ')}]';
 
@@ -446,7 +463,8 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   }) async {
     if (playlistId == null && (videoIds == null || videoIds.isEmpty)) {
       throw ArgumentError(
-          'Either playlistId or a non-empty videoIds must be provided');
+        'Either playlistId or a non-empty videoIds must be provided',
+      );
     }
     var playlist = playlistId ?? '[${videoIds!.map((e) => '"$e"').join(', ')}]';
 

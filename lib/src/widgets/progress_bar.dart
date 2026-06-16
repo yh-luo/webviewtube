@@ -39,7 +39,7 @@ class _ProgressBarState extends State<ProgressBar> {
     final relative = touchPoint.dx / box.size.width;
     final position =
         context.read<WebviewtubeController>().value.videoMetadata.duration *
-            relative;
+        relative;
 
     return position;
   }
@@ -64,9 +64,10 @@ class _ProgressBarState extends State<ProgressBar> {
       _touchDown = false;
       _positionChanged = false;
     });
-    context
-        .read<WebviewtubeController>()
-        .seekTo(_position, allowSeekAhead: true);
+    context.read<WebviewtubeController>().seekTo(
+      _position,
+      allowSeekAhead: true,
+    );
   }
 
   @override
@@ -77,36 +78,38 @@ class _ProgressBarState extends State<ProgressBar> {
       onHorizontalDragUpdate: _onHorizontalDragUpdate,
       onHorizontalDragEnd: (_) => _onHorizontalDragEnd(),
       onHorizontalDragCancel: _onHorizontalDragEnd,
-      child: Consumer<WebviewtubeController>(builder: (context, controller, _) {
-        var playedRatio = 0.0;
-        final durationMs =
-            controller.value.videoMetadata.duration.inMilliseconds;
-        if (durationMs != 0) {
-          double val;
-          if (_positionChanged) {
-            val = _position.inMilliseconds / durationMs;
-          } else {
-            val = controller.value.position.inMilliseconds / durationMs;
+      child: Consumer<WebviewtubeController>(
+        builder: (context, controller, _) {
+          var playedRatio = 0.0;
+          final durationMs =
+              controller.value.videoMetadata.duration.inMilliseconds;
+          if (durationMs != 0) {
+            double val;
+            if (_positionChanged) {
+              val = _position.inMilliseconds / durationMs;
+            } else {
+              val = controller.value.position.inMilliseconds / durationMs;
+            }
+
+            playedRatio = double.parse(val.toStringAsFixed(3));
           }
 
-          playedRatio = double.parse(val.toStringAsFixed(3));
-        }
-
-        return CustomPaint(
-          size: Size(MediaQuery.of(context).size.width, _style.barHeight),
-          painter: _ProgressBarPainter(
-            progressWidth: _style.progressWidth,
-            handleRadius: _style.handleRadius,
-            playedRatio: playedRatio,
-            bufferedRatio: controller.value.buffered,
-            backgroundColor: _style.backgroundColor,
-            playedColor: _style.playedColor,
-            bufferedColor: _style.bufferedColor,
-            handleColor: _style.handleColor,
-            touchDown: _touchDown,
-          ),
-        );
-      }),
+          return CustomPaint(
+            size: Size(MediaQuery.of(context).size.width, _style.barHeight),
+            painter: _ProgressBarPainter(
+              progressWidth: _style.progressWidth,
+              handleRadius: _style.handleRadius,
+              playedRatio: playedRatio,
+              bufferedRatio: controller.value.buffered,
+              backgroundColor: _style.backgroundColor,
+              playedColor: _style.playedColor,
+              bufferedColor: _style.bufferedColor,
+              handleColor: _style.handleColor,
+              touchDown: _touchDown,
+            ),
+          );
+        },
+      ),
     );
   }
 }

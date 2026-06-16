@@ -66,15 +66,10 @@ class _PlaylistPlayerState extends State<PlaylistPlayer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Playlist Player'),
-      ),
+      appBar: AppBar(title: const Text('Playlist Player')),
       body: ListView(
         children: <Widget>[
-          WebviewtubePlayer(
-            videoId: '',
-            controller: controller,
-          ),
+          WebviewtubePlayer(videoId: '', controller: controller),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
@@ -83,43 +78,49 @@ class _PlaylistPlayerState extends State<PlaylistPlayer> {
                 style: Theme.of(context).textTheme.bodyLarge,
               ),
               DropdownButton<int>(
-                  value: _currentIdx,
-                  items: List<DropdownMenuItem<int>>.generate(videoIds.length,
-                      (i) {
-                    return DropdownMenuItem<int>(
-                      value: i,
-                      child: Text(
-                        i.toString(),
-                        style: Theme.of(context).textTheme.bodyLarge,
-                      ),
-                    );
-                  }),
-                  onChanged: (index) async {
-                    if (index == null) return;
-                    await controller.playVideoAt(index);
-                  }),
+                value: _currentIdx,
+                items: List<DropdownMenuItem<int>>.generate(videoIds.length, (
+                  i,
+                ) {
+                  return DropdownMenuItem<int>(
+                    value: i,
+                    child: Text(
+                      i.toString(),
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                  );
+                }),
+                onChanged: (index) async {
+                  if (index == null) return;
+                  await controller.playVideoAt(index);
+                },
+              ),
             ],
           ),
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               IconButton(
-                  onPressed: _currentIdx > 0
-                      ? () async => controller.previousVideo()
-                      : null,
-                  icon: const Icon(Icons.skip_previous)),
+                onPressed: _currentIdx > 0
+                    ? () async => controller.previousVideo()
+                    : null,
+                icon: const Icon(Icons.skip_previous),
+              ),
               _isPlaying
                   ? IconButton(
                       onPressed: () async => controller.pause(),
-                      icon: const Icon(Icons.pause))
+                      icon: const Icon(Icons.pause),
+                    )
                   : IconButton(
                       onPressed: () async => controller.play(),
-                      icon: const Icon(Icons.play_arrow)),
+                      icon: const Icon(Icons.play_arrow),
+                    ),
               IconButton(
-                  onPressed: _currentIdx < videoIds.length - 1
-                      ? () async => controller.nextVideo()
-                      : null,
-                  icon: const Icon(Icons.skip_next))
+                onPressed: _currentIdx < videoIds.length - 1
+                    ? () async => controller.nextVideo()
+                    : null,
+                icon: const Icon(Icons.skip_next),
+              ),
             ],
           ),
         ],

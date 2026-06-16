@@ -17,10 +17,7 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Webviewtube',
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-        useMaterial3: false,
-      ),
+      theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: false),
       home: const WebviewtubeDemo(),
     );
   }
@@ -45,7 +42,10 @@ class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
     // callback with `url_launcher`.
     controller = WebviewtubeController(
       options: const WebviewtubeOptions(
-          forceHd: true, loop: true, interfaceLanguage: 'en'),
+        forceHd: true,
+        loop: true,
+        interfaceLanguage: 'en',
+      ),
       onPlayerNavigationRequest: (uri) async {
         if (uri.host == 'www.youtube.com') {
           await launchUrl(uri, mode: LaunchMode.externalApplication);
@@ -67,9 +67,7 @@ class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Webviewtube Demo'),
-      ),
+      appBar: AppBar(title: const Text('Webviewtube Demo')),
       body: ListView(
         padding: const EdgeInsets.symmetric(vertical: 10),
         children: <Widget>[
@@ -82,10 +80,7 @@ class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
                   style: Theme.of(context).textTheme.headlineSmall,
                 ),
               ),
-              WebviewtubePlayer(
-                videoId: '4AoFA19gbLo',
-                controller: controller,
-              ),
+              WebviewtubePlayer(videoId: '4AoFA19gbLo', controller: controller),
             ],
           ),
           const SizedBox(height: 70),
@@ -93,13 +88,18 @@ class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
             onPressed: () async {
               controller.pause();
               debugPrint(
-                  '${controller.value.videoMetadata.title} paused at ${controller.value.position}');
-              await Navigator.of(context).push<void>(MaterialPageRoute(
-                  builder: (_) => const WebviewtubeDecoratedPlayer()));
+                '${controller.value.videoMetadata.title} paused at ${controller.value.position}',
+              );
+              await Navigator.of(context).push<void>(
+                MaterialPageRoute(
+                  builder: (_) => const WebviewtubeDecoratedPlayer(),
+                ),
+              );
               // when popping back, make the player continues to play
               controller.play();
               debugPrint(
-                  'Continue to play ${controller.value.videoMetadata.title}');
+                'Continue to play ${controller.value.videoMetadata.title}',
+              );
             },
             child: const Text(
               'Webviewtube Decorated Player',
@@ -110,7 +110,8 @@ class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
             onPressed: () {
               controller.pause();
               Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const CustomizedPlayer()));
+                MaterialPageRoute(builder: (_) => const CustomizedPlayer()),
+              );
             },
             child: const Text(
               'Customized Player',
@@ -120,8 +121,9 @@ class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
           ElevatedButton(
             onPressed: () {
               controller.pause();
-              Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const PlaylistPlayer()));
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (_) => const PlaylistPlayer()));
             },
             child: const Text(
               'Playlist Player',

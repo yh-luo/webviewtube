@@ -25,7 +25,8 @@ class PlaybackSpeedButton extends StatelessWidget {
       onSelected: (playbackRate) async =>
           context.read<WebviewtubeController>().setPlaybackRate(playbackRate),
       initialValue: context.select<WebviewtubeController, PlaybackRate>(
-          (c) => c.value.playbackRate),
+        (c) => c.value.playbackRate,
+      ),
       itemBuilder: (context) => const [
         PopupMenuItem<PlaybackRate>(
           value: PlaybackRate.quarter,

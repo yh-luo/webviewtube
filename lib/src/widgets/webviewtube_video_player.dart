@@ -7,26 +7,29 @@ import 'widgets.dart';
 /// Signature for a builder that builds the loading overlay.
 ///
 /// [isReady] is `true` once the player has finished initializing.
-typedef WebviewtubeLoadingBuilder = Widget Function(
-  BuildContext context,
-  bool isReady,
-);
+typedef WebviewtubeLoadingBuilder =
+    Widget Function(
+      BuildContext context,
+      bool isReady,
+    );
 
 /// Signature for a builder that builds the controls overlay.
 ///
 /// [playerState] reflects the current playback state.
-typedef WebviewtubeControlsBuilder = Widget Function(
-  BuildContext context,
-  PlayerState playerState,
-);
+typedef WebviewtubeControlsBuilder =
+    Widget Function(
+      BuildContext context,
+      PlayerState playerState,
+    );
 
 /// Signature for a builder that builds the progress bar overlay.
 ///
 /// [playerState] reflects the current playback state.
-typedef WebviewtubeProgressBarBuilder = Widget Function(
-  BuildContext context,
-  PlayerState playerState,
-);
+typedef WebviewtubeProgressBarBuilder =
+    Widget Function(
+      BuildContext context,
+      PlayerState playerState,
+    );
 
 /// {@template webviewtube_video_player}
 /// A widgets-decorated [WebviewtubePlayer].
@@ -114,13 +117,16 @@ class WebviewtubeVideoPlayer extends StatelessWidget {
 
   late final _child = _WebviewtubeVideoPlayerView(
     videoId: videoId,
-    loadingBuilder: loadingBuilder ??
+    loadingBuilder:
+        loadingBuilder ??
         (context, isReady) =>
             _defaultLoadingBuilder(context, isReady, loadingIndicatorColor),
-    controlsBuilder: controlsBuilder ??
+    controlsBuilder:
+        controlsBuilder ??
         (context, playerState) =>
             _defaultControlsBuilder(context, playerState, controlsColor),
-    progressBarBuilder: progressBarBuilder ??
+    progressBarBuilder:
+        progressBarBuilder ??
         (context, playerState) =>
             _defaultProgressBarBuilder(context, playerState, progressBarStyle),
   );
@@ -136,7 +142,8 @@ class WebviewtubeVideoPlayer extends StatelessWidget {
           )
         : ChangeNotifierProvider<WebviewtubeController>(
             create: (_) => WebviewtubeController(
-                options: const WebviewtubeOptions(showControls: false)),
+              options: const WebviewtubeOptions(showControls: false),
+            ),
             child: _child,
           );
   }

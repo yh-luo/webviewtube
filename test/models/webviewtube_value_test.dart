@@ -253,7 +253,9 @@ void main() {
 
         expect(value != actual, true);
         expect(
-            actual, WebviewTubeValue(playbackQuality: PlaybackQuality.medium));
+          actual,
+          WebviewTubeValue(playbackQuality: PlaybackQuality.medium),
+        );
       });
 
       test('playbackRate', () {
@@ -290,16 +292,19 @@ void main() {
 
       test('videoMetadata', () {
         final videoData = VideoMetadata(
-            videoId: '123test',
-            title: '123 test',
-            author: 'test',
-            duration: Duration(seconds: 2));
+          videoId: '123test',
+          title: '123 test',
+          author: 'test',
+          duration: Duration(seconds: 2),
+        );
         final value = WebviewTubeValue(
-            videoMetadata: VideoMetadata(
-                videoId: 'test123',
-                title: 'test 123',
-                author: 'test',
-                duration: Duration(seconds: 2)));
+          videoMetadata: VideoMetadata(
+            videoId: 'test123',
+            title: 'test 123',
+            author: 'test',
+            duration: Duration(seconds: 2),
+          ),
+        );
         final actual = value.copyWith(videoMetadata: videoData);
 
         expect(value != actual, true);
@@ -312,13 +317,14 @@ void main() {
     test('isEmpty', () {
       expect(VideoMetadata.empty.isEmpty, true);
       expect(
-          VideoMetadata(
-                  videoId: 'test123',
-                  title: 'test 123',
-                  author: 'test',
-                  duration: Duration(seconds: 2))
-              .isEmpty,
-          false);
+        VideoMetadata(
+          videoId: 'test123',
+          title: 'test 123',
+          author: 'test',
+          duration: Duration(seconds: 2),
+        ).isEmpty,
+        false,
+      );
     });
 
     test('fromData', () {
@@ -326,24 +332,27 @@ void main() {
         'videoId': 'test123',
         'title': 'test 123',
         'author': 'test',
-        'duration': 2.0
+        'duration': 2.0,
       };
 
       final actual = VideoMetadata.fromData(data);
       expect(actual.videoId, data['videoId']);
       expect(actual.title, data['title']);
       expect(actual.author, data['author']);
-      expect(actual.duration,
-          Duration(seconds: (data['duration'] as num).toInt()));
+      expect(
+        actual.duration,
+        Duration(seconds: (data['duration'] as num).toInt()),
+      );
     });
 
     group('copyWith', () {
       test('videoId', () {
         final videoMetadata = VideoMetadata(
-            videoId: '123test',
-            title: '123 test',
-            author: 'test',
-            duration: Duration(seconds: 2));
+          videoId: '123test',
+          title: '123 test',
+          author: 'test',
+          duration: Duration(seconds: 2),
+        );
         final videoId = 'test123';
         final actual = videoMetadata.copyWith(videoId: videoId);
 
@@ -353,10 +362,11 @@ void main() {
 
       test('title', () {
         final videoMetadata = VideoMetadata(
-            videoId: '123test',
-            title: '123 test',
-            author: 'test',
-            duration: Duration(seconds: 2));
+          videoId: '123test',
+          title: '123 test',
+          author: 'test',
+          duration: Duration(seconds: 2),
+        );
         final title = 'test 123';
         final actual = videoMetadata.copyWith(title: title);
 
@@ -366,10 +376,11 @@ void main() {
 
       test('author', () {
         final videoMetadata = VideoMetadata(
-            videoId: '123test',
-            title: '123 test',
-            author: 'test',
-            duration: Duration(seconds: 2));
+          videoId: '123test',
+          title: '123 test',
+          author: 'test',
+          duration: Duration(seconds: 2),
+        );
         final author = 'another test author';
         final actual = videoMetadata.copyWith(author: author);
 
@@ -379,10 +390,11 @@ void main() {
 
       test('duration', () {
         final videoMetadata = VideoMetadata(
-            videoId: '123test',
-            title: '123 test',
-            author: 'test',
-            duration: Duration(seconds: 2));
+          videoId: '123test',
+          title: '123 test',
+          author: 'test',
+          duration: Duration(seconds: 2),
+        );
         final duration = Duration(seconds: 1);
         final actual = videoMetadata.copyWith(duration: duration);
 

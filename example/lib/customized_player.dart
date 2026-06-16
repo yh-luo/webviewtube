@@ -23,9 +23,7 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
   void initState() {
     super.initState();
     controller = WebviewtubeController(
-      options: const WebviewtubeOptions(
-        enableCaption: false,
-      ),
+      options: const WebviewtubeOptions(enableCaption: false),
       onPlayerReady: _onPlayerReady,
     );
     controller.addListener(_valueHandler);
@@ -80,15 +78,10 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Customized Player'),
-      ),
+      appBar: AppBar(title: const Text('Customized Player')),
       body: ListView(
         children: <Widget>[
-          WebviewtubePlayer(
-            videoId: videoIds.first,
-            controller: controller,
-          ),
+          WebviewtubePlayer(videoId: videoIds.first, controller: controller),
           Column(
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
@@ -106,10 +99,7 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
                 padding: const EdgeInsets.all(8.0),
                 child: Column(
                   children: [
-                    Text(
-                      _title,
-                      style: Theme.of(context).textTheme.bodyLarge,
-                    ),
+                    Text(_title, style: Theme.of(context).textTheme.bodyLarge),
                     Text(
                       "${_author.isNotEmpty ? 'by ' : ''}$_author",
                       style: Theme.of(context).textTheme.bodyMedium,
@@ -123,32 +113,36 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               IconButton(
-                  onPressed: _currentIdx > 0
-                      ? () async {
-                          await controller.load(videoIds[_currentIdx - 1]);
-                          setState(() {
-                            _currentIdx -= 1;
-                          });
-                        }
-                      : null,
-                  icon: const Icon(Icons.skip_previous)),
+                onPressed: _currentIdx > 0
+                    ? () async {
+                        await controller.load(videoIds[_currentIdx - 1]);
+                        setState(() {
+                          _currentIdx -= 1;
+                        });
+                      }
+                    : null,
+                icon: const Icon(Icons.skip_previous),
+              ),
               _isPlaying
                   ? IconButton(
                       onPressed: () async => controller.pause(),
-                      icon: const Icon(Icons.pause))
+                      icon: const Icon(Icons.pause),
+                    )
                   : IconButton(
                       onPressed: () async => controller.play(),
-                      icon: const Icon(Icons.play_arrow)),
+                      icon: const Icon(Icons.play_arrow),
+                    ),
               IconButton(
-                  onPressed: _currentIdx < videoIds.length - 1
-                      ? () async {
-                          await controller.load(videoIds[_currentIdx + 1]);
-                          setState(() {
-                            _currentIdx += 1;
-                          });
-                        }
-                      : null,
-                  icon: const Icon(Icons.skip_next))
+                onPressed: _currentIdx < videoIds.length - 1
+                    ? () async {
+                        await controller.load(videoIds[_currentIdx + 1]);
+                        setState(() {
+                          _currentIdx += 1;
+                        });
+                      }
+                    : null,
+                icon: const Icon(Icons.skip_next),
+              ),
             ],
           ),
         ],

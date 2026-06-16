@@ -87,7 +87,8 @@ class VideoDuration extends StatelessWidget {
   Widget build(BuildContext context) {
     return Selector<WebviewtubeController, String>(
       selector: (_, controller) => _durationFormatter(
-          controller.value.videoMetadata.duration.inMilliseconds),
+        controller.value.videoMetadata.duration.inMilliseconds,
+      ),
       builder: (_, text, __) => Text(text, style: textStyle),
     );
   }

@@ -159,21 +159,21 @@ class WebviewtubeOptions {
 
   @override
   int get hashCode => Object.hash(
-        runtimeType,
-        showControls,
-        enableFullscreen,
-        mute,
-        loop,
-        forceHd,
-        interfaceLanguage,
-        enableCaption,
-        captionLanguage,
-        startAt,
-        endAt,
-        currentTimeUpdateInterval,
-        aspectRatio,
-        origin,
-      );
+    runtimeType,
+    showControls,
+    enableFullscreen,
+    mute,
+    loop,
+    forceHd,
+    interfaceLanguage,
+    enableCaption,
+    captionLanguage,
+    startAt,
+    endAt,
+    currentTimeUpdateInterval,
+    aspectRatio,
+    origin,
+  );
 
   @override
   String toString() {

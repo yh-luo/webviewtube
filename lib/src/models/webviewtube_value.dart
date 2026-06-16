@@ -363,16 +363,17 @@ class WebviewTubeValue {
 
   @override
   int get hashCode => Object.hash(
-      runtimeType,
-      isReady,
-      isMuted,
-      playerState,
-      playbackQuality,
-      playbackRate,
-      position,
-      buffered,
-      playerError,
-      videoMetadata);
+    runtimeType,
+    isReady,
+    isMuted,
+    playerState,
+    playbackQuality,
+    playbackRate,
+    position,
+    buffered,
+    playerError,
+    videoMetadata,
+  );
 
   @override
   String toString() {
@@ -422,16 +423,21 @@ class VideoMetadata {
 
   /// Empty metadata.
   static const VideoMetadata empty = VideoMetadata(
-      videoId: '', title: '', author: '', duration: Duration.zero);
+    videoId: '',
+    title: '',
+    author: '',
+    duration: Duration.zero,
+  );
 
   /// Returns the [VideoMetadata] with given data.
   factory VideoMetadata.fromData(Map<String, dynamic> data) {
     final durationInMs = (((data['duration'] ?? 0) as num) * 1000.0).floor();
     return VideoMetadata(
-        videoId: (data['videoId'] as String?) ?? '',
-        title: (data['title'] as String?) ?? '',
-        author: (data['author'] as String?) ?? '',
-        duration: Duration(milliseconds: durationInMs));
+      videoId: (data['videoId'] as String?) ?? '',
+      title: (data['title'] as String?) ?? '',
+      author: (data['author'] as String?) ?? '',
+      duration: Duration(milliseconds: durationInMs),
+    );
   }
 
   /// Returns a new [VideoMetadata] with updated parameters.
@@ -442,10 +448,11 @@ class VideoMetadata {
     Duration? duration,
   }) {
     return VideoMetadata(
-        videoId: videoId ?? this.videoId,
-        title: title ?? this.title,
-        author: author ?? this.author,
-        duration: duration ?? this.duration);
+      videoId: videoId ?? this.videoId,
+      title: title ?? this.title,
+      author: author ?? this.author,
+      duration: duration ?? this.duration,
+    );
   }
 
   @override

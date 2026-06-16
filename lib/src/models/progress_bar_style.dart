@@ -71,8 +71,16 @@ class ProgressBarStyle {
       other.handleRadius == handleRadius;
 
   @override
-  int get hashCode => Object.hash(runtimeType, backgroundColor, playedColor,
-      bufferedColor, handleColor, barHeight, progressWidth, handleRadius);
+  int get hashCode => Object.hash(
+    runtimeType,
+    backgroundColor,
+    playedColor,
+    bufferedColor,
+    handleColor,
+    barHeight,
+    progressWidth,
+    handleRadius,
+  );
 
   @override
   String toString() {

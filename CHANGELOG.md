@@ -2,7 +2,7 @@
 
 ## Breaking Changes
 
-- Updated minimum supported SDK version to Flutter 3.29.0
+- Updated minimum supported SDK version to Flutter 3.32.0
 - Removed `ProgressBarColors`. Use `ProgressBarStyle` instead, which covers both colors and dimensions.
   - **Migration Note**: Replace `ProgressBarColors(backgroundColor: ..., playedColor: ..., bufferedColor: ..., handleColor: ...)` with `ProgressBarStyle(backgroundColor: ..., playedColor: ..., bufferedColor: ..., handleColor: ...)`.
 - Default colors changed from `Theme.of(context).colorScheme.secondary` to white variants (`Colors.white38`, `Colors.white`, `Colors.white70`).
