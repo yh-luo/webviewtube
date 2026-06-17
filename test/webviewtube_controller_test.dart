@@ -661,5 +661,58 @@ void main() {
         expect(controller.isPlaylist, true);
       });
     });
+
+    group('dispose', () {
+      test('does not throw when init() was never called', () {
+        final controller = WebviewtubeController();
+
+        expect(controller.dispose, returnsNormally);
+      });
+
+      test(
+        'pending _callMethod calls resolve instead of hanging forever',
+        () async {
+          final controller = WebviewtubeController();
+          // No init(), no setMockWebViewController — completer is pending.
+          final pending = controller.play();
+
+          controller.dispose();
+
+          await pending.timeout(const Duration(seconds: 1));
+        },
+      );
+
+      test('subsequent method calls do not invoke runJavaScript', () async {
+        final mock = MockWebViewController();
+        final controller = WebviewtubeController();
+        controller.setMockWebViewController(mock);
+        controller.onReady();
+
+        controller.dispose();
+        await controller.play();
+
+        verifyNever(mock.runJavaScript('play()'));
+      });
+
+      test(
+        'value-mutating methods do not assert after dispose mid-await',
+        () async {
+          final mock = MockWebViewController();
+          final controller = WebviewtubeController();
+          controller.setMockWebViewController(mock);
+          controller.onReady();
+
+          // Start the method, then dispose before its await resumes.
+          final mutePending = controller.mute();
+          final unMutePending = controller.unMute();
+          final seekPending = controller.seekTo(const Duration(seconds: 1));
+          controller.dispose();
+
+          await mutePending;
+          await unMutePending;
+          await seekPending;
+        },
+      );
+    });
   });
 }

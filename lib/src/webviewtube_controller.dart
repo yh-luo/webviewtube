@@ -48,9 +48,9 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     this.onPlayerNavigationRequest,
   }) : super(const WebviewTubeValue());
 
-  late final WebViewController _webViewController;
+  WebViewController? _webViewController;
 
-  final Completer _initCompleter = Completer();
+  final Completer<void> _initCompleter = Completer<void>();
 
   bool _isPlaylist = false;
 
@@ -94,7 +94,18 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   final PlayerNavigationRequestCallback? onPlayerNavigationRequest;
 
   /// Current loaded [WebViewController].
-  WebViewController get webViewController => _webViewController;
+  ///
+  /// Throws [StateError] if accessed before [init] (or
+  /// [setMockWebViewController]) has set it.
+  WebViewController get webViewController {
+    final controller = _webViewController;
+    if (controller == null) {
+      throw StateError(
+        'WebViewController has not been initialized. Call init() first.',
+      );
+    }
+    return controller;
+  }
 
   /// Whether the controller is playing a playlist.
   bool get isPlaylist => _isPlaylist;
@@ -110,59 +121,68 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
   /// Initializes the controller with the specified video id.
   Future<void> init(String videoId) async {
-    late final PlatformWebViewControllerCreationParams params;
+    try {
+      late final PlatformWebViewControllerCreationParams params;
 
-    if (WebViewPlatform.instance is WebKitWebViewPlatform) {
-      params = WebKitWebViewControllerCreationParams(
-        allowsInlineMediaPlayback: true,
-        mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
-      );
-    } else {
-      params = const PlatformWebViewControllerCreationParams();
+      if (WebViewPlatform.instance is WebKitWebViewPlatform) {
+        params = WebKitWebViewControllerCreationParams(
+          allowsInlineMediaPlayback: true,
+          mediaTypesRequiringUserAction: const <PlaybackMediaTypes>{},
+        );
+      } else {
+        params = const PlatformWebViewControllerCreationParams();
+      }
+      final controller = WebViewController.fromPlatformCreationParams(params)
+        ..setJavaScriptMode(JavaScriptMode.unrestricted)
+        ..addJavaScriptChannel(
+          'Webviewtube',
+          onMessageReceived: _onMessageReceived,
+        )
+        ..setNavigationDelegate(
+          NavigationDelegate(
+            onNavigationRequest: (request) async {
+              // first navigation is allowed on iOS to load the video correctly
+              if (defaultTargetPlatform == TargetPlatform.iOS &&
+                  !value.isReady) {
+                return NavigationDecision.navigate;
+              }
+
+              final url = Uri.tryParse(request.url);
+              if (url == null) return NavigationDecision.prevent;
+              final verdict =
+                  await onPlayerNavigationRequest?.call(url) ?? false;
+
+              return verdict
+                  ? NavigationDecision.navigate
+                  : NavigationDecision.prevent;
+            },
+            onWebResourceError: onWebResourceError,
+          ),
+        );
+      _webViewController = controller;
+
+      if (controller.platform is AndroidWebViewController) {
+        (controller.platform as AndroidWebViewController)
+            .setMediaPlaybackRequiresUserGesture(false);
+      } else if (controller.platform is WebKitWebViewController) {
+        (controller.platform as WebKitWebViewController)
+            .setAllowsBackForwardNavigationGestures(false);
+      }
+
+      if (options.forceHd) {
+        controller.setUserAgent(hdUserAgent);
+      }
+
+      final htmlContent = await _loadHtmlTemplate(videoId, options);
+      await controller.loadHtmlString(htmlContent, baseUrl: options.origin);
+    } catch (error, stackTrace) {
+      // Make sure pending `_callMethod` awaits resolve instead of hanging
+      // forever when init fails.
+      if (!_initCompleter.isCompleted) {
+        _initCompleter.completeError(error, stackTrace);
+      }
+      rethrow;
     }
-    _webViewController = WebViewController.fromPlatformCreationParams(params)
-      ..setJavaScriptMode(JavaScriptMode.unrestricted)
-      ..addJavaScriptChannel(
-        'Webviewtube',
-        onMessageReceived: _onMessageReceived,
-      )
-      ..setNavigationDelegate(
-        NavigationDelegate(
-          onNavigationRequest: (request) async {
-            // first navigation is allowed on iOS to load the video correctly
-            if (defaultTargetPlatform == TargetPlatform.iOS && !value.isReady) {
-              return NavigationDecision.navigate;
-            }
-
-            final url = Uri.tryParse(request.url);
-            if (url == null) return NavigationDecision.prevent;
-            final verdict = await onPlayerNavigationRequest?.call(url) ?? false;
-
-            return verdict
-                ? NavigationDecision.navigate
-                : NavigationDecision.prevent;
-          },
-          onWebResourceError: onWebResourceError,
-        ),
-      );
-
-    if (_webViewController.platform is AndroidWebViewController) {
-      (_webViewController.platform as AndroidWebViewController)
-          .setMediaPlaybackRequiresUserGesture(false);
-    } else if (_webViewController.platform is WebKitWebViewController) {
-      (_webViewController.platform as WebKitWebViewController)
-          .setAllowsBackForwardNavigationGestures(false);
-    }
-
-    if (options.forceHd) {
-      _webViewController.setUserAgent(hdUserAgent);
-    }
-
-    final htmlContent = await _loadHtmlTemplate(videoId, options);
-    await _webViewController.loadHtmlString(
-      htmlContent,
-      baseUrl: options.origin,
-    );
 
     if (!_initCompleter.isCompleted) {
       _initCompleter.complete();
@@ -279,13 +299,26 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// This method should be called when the controller is no longer needed.
   @override
   void dispose() {
-    // recommended in
-    // https://github.com/flutter/flutter/issues/119616#issuecomment-1419991144
     _disposed = true;
-    _webViewController
-      ..removeJavaScriptChannel('Webviewtube')
-      ..setNavigationDelegate(NavigationDelegate())
-      ..loadRequest(Uri.parse('about:blank'));
+    // Resolve pending `_callMethod` awaits so they observe `_disposed` and
+    // return early instead of hanging forever.
+    if (!_initCompleter.isCompleted) {
+      _initCompleter.complete();
+    }
+    final controller = _webViewController;
+    if (controller != null) {
+      // recommended in
+      // https://github.com/flutter/flutter/issues/119616#issuecomment-1419991144
+      try {
+        controller
+          ..removeJavaScriptChannel('Webviewtube')
+          ..setNavigationDelegate(NavigationDelegate())
+          ..loadRequest(Uri.parse('about:blank'));
+      } catch (_) {
+        // Swallow cleanup errors (e.g., test environments without a
+        // WebViewPlatform implementation). Dispose must still succeed.
+      }
+    }
     super.dispose();
   }
 
@@ -348,8 +381,11 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// Interacts with IFrame API via javascript channels.
   Future<void> _callMethod(String method) async {
     await _initCompleter.future;
+    if (_disposed) return;
+    final controller = _webViewController;
+    if (controller == null) return;
     if (value.isReady) {
-      _webViewController.runJavaScript(method);
+      controller.runJavaScript(method);
     } else {
       debugPrint('The controller is not ready for method calls.');
     }
@@ -364,12 +400,14 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// Mutes the player.
   Future<void> mute() async {
     await _callMethod('mute()');
+    if (_disposed) return;
     value = value.copyWith(isMuted: true);
   }
 
   /// Unmutes the player.
   Future<void> unMute() async {
     await _callMethod('unMute()');
+    if (_disposed) return;
     value = value.copyWith(isMuted: false);
   }
 
@@ -385,6 +423,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// [allowSeekAhead] defaults to false.
   Future<void> seekTo(Duration position, {bool allowSeekAhead = false}) async {
     await _callMethod('seekTo(${position.inSeconds}, $allowSeekAhead)');
+    if (_disposed) return;
     value = value.copyWith(position: position);
 
     await play();
@@ -394,7 +433,12 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   Future<void> replay() => seekTo(Duration.zero);
 
   /// Reloads the player.
-  Future<void> reload() => _webViewController.reload();
+  Future<void> reload() async {
+    if (_disposed) return;
+    final controller = _webViewController;
+    if (controller == null) return;
+    await controller.reload();
+  }
 
   void _validateTimeRange(int startAt, int? endAt) {
     if (endAt != null && startAt >= endAt) {
