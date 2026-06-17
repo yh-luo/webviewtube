@@ -4,7 +4,6 @@ import 'package:webviewtube/webviewtube.dart';
 
 import 'customized_player.dart';
 import 'playlist_player.dart';
-import 'webviewtube_decorated_player.dart';
 
 void main() {
   runApp(const MyApp());
@@ -90,27 +89,14 @@ class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
               debugPrint(
                 '${controller.value.videoMetadata.title} paused at ${controller.value.position}',
               );
+
               await Navigator.of(context).push<void>(
-                MaterialPageRoute(
-                  builder: (_) => const WebviewtubeDecoratedPlayer(),
-                ),
+                MaterialPageRoute(builder: (_) => const CustomizedPlayer()),
               );
-              // when popping back, make the player continues to play
+
               controller.play();
               debugPrint(
                 'Continue to play ${controller.value.videoMetadata.title}',
-              );
-            },
-            child: const Text(
-              'Webviewtube Decorated Player',
-              style: TextStyle(fontSize: 16),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              controller.pause();
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (_) => const CustomizedPlayer()),
               );
             },
             child: const Text(
