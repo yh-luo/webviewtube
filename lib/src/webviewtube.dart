@@ -6,4 +6,5 @@ export 'widgets/widgets.dart'
         WebviewtubeVideoPlayer,
         WebviewtubeLoadingBuilder,
         WebviewtubeControlsBuilder,
-        WebviewtubeProgressBarBuilder;
+        WebviewtubeProgressBarBuilder,
+        WebviewtubeDefaults;

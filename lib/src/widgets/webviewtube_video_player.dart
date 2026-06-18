@@ -119,16 +119,25 @@ class WebviewtubeVideoPlayer extends StatelessWidget {
     videoId: videoId,
     loadingBuilder:
         loadingBuilder ??
-        (context, isReady) =>
-            _defaultLoadingBuilder(context, isReady, loadingIndicatorColor),
+        (context, isReady) => WebviewtubeDefaults.loadingBuilder(
+          context,
+          isReady,
+          color: loadingIndicatorColor,
+        ),
     controlsBuilder:
         controlsBuilder ??
-        (context, playerState) =>
-            _defaultControlsBuilder(context, playerState, controlsColor),
+        (context, playerState) => WebviewtubeDefaults.controlsBuilder(
+          context,
+          playerState,
+          color: controlsColor,
+        ),
     progressBarBuilder:
         progressBarBuilder ??
-        (context, playerState) =>
-            _defaultProgressBarBuilder(context, playerState, progressBarStyle),
+        (context, playerState) => WebviewtubeDefaults.progressBarBuilder(
+          context,
+          playerState,
+          style: progressBarStyle,
+        ),
   );
 
   @override
@@ -194,15 +203,6 @@ class _WebviewtubeVideoPlayerView extends StatelessWidget {
   }
 }
 
-Widget _defaultLoadingBuilder(
-  BuildContext context,
-  bool isReady, [
-  Color? color,
-]) {
-  if (isReady) return const SizedBox.shrink();
-  return LoadingIndicator(color: color ?? Colors.white);
-}
-
 /// Fades out and disables pointer events while [hide] is true.
 class _HideWhenPlaying extends StatelessWidget {
   const _HideWhenPlaying({required this.hide, required this.child});
@@ -220,54 +220,105 @@ class _HideWhenPlaying extends StatelessWidget {
   }
 }
 
-Widget _defaultControlsBuilder(
-  BuildContext context,
-  PlayerState playerState, [
-  Color? color,
-]) {
-  final textStyle = kDefaultControlTextStyle.copyWith(color: color);
-  final iconColor = textStyle.color ?? Colors.white;
+/// Default builders used by [WebviewtubeVideoPlayer] for its loading,
+/// controls, and progress-bar overlays.
+///
+/// Each method matches the corresponding builder typedef and can be passed
+/// as a tear-off when only the default behavior is wanted:
+///
+/// ```dart
+/// WebviewtubeVideoPlayer(
+///   videoId: '...',
+///   loadingBuilder: WebviewtubeDefaults.loadingBuilder,
+/// );
+/// ```
+///
+/// They can also be composed inside a custom builder to add to or wrap the
+/// default overlay without rewriting it from scratch:
+///
+/// ```dart
+/// controlsBuilder: (ctx, state) => Stack(
+///   clipBehavior: Clip.none,
+///   children: [
+///     WebviewtubeDefaults.controlsBuilder(ctx, state, color: Colors.red),
+///     const Positioned(right: 10, bottom: -5, child: MyExtraButton()),
+///   ],
+/// );
+/// ```
+class WebviewtubeDefaults {
+  WebviewtubeDefaults._();
 
-  if (playerState == PlayerState.ended) {
+  /// Default [WebviewtubeLoadingBuilder]: shows [LoadingIndicator] until the
+  /// player reports ready, then collapses to a zero-size box.
+  ///
+  /// [color] tints the indicator when it's visible; defaults to white.
+  static Widget loadingBuilder(
+    BuildContext context,
+    bool isReady, {
+    Color? color,
+  }) {
+    if (isReady) return const SizedBox.shrink();
+    return LoadingIndicator(color: color ?? Colors.white);
+  }
+
+  /// Default [WebviewtubeControlsBuilder]: shows a replay button when the
+  /// video has ended, and otherwise a row of duration/volume/speed controls
+  /// that fades out while playing.
+  ///
+  /// [color] tints the icons and text; defaults to white.
+  static Widget controlsBuilder(
+    BuildContext context,
+    PlayerState playerState, {
+    Color? color,
+  }) {
+    final textStyle = kDefaultControlTextStyle.copyWith(color: color);
+    final iconColor = textStyle.color ?? Colors.white;
+
+    if (playerState == PlayerState.ended) {
+      return Positioned(
+        left: 10,
+        bottom: -5,
+        child: IconButton(
+          onPressed: () => context.read<WebviewtubeController>().replay(),
+          icon: Icon(Icons.replay, color: iconColor),
+        ),
+      );
+    }
+
     return Positioned(
       left: 10,
       bottom: -5,
-      child: IconButton(
-        onPressed: () => context.read<WebviewtubeController>().replay(),
-        icon: Icon(Icons.replay, color: iconColor),
+      child: _HideWhenPlaying(
+        hide: playerState == PlayerState.playing,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: <Widget>[
+            DurationIndicator(textStyle: textStyle),
+            VolumeButton(color: iconColor),
+            PlaybackSpeedButton(color: iconColor),
+          ],
+        ),
       ),
     );
   }
 
-  return Positioned(
-    left: 10,
-    bottom: -5,
-    child: _HideWhenPlaying(
-      hide: playerState == PlayerState.playing,
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          DurationIndicator(textStyle: textStyle),
-          VolumeButton(color: iconColor),
-          PlaybackSpeedButton(color: iconColor),
-        ],
+  /// Default [WebviewtubeProgressBarBuilder]: shows a [ProgressBar] at the
+  /// bottom of the player that fades out while playing.
+  ///
+  /// [style] customizes colors and dimensions; defaults to [ProgressBarStyle].
+  static Widget progressBarBuilder(
+    BuildContext context,
+    PlayerState playerState, {
+    ProgressBarStyle? style,
+  }) {
+    return Positioned(
+      left: 5,
+      right: 5,
+      bottom: 35,
+      child: _HideWhenPlaying(
+        hide: playerState == PlayerState.playing,
+        child: ProgressBar(style: style),
       ),
-    ),
-  );
-}
-
-Widget _defaultProgressBarBuilder(
-  BuildContext context,
-  PlayerState playerState, [
-  ProgressBarStyle? style,
-]) {
-  return Positioned(
-    left: 5,
-    right: 5,
-    bottom: 35,
-    child: _HideWhenPlaying(
-      hide: playerState == PlayerState.playing,
-      child: ProgressBar(style: style),
-    ),
-  );
+    );
+  }
 }
