@@ -765,26 +765,28 @@ void main() {
         await expectLater(controller.init('abc'), throwsA(anything));
       });
 
-      test('mutating methods do not desync value before the player handshake',
-          () async {
-        // _callMethod logs 'not ready' and skips runJavaScript when
-        // !value.isReady; the matching guard in _safeSetValue must skip the
-        // value mutation too, otherwise listeners see a state that the
-        // player was never actually told about.
-        final mock = MockWebViewController();
-        final controller = WebviewtubeController();
-        controller.setMockWebViewController(mock);
-        // Intentionally do NOT call onReady() — value.isReady stays false.
+      test(
+        'mutating methods do not desync value before the player handshake',
+        () async {
+          // _callMethod logs 'not ready' and skips runJavaScript when
+          // !value.isReady; the matching guard in _safeSetValue must skip the
+          // value mutation too, otherwise listeners see a state that the
+          // player was never actually told about.
+          final mock = MockWebViewController();
+          final controller = WebviewtubeController();
+          controller.setMockWebViewController(mock);
+          // Intentionally do NOT call onReady() — value.isReady stays false.
 
-        await controller.mute();
-        await controller.unMute();
-        await controller.seekTo(const Duration(seconds: 5));
+          await controller.mute();
+          await controller.unMute();
+          await controller.seekTo(const Duration(seconds: 5));
 
-        expect(controller.value.isReady, false);
-        expect(controller.value.isMuted, false);
-        expect(controller.value.position, Duration.zero);
-        verifyNever(mock.runJavaScript(any));
-      });
+          expect(controller.value.isReady, false);
+          expect(controller.value.isMuted, false);
+          expect(controller.value.position, Duration.zero);
+          verifyNever(mock.runJavaScript(any));
+        },
+      );
     });
 
     group('dispose idempotency', () {
