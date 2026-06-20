@@ -183,6 +183,16 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
       if (_disposed) return;
       await controller.loadHtmlString(htmlContent, baseUrl: options.origin);
     } catch (_) {
+      // If dispose() already ran, it has owned the teardown and completer;
+      // re-doing either would log spurious errors against the stripped
+      // controller. The init() caller still gets the original error via
+      // the rethrow.
+      if (_disposed) rethrow;
+      // Run the same platform-side teardown dispose() uses, so the
+      // half-configured controller's JS channel + navigation delegate
+      // don't keep the native WebView (and `this`, via the channel
+      // closure) alive after the rethrow.
+      _teardownWebView();
       _webViewController = null;
       // Unblock pending `_callMethod` awaits so they observe the still-null
       // `_webViewController` and short-circuit instead of hanging. The
@@ -317,22 +327,26 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     if (!_initCompleter.isCompleted) {
       _initCompleter.complete();
     }
-    final controller = _webViewController;
-    if (controller != null) {
-      // recommended in
-      // https://github.com/flutter/flutter/issues/119616#issuecomment-1419991144
-      try {
-        controller
-          ..removeJavaScriptChannel('Webviewtube')
-          ..setNavigationDelegate(NavigationDelegate())
-          ..loadRequest(Uri.parse('about:blank'));
-      } catch (error) {
-        // Don't let a teardown error abort `super.dispose()`. Log so
-        // production regressions are still observable instead of silent.
-        debugPrint('WebviewtubeController WebView teardown failed: $error');
-      }
-    }
+    _teardownWebView();
     super.dispose();
+  }
+
+  /// Platform-side WebView cleanup recommended in
+  /// https://github.com/flutter/flutter/issues/119616#issuecomment-1419991144.
+  /// No-ops when [_webViewController] is null; swallows (and logs) errors so
+  /// the surrounding caller — `dispose()` or `init()`'s catch — can still
+  /// finish its own work.
+  void _teardownWebView() {
+    final controller = _webViewController;
+    if (controller == null) return;
+    try {
+      controller
+        ..removeJavaScriptChannel('Webviewtube')
+        ..setNavigationDelegate(NavigationDelegate())
+        ..loadRequest(Uri.parse('about:blank'));
+    } catch (error) {
+      debugPrint('WebviewtubeController WebView teardown failed: $error');
+    }
   }
 
   /// Invoked handler when the player is ready.
@@ -404,11 +418,15 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     }
   }
 
-  /// Assigns to [value] only when the controller is still alive
+  /// Assigns to [value] only when the controller is alive and the player
+  /// reported ready. Skipping when not-ready keeps local state from drifting
+  /// after a failed [init] (where `_callMethod` silently short-circuits) or
+  /// when a caller invokes a mutating method before the player handshake.
   void _safeSetValue(
     WebviewTubeValue Function(WebviewTubeValue current) update,
   ) {
     if (_disposed) return;
+    if (!value.isReady) return;
     value = update(value);
   }
 

@@ -764,6 +764,27 @@ void main() {
         // come from the new attempt rather than the stale completer state.
         await expectLater(controller.init('abc'), throwsA(anything));
       });
+
+      test('mutating methods do not desync value before the player handshake',
+          () async {
+        // _callMethod logs 'not ready' and skips runJavaScript when
+        // !value.isReady; the matching guard in _safeSetValue must skip the
+        // value mutation too, otherwise listeners see a state that the
+        // player was never actually told about.
+        final mock = MockWebViewController();
+        final controller = WebviewtubeController();
+        controller.setMockWebViewController(mock);
+        // Intentionally do NOT call onReady() — value.isReady stays false.
+
+        await controller.mute();
+        await controller.unMute();
+        await controller.seekTo(const Duration(seconds: 5));
+
+        expect(controller.value.isReady, false);
+        expect(controller.value.isMuted, false);
+        expect(controller.value.position, Duration.zero);
+        verifyNever(mock.runJavaScript(any));
+      });
     });
 
     group('dispose idempotency', () {
@@ -778,23 +799,21 @@ void main() {
     });
 
     group('init lifecycle', () {
-      test('dispose during _loadHtmlTemplate await does not call '
-          'loadHtmlString on the disposed controller', () async {
-        // The init() try block awaits `_loadHtmlTemplate` and then
-        // `loadHtmlString`. If dispose() runs during the first await, the
-        // second one must not fire. We can't easily intercept the bundle
-        // load, so this test exercises the disposed-mid-init path by
-        // disposing immediately after kicking off init(): init() fails
-        // synchronously without a WebViewPlatform, but the same `_disposed`
-        // check that protects the loadHtmlString call also keeps the catch
-        // path from doing the wrong thing on a disposed controller.
+      test('dispose() after a failed init() is safe and idempotent', () async {
+        // Without a `WebViewPlatform`, init() throws synchronously inside
+        // its try block — the catch path runs before any await and before
+        // dispose() is called. This verifies the failed-init catch leaves
+        // the controller in a state where dispose() still succeeds and
+        // remains idempotent.
+        //
+        // The disposed-mid-_loadHtmlTemplate-await scenario the runtime
+        // guard (`if (_disposed) return;` after the bundle load) protects
+        // against requires a real `WebViewPlatform` to exercise and isn't
+        // covered here.
         final controller = WebviewtubeController();
         final initFuture = controller.init('abc');
         controller.dispose();
 
-        // init() rethrows the platform assertion; we only care that the
-        // controller doesn't end up in an inconsistent state and that
-        // dispose remains safe.
         await expectLater(initFuture, throwsA(anything));
         expect(controller.dispose, returnsNormally);
       });
