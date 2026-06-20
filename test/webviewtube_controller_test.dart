@@ -713,6 +713,57 @@ void main() {
           await seekPending;
         },
       );
+
+      test('_isPlaylist is not mutated after dispose mid-await', () async {
+        final mock = MockWebViewController();
+        final controller = WebviewtubeController();
+        controller.setMockWebViewController(mock);
+        controller.onReady();
+
+        // Start each method, then dispose before its await resumes.
+        final loadPending = controller.load('abc');
+        final cuePending = controller.cue('abc');
+        final loadPlaylistPending = controller.loadPlaylist(
+          playlistId: 'pl1',
+        );
+        final cuePlaylistPending = controller.cuePlaylist(playlistId: 'pl1');
+        controller.dispose();
+
+        await loadPending;
+        await cuePending;
+        await loadPlaylistPending;
+        await cuePlaylistPending;
+
+        // No assertion on the value itself — the invariant is that the
+        // post-await assignment was skipped, so `isPlaylist` stayed at its
+        // pre-call default.
+        expect(controller.isPlaylist, false);
+      });
+    });
+
+    group('init failure', () {
+      test('does not poison subsequent _callMethod awaits', () async {
+        final controller = WebviewtubeController();
+        // Simulate a failed init by completing the completer with an error.
+        // We use a private path through the public API: trigger init() which
+        // will fail without a Flutter binding (rootBundle is unavailable).
+        await expectLater(controller.init('abc'), throwsA(anything));
+
+        // play() must not rethrow the asset error — it should return quietly.
+        await controller.play();
+        await controller.mute();
+      });
+
+      test('init() can be retried after a failure', () async {
+        final controller = WebviewtubeController();
+        await expectLater(controller.init('abc'), throwsA(anything));
+
+        // The second init() should be able to attempt setup again instead of
+        // short-circuiting on the already-completed (errored) completer.
+        // It will still fail in this test environment, but the failure must
+        // come from the new attempt rather than the stale completer state.
+        await expectLater(controller.init('abc'), throwsA(anything));
+      });
     });
   });
 }

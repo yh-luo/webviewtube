@@ -50,7 +50,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
   WebViewController? _webViewController;
 
-  final Completer<void> _initCompleter = Completer<void>();
+  Completer<void> _initCompleter = Completer<void>();
 
   bool _isPlaylist = false;
 
@@ -120,7 +120,13 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   }
 
   /// Initializes the controller with the specified video id.
+  ///
+  /// If a previous [init] call failed, calling [init] again resets the
+  /// underlying completer so a retry can succeed.
   Future<void> init(String videoId) async {
+    if (_initCompleter.isCompleted) {
+      _initCompleter = Completer<void>();
+    }
     try {
       late final PlatformWebViewControllerCreationParams params;
 
@@ -175,11 +181,14 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
       final htmlContent = await _loadHtmlTemplate(videoId, options);
       await controller.loadHtmlString(htmlContent, baseUrl: options.origin);
-    } catch (error, stackTrace) {
-      // Make sure pending `_callMethod` awaits resolve instead of hanging
-      // forever when init fails.
+    } catch (_) {
+      // Unblock pending `_callMethod` awaits so they observe the still-null
+      // `_webViewController` and short-circuit instead of hanging. The
+      // original error is propagated to the `init()` caller via the rethrow
+      // below; we deliberately don't store it on the completer to avoid
+      // poisoning every later playback call with a stale init error.
       if (!_initCompleter.isCompleted) {
-        _initCompleter.completeError(error, stackTrace);
+        _initCompleter.complete();
       }
       rethrow;
     }
@@ -459,6 +468,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     }
 
     await _callMethod('loadById({$params})');
+    if (_disposed) return;
     _isPlaylist = false;
   }
 
@@ -475,6 +485,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     }
 
     await _callMethod('cueById({$params})');
+    if (_disposed) return;
     _isPlaylist = false;
   }
 
@@ -493,6 +504,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     var playlist = playlistId ?? '[${videoIds!.map((e) => '"$e"').join(', ')}]';
 
     await _callMethod('loadPlaylist($playlist, $index, $startAt)');
+    if (_disposed) return;
     _isPlaylist = true;
   }
 
@@ -513,6 +525,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     var playlist = playlistId ?? '[${videoIds!.map((e) => '"$e"').join(', ')}]';
 
     await _callMethod('cuePlaylist($playlist, $index, $startAt)');
+    if (_disposed) return;
     _isPlaylist = true;
   }
 
