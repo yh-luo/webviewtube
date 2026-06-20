@@ -122,8 +122,19 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// Initializes the controller with the specified video id.
   ///
   /// If a previous [init] call failed, calling [init] again resets the
-  /// underlying completer so a retry can succeed.
+  /// underlying completer so a retry can succeed. If a previous [init]
+  /// succeeded, the existing WebView is torn down before a new one is wired
+  /// up so the native resources aren't leaked.
+  ///
+  /// Throws [StateError] if called after [dispose].
   Future<void> init(String videoId) async {
+    if (_disposed) {
+      throw StateError('Cannot init a disposed WebviewtubeController.');
+    }
+    if (_webViewController != null) {
+      _teardownWebView();
+      _webViewController = null;
+    }
     if (_initCompleter.isCompleted) {
       _initCompleter = Completer<void>();
     }
@@ -430,6 +441,15 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     value = update(value);
   }
 
+  /// Mirrors [_safeSetValue]'s gate for [_isPlaylist]. The flag must not drift
+  /// when [_callMethod] silently dropped the JS call (disposed or not-ready),
+  /// otherwise `nextVideo`/`previousVideo`/`playVideoAt` will issue JS against
+  /// a player that has no matching playlist (or video) loaded.
+  void _safeSetIsPlaylist(bool isPlaylist) {
+    if (_disposed || !value.isReady) return;
+    _isPlaylist = isPlaylist;
+  }
+
   /// Plays the video.
   Future<void> play() => _callMethod('play()');
 
@@ -496,8 +516,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     }
 
     await _callMethod('loadById({$params})');
-    if (_disposed) return;
-    _isPlaylist = false;
+    _safeSetIsPlaylist(false);
   }
 
   /// Loads the specified video's thumbnail and prepares the player.
@@ -513,8 +532,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     }
 
     await _callMethod('cueById({$params})');
-    if (_disposed) return;
-    _isPlaylist = false;
+    _safeSetIsPlaylist(false);
   }
 
   /// Loads the specified playlist and plays it.
@@ -532,8 +550,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     var playlist = playlistId ?? '[${videoIds!.map((e) => '"$e"').join(', ')}]';
 
     await _callMethod('loadPlaylist($playlist, $index, $startAt)');
-    if (_disposed) return;
-    _isPlaylist = true;
+    _safeSetIsPlaylist(true);
   }
 
   /// Queues the specified playlist.
@@ -553,8 +570,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     var playlist = playlistId ?? '[${videoIds!.map((e) => '"$e"').join(', ')}]';
 
     await _callMethod('cuePlaylist($playlist, $index, $startAt)');
-    if (_disposed) return;
-    _isPlaylist = true;
+    _safeSetIsPlaylist(true);
   }
 
   /// Loads and plays the next video in the playlist.

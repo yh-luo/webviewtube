@@ -787,6 +787,35 @@ void main() {
           verifyNever(mock.runJavaScript(any));
         },
       );
+
+      test(
+        '_isPlaylist is not mutated before the player handshake',
+        () async {
+          // Matches the _safeSetValue guard: _callMethod silently skips
+          // runJavaScript when !value.isReady, so _isPlaylist must also stay
+          // at its pre-call default — otherwise nextVideo/previousVideo
+          // believe a playlist is loaded and issue JS against a player that
+          // was never told to load one.
+          final mock = MockWebViewController();
+          final controller = WebviewtubeController();
+          controller.setMockWebViewController(mock);
+          // Intentionally do NOT call onReady() — value.isReady stays false.
+
+          await controller.loadPlaylist(playlistId: 'pl1');
+          expect(controller.isPlaylist, false);
+
+          await controller.cuePlaylist(playlistId: 'pl1');
+          expect(controller.isPlaylist, false);
+
+          await controller.load('abc');
+          expect(controller.isPlaylist, false);
+
+          await controller.cue('abc');
+          expect(controller.isPlaylist, false);
+
+          verifyNever(mock.runJavaScript(any));
+        },
+      );
     });
 
     group('dispose idempotency', () {
@@ -819,6 +848,33 @@ void main() {
         await expectLater(initFuture, throwsA(anything));
         expect(controller.dispose, returnsNormally);
       });
+
+      test('init() after dispose() throws StateError', () async {
+        final controller = WebviewtubeController();
+        controller.dispose();
+
+        await expectLater(
+          controller.init('abc'),
+          throwsA(isA<StateError>()),
+        );
+      });
+
+      test(
+        'init() tears down the previous WebViewController before re-initializing',
+        () async {
+          // Simulate a prior successful init() by installing a mock controller.
+          // init() will still throw inside the try block (no `WebViewPlatform`
+          // in this test environment), but the pre-try teardown of the existing
+          // controller must run first.
+          final mock = MockWebViewController();
+          final controller = WebviewtubeController();
+          controller.setMockWebViewController(mock);
+
+          await expectLater(controller.init('abc'), throwsA(anything));
+
+          verify(mock.removeJavaScriptChannel('Webviewtube')).called(1);
+        },
+      );
     });
   });
 }
