@@ -180,8 +180,10 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
       }
 
       final htmlContent = await _loadHtmlTemplate(videoId, options);
+      if (_disposed) return;
       await controller.loadHtmlString(htmlContent, baseUrl: options.origin);
     } catch (_) {
+      _webViewController = null;
       // Unblock pending `_callMethod` awaits so they observe the still-null
       // `_webViewController` and short-circuit instead of hanging. The
       // original error is propagated to the `init()` caller via the rethrow
@@ -308,6 +310,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// This method should be called when the controller is no longer needed.
   @override
   void dispose() {
+    if (_disposed) return;
     _disposed = true;
     // Resolve pending `_callMethod` awaits so they observe `_disposed` and
     // return early instead of hanging forever.
@@ -323,9 +326,10 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
           ..removeJavaScriptChannel('Webviewtube')
           ..setNavigationDelegate(NavigationDelegate())
           ..loadRequest(Uri.parse('about:blank'));
-      } catch (_) {
-        // Swallow cleanup errors (e.g., test environments without a
-        // WebViewPlatform implementation). Dispose must still succeed.
+      } catch (error) {
+        // Don't let a teardown error abort `super.dispose()`. Log so
+        // production regressions are still observable instead of silent.
+        debugPrint('WebviewtubeController WebView teardown failed: $error');
       }
     }
     super.dispose();
@@ -400,6 +404,14 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
     }
   }
 
+  /// Assigns to [value] only when the controller is still alive
+  void _safeSetValue(
+    WebviewTubeValue Function(WebviewTubeValue current) update,
+  ) {
+    if (_disposed) return;
+    value = update(value);
+  }
+
   /// Plays the video.
   Future<void> play() => _callMethod('play()');
 
@@ -409,15 +421,13 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// Mutes the player.
   Future<void> mute() async {
     await _callMethod('mute()');
-    if (_disposed) return;
-    value = value.copyWith(isMuted: true);
+    _safeSetValue((v) => v.copyWith(isMuted: true));
   }
 
   /// Unmutes the player.
   Future<void> unMute() async {
     await _callMethod('unMute()');
-    if (_disposed) return;
-    value = value.copyWith(isMuted: false);
+    _safeSetValue((v) => v.copyWith(isMuted: false));
   }
 
   /// Sets the playback rate.
@@ -432,8 +442,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   /// [allowSeekAhead] defaults to false.
   Future<void> seekTo(Duration position, {bool allowSeekAhead = false}) async {
     await _callMethod('seekTo(${position.inSeconds}, $allowSeekAhead)');
-    if (_disposed) return;
-    value = value.copyWith(position: position);
+    _safeSetValue((v) => v.copyWith(position: position));
 
     await play();
   }
@@ -443,6 +452,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
 
   /// Reloads the player.
   Future<void> reload() async {
+    await _initCompleter.future;
     if (_disposed) return;
     final controller = _webViewController;
     if (controller == null) return;

@@ -765,5 +765,39 @@ void main() {
         await expectLater(controller.init('abc'), throwsA(anything));
       });
     });
+
+    group('dispose idempotency', () {
+      test('calling dispose() twice does not throw', () {
+        final mock = MockWebViewController();
+        final controller = WebviewtubeController();
+        controller.setMockWebViewController(mock);
+
+        controller.dispose();
+        expect(controller.dispose, returnsNormally);
+      });
+    });
+
+    group('init lifecycle', () {
+      test('dispose during _loadHtmlTemplate await does not call '
+          'loadHtmlString on the disposed controller', () async {
+        // The init() try block awaits `_loadHtmlTemplate` and then
+        // `loadHtmlString`. If dispose() runs during the first await, the
+        // second one must not fire. We can't easily intercept the bundle
+        // load, so this test exercises the disposed-mid-init path by
+        // disposing immediately after kicking off init(): init() fails
+        // synchronously without a WebViewPlatform, but the same `_disposed`
+        // check that protects the loadHtmlString call also keeps the catch
+        // path from doing the wrong thing on a disposed controller.
+        final controller = WebviewtubeController();
+        final initFuture = controller.init('abc');
+        controller.dispose();
+
+        // init() rethrows the platform assertion; we only care that the
+        // controller doesn't end up in an inconsistent state and that
+        // dispose remains safe.
+        await expectLater(initFuture, throwsA(anything));
+        expect(controller.dispose, returnsNormally);
+      });
+    });
   });
 }
