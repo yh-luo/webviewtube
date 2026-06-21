@@ -2,17 +2,7 @@
 
 ## Breaking Changes
 
-- Updated minimum supported SDK version to Flutter 3.32.0
-- Removed `ProgressBarColors`. Use `ProgressBarStyle` instead, which covers both colors and dimensions.
-  - **Migration Note**: Replace `ProgressBarColors(backgroundColor: ..., playedColor: ..., bufferedColor: ..., handleColor: ...)` with `ProgressBarStyle(backgroundColor: ..., playedColor: ..., bufferedColor: ..., handleColor: ...)`.
-- Default colors changed from `Theme.of(context).colorScheme.secondary` to white variants (`Colors.white38`, `Colors.white`, `Colors.white70`).
-- `load()` and `cue()` now throw `ArgumentError` (instead of failing silently in release mode) when `startAt >= endAt`.
-- `loadPlaylist()` and `cuePlaylist()` now throw `ArgumentError` (instead of failing silently in release mode) when neither `playlistId` nor `videoIds` is provided.
-
-## Features
-
-- `WebviewtubeVideoPlayer` supports custom builder callbacks (`loadingBuilder`, `controlsBuilder`, `progressBarBuilder`) for full overlay customization.
-- `WebviewtubeVideoPlayer` accepts `loadingIndicatorColor`, `controlsColor`, and `progressBarStyle` for simple color/style customization without replacing the entire overlay.
+- Updated minimum supported SDK version to Flutter 3.27.4
 
 # 3.2.0
 
