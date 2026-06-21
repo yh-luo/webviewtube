@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
-
 import 'package:webviewtube/webviewtube.dart';
 
+/// Demonstrates playlist playback: queue a list of video ids (or a
+/// YouTube playlist id) and step through them with `nextVideo` /
+/// `previousVideo` / `playVideoAt`.
 class PlaylistPlayer extends StatefulWidget {
-  const PlaylistPlayer({Key? key}) : super(key: key);
+  const PlaylistPlayer({super.key});
 
   @override
   State<PlaylistPlayer> createState() => _PlaylistPlayerState();
@@ -22,7 +24,8 @@ class _PlaylistPlayerState extends State<PlaylistPlayer> {
   @override
   void initState() {
     super.initState();
-    // load by playlist id
+    // Alternative: load by a YouTube playlist id instead of an explicit
+    // list of video ids — uncomment to try.
     // controller = WebviewtubeController(
     //   options: const WebviewtubeOptions(enableCaption: false),
     //   onPlayerReady: () => controller.loadPlaylist(
@@ -101,6 +104,7 @@ class _PlaylistPlayerState extends State<PlaylistPlayer> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               IconButton(
+                iconSize: 48,
                 onPressed: _currentIdx > 0
                     ? () async => controller.previousVideo()
                     : null,
@@ -108,14 +112,17 @@ class _PlaylistPlayerState extends State<PlaylistPlayer> {
               ),
               _isPlaying
                   ? IconButton(
+                      iconSize: 48,
                       onPressed: () async => controller.pause(),
                       icon: const Icon(Icons.pause),
                     )
                   : IconButton(
+                      iconSize: 48,
                       onPressed: () async => controller.play(),
                       icon: const Icon(Icons.play_arrow),
                     ),
               IconButton(
+                iconSize: 48,
                 onPressed: _currentIdx < videoIds.length - 1
                     ? () async => controller.nextVideo()
                     : null,
