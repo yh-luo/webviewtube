@@ -1,13 +1,17 @@
-# Unreleased
+# 4.0.0
 
 ## Breaking Changes
 
-- Updated minimum supported SDK version to Flutter 3.27.4
+- Updated minimum supported SDK version to Flutter 3.32.0
 
 ## Deprecations
 
-- `WebviewtubeVideoPlayer` is deprecated. The widget overlays custom controls on top of the YouTube iframe, which now covers YouTube-provided UI (share, "Watch on YouTube", thumbnail) that is rendered in the bottom strip even when `controls=0`. This violates [YouTube's Required Minimum Functionality](https://developers.google.com/youtube/terms/required-minimum-functionality).
+- `WebviewtubeVideoPlayer` is deprecated. The widget overlays custom controls on top of the YouTube iframe, which now covers YouTube-provided UI (share, "Watch on YouTube", thumbnail) that is rendered in the bottom strip even when `controls=0`. This violates [YouTube's Required Minimum Functionality](https://developers.google.com/youtube/terms/required-minimum-functionality#overlays-and-frames).
   - **Migration Note**: switch to `WebviewtubePlayer` with the native YouTube controls (`WebviewtubeOptions(showControls: true)`), or build a custom widget around `WebviewtubeController`. Scheduled for removal in a future major release.
+
+## Fixes
+
+- Resolved several `WebviewtubeController` dispose/init lifecycle bugs: operations on a disposed controller, re-initialization leaks, and init-failure poisoning that prevented retry.
 
 # 3.2.0
 

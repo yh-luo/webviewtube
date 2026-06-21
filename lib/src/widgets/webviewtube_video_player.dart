@@ -44,8 +44,8 @@ import 'widgets.dart';
 @Deprecated(
   'Overlaying custom controls on the YouTube iframe violates YouTube\'s '
   'Required Minimum Functionality policy. Use WebviewtubePlayer with the '
-  'native YouTube controls instead, or build your own widget around `WebviewtubeController`, '
-  'Scheduled for removal in a future major release.',
+  'native YouTube controls instead, or build your own widget around '
+  'WebviewtubeController. Scheduled for removal in a future major release.',
 )
 class WebviewtubeVideoPlayer extends StatelessWidget {
   /// {@macro webviewtube_video_player}
