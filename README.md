@@ -8,44 +8,24 @@ This package leverages [webview_flutter](https://pub.dev/packages/webview_flutte
 
 ### IFrame player
 
-![default iframe player view](https://raw.githubusercontent.com/yh-luo/webviewtube/main/resources/default_1.png)
+![iframe player view](https://raw.githubusercontent.com/yh-luo/webviewtube/main/resources/default_1.png)
 
 ## Features
 
-- `WebviewtubePlayer` provides a WebView that integrates with the YouTube IFrame Player API. Combine it with `WebviewtubeOptions(showControls: true)` to use YouTube's native controls, or build your own UI around `WebviewtubeController`.
+- `WebviewtubePlayer` embeds the YouTube IFrame Player API in a WebView, using YouTube's native controls by default. Pair it with `WebviewtubeController` to drive playback or build your own UI on top.
 
 > **Note:** `WebviewtubeVideoPlayer` (the widgets-decorated player) is deprecated as of 4.0.0. Overlaying custom controls on the YouTube iframe violates [YouTube's Required Minimum Functionality](https://developers.google.com/youtube/terms/required-minimum-functionality#overlays-and-frames). It will be removed in a future major release.
 
 ## Supported Platforms
 
-The same as [webview_flutter](https://pub.dev/packages/webview_flutter). On Android, hybrid composition mode is used.
+The same as [webview_flutter](https://pub.dev/packages/webview_flutter).
 
 - Android: SDK 21+
 - iOS: 12.0+
 
-## Setup
-
-### Android
-
-Set the correct `minSdkVersion` in `android/app/build.gradle`
-
-```groovy
-android {
-    defaultConfig {
-        minSdkVersion 19
-    }
-}
-```
-
-### iOS
-
-No configuration needed.
-
 ## Usage
 
 Check out `example/lib/` for more details.
-
-### Default IFrame player
 
 ```dart
 WebviewtubePlayer(videoId: '4AoFA19gbLo')
