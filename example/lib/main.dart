@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:webviewtube/webviewtube.dart';
 
 import 'customized_player.dart';
+import 'external_links_player.dart';
 import 'playlist_player.dart';
 
 void main() {
@@ -10,114 +10,81 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Webviewtube',
-      theme: ThemeData(primarySwatch: Colors.blue, useMaterial3: false),
-      home: const WebviewtubeDemo(),
-    );
-  }
-}
-
-class WebviewtubeDemo extends StatefulWidget {
-  const WebviewtubeDemo({Key? key}) : super(key: key);
-
-  @override
-  State<WebviewtubeDemo> createState() => _WebviewtubeDemoState();
-}
-
-class _WebviewtubeDemoState extends State<WebviewtubeDemo> {
-  late final WebviewtubeController controller;
-
-  @override
-  void initState() {
-    super.initState();
-
-    // To allow the user to watch the video in the YouTube app or website when
-    // tapping on the YouTube logo, you can use the `onPlayerNavigationRequest`
-    // callback with `url_launcher`.
-    controller = WebviewtubeController(
-      options: const WebviewtubeOptions(
-        forceHd: true,
-        loop: true,
-        interfaceLanguage: 'en',
+      theme: ThemeData(
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.blue,
+          foregroundColor: Colors.white,
+        ),
       ),
-      onPlayerNavigationRequest: (uri) async {
-        if (uri.host == 'www.youtube.com') {
-          await launchUrl(uri, mode: LaunchMode.externalApplication);
-          return false;
-        }
-        return false;
-      },
+      home: const QuickStartPage(),
     );
   }
+}
 
-  @override
-  void dispose() {
-    // If a controller is passed to the player, remember to dispose it when
-    // it's not in need.
-    controller.dispose();
-    super.dispose();
-  }
+/// Minimal quickstart: drop a [WebviewtubePlayer] into the widget tree
+/// and pass a `videoId`. No controller is required for playback.
+///
+/// The other pages demonstrate more advanced patterns: controller-driven
+/// UI, playlists, and handing YouTube links to the system browser.
+class QuickStartPage extends StatelessWidget {
+  const QuickStartPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Webviewtube Demo')),
+      appBar: AppBar(title: const Text('Webviewtube Examples')),
       body: ListView(
-        padding: const EdgeInsets.symmetric(vertical: 10),
         children: <Widget>[
-          Column(
-            children: <Widget>[
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Default IFrame Player',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
-              ),
-              WebviewtubePlayer(videoId: '4AoFA19gbLo', controller: controller),
-            ],
+          WebviewtubePlayer(videoId: 'iBRrnCqzTuk'),
+          const SizedBox(height: 16),
+          _NavTile(
+            label: 'Controller-driven UI',
+            description:
+                'Reflect title, author, and position in your own widgets',
+            builder: (_) => const CustomizedPlayer(),
           ),
-          const SizedBox(height: 70),
-          ElevatedButton(
-            onPressed: () async {
-              controller.pause();
-              debugPrint(
-                '${controller.value.videoMetadata.title} paused at ${controller.value.position}',
-              );
-
-              await Navigator.of(context).push<void>(
-                MaterialPageRoute(builder: (_) => const CustomizedPlayer()),
-              );
-
-              controller.play();
-              debugPrint(
-                'Continue to play ${controller.value.videoMetadata.title}',
-              );
-            },
-            child: const Text(
-              'Customized Player',
-              style: TextStyle(fontSize: 16),
-            ),
+          _NavTile(
+            label: 'Playlist',
+            description:
+                'Load a list of videos and navigate with next / previous',
+            builder: (_) => const PlaylistPlayer(),
           ),
-          ElevatedButton(
-            onPressed: () {
-              controller.pause();
-              Navigator.of(
-                context,
-              ).push(MaterialPageRoute(builder: (_) => const PlaylistPlayer()));
-            },
-            child: const Text(
-              'Playlist Player',
-              style: TextStyle(fontSize: 16),
-            ),
+          _NavTile(
+            label: 'External links',
+            description: 'Open YouTube links in the system browser',
+            builder: (_) => const ExternalLinksPlayer(),
           ),
         ],
       ),
+    );
+  }
+}
+
+class _NavTile extends StatelessWidget {
+  const _NavTile({
+    required this.label,
+    required this.description,
+    required this.builder,
+  });
+
+  final String label;
+  final String description;
+  final WidgetBuilder builder;
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      title: Text(label, style: Theme.of(context).textTheme.titleMedium),
+      subtitle: Text(description),
+      trailing: const Icon(Icons.chevron_right),
+      onTap: () =>
+          Navigator.of(context).push<void>(MaterialPageRoute(builder: builder)),
     );
   }
 }

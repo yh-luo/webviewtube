@@ -31,9 +31,10 @@ class VolumeButton extends StatelessWidget {
                 color: Colors.white,
                 shadows: <Shadow>[
                   Shadow(
-                      offset: Offset(1, 1),
-                      blurRadius: 5,
-                      color: Colors.black87)
+                    offset: Offset(1, 1),
+                    blurRadius: 5,
+                    color: Colors.black87,
+                  ),
                 ],
               );
             default:
@@ -42,9 +43,10 @@ class VolumeButton extends StatelessWidget {
                 color: Colors.white,
                 shadows: <Shadow>[
                   Shadow(
-                      offset: Offset(1, 1),
-                      blurRadius: 5,
-                      color: Colors.black87)
+                    offset: Offset(1, 1),
+                    blurRadius: 5,
+                    color: Colors.black87,
+                  ),
                 ],
               );
           }

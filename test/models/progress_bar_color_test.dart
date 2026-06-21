@@ -31,13 +31,14 @@ void main() {
       expect(actual.playedColor, Colors.amber);
       expect(actual.backgroundColor, colors.backgroundColor);
       expect(
-          actual,
-          ProgressBarColors(
-            backgroundColor: Colors.white,
-            playedColor: Colors.amber,
-            bufferedColor: Colors.black,
-            handleColor: Colors.black,
-          ));
+        actual,
+        ProgressBarColors(
+          backgroundColor: Colors.white,
+          playedColor: Colors.amber,
+          bufferedColor: Colors.black,
+          handleColor: Colors.black,
+        ),
+      );
     });
   });
 }
