@@ -85,7 +85,9 @@ class _CustomizedPlayerState extends State<CustomizedPlayer> {
               ),
               IconButton(
                 iconSize: 48,
-                onPressed: isPlaying ? controller.pause : controller.play,
+                onPressed: isBuffering
+                    ? null
+                    : (isPlaying ? controller.pause : controller.play),
                 icon: isBuffering
                     ? const SizedBox(
                         width: 48,

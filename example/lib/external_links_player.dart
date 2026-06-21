@@ -36,12 +36,15 @@ class _ExternalLinksPlayerState extends State<ExternalLinksPlayer> {
     final isYouTube =
         host == 'youtube.com' ||
         host.endsWith('.youtube.com') ||
-        host == 'youtu.be';
-    if (isYouTube) {
+        host == 'youtu.be' ||
+        host.endsWith('.youtu.be');
+    if (!isYouTube) return true;
+    try {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
       return false;
+    } catch (_) {
+      return true;
     }
-    return true;
   }
 
   @override

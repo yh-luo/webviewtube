@@ -7,39 +7,10 @@ import 'widgets.dart';
 /// {@template webviewtube_video_player}
 /// A widgets-decorated [WebviewtubePlayer].
 ///
-/// It's less performant but has more customized widgets. The player can be
-/// configured by [options] and controlled by [controller]. If a controller is
-/// not provided, a [WebviewtubeController] with default options will be created
-/// using `ChangeNotifierProvider` constructor. It will be automatically
-/// disposed when the [WebviewtubeVideoPlayer] widget is removed from the
-/// widget tree. Otherwise the user is responsible for disposing the given
-/// controller.
-///
-/// Example:
-/// ```dart
-/// Scaffold(
-///   body: WebviewtubeVideoPlayer(videoId: '4AoFA19gbLo'),
-/// );
-/// ```
-///
-/// With controller:
-/// ```dart
-/// final webviewtubeController = WebviewtubeController(
-///   options: const WebviewtubeOptions(showControls: false));
-///
-/// // Remember to dispose the controller to avoid memory leak
-/// @override
-/// void dispose() {
-///   webviewtubeController.dispose();
-///   super.dispose();
-/// }
-///
-/// Scaffold(
-///   body: WebviewtubeVideoPlayer(
-///     videoId: '4AoFA19gbLo',
-///     controller: webviewtubeController),
-/// );
-/// ```
+/// Overlaying widgets on the player violates YouTube's Required Minimum
+/// Functionality policy. Use [WebviewtubePlayer] with the native YouTube
+/// controls, or build your own widget around [WebviewtubeController]; see
+/// `example/lib/customized_player.dart`.
 /// {@endtemplate}
 @Deprecated(
   'Overlaying custom controls on the YouTube iframe violates YouTube\'s '
