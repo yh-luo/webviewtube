@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 // ignore_for_file: prefer_const_declarations
+// ignore_for_file: deprecated_member_use_from_same_package
 import 'dart:async';
 import 'dart:io';
 
