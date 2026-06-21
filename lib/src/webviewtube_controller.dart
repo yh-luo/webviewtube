@@ -436,8 +436,7 @@ class WebviewtubeController extends ValueNotifier<WebviewTubeValue> {
   void _safeSetValue(
     WebviewTubeValue Function(WebviewTubeValue current) update,
   ) {
-    if (_disposed) return;
-    if (!value.isReady) return;
+    if (_disposed || !value.isReady) return;
     value = update(value);
   }
 
