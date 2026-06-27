@@ -12,6 +12,9 @@
 ## Fixes
 
 - Resolved several `WebviewtubeController` dispose/init lifecycle bugs: operations on a disposed controller, re-initialization leaks, and init-failure poisoning that prevented retry.
+- `load`/`cue` throw `ArgumentError` when `startAt >= endAt`.
+- `loadPlaylist`/`cuePlaylist` throw when neither `playlistId` nor a non-empty `videoIds` is provided.
+- `VideoMetadata.fromData` falls back to an empty string when YouTube omits `videoId`, `title`, or `author`.
 
 # 3.2.0
 
